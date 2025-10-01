@@ -1,0 +1,204 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Jabatan {
+  ABL
+  ATM
+}
+
+enum StatusTransaksi {
+  LUNAS
+  BELUM_LUNAS
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  jabatan   Jabatan
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relasi
+  barang          Barang[]
+  barangMasuk     BarangMasuk[]
+  barangKeluar    BarangKeluar[]
+  pelanggan       Pelanggan[]
+  transaksiKeluar TransaksiKeluar[]
+  pengeluaran     Pengeluaran[]
+  logAktivitas    LogAktivitas[]
+
+  @@map("admin")
+}
+
+model Barang {
+  id        Int      @id @default(autoincrement()) @map("id_barang")
+  nama      String   @map("nama_barang")
+  harga     Int
+  stok      Int
+  adminId   Int      @map("id_admin")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relasi
+  admin        Admin          @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  barangMasuk  BarangMasuk[]
+  barangKeluar BarangKeluar[]
+
+  @@index([adminId])
+  @@map("barang")
+}
+
+model BarangMasuk {
+  id           Int             @id @default(autoincrement()) @map("id_barang_masuk")
+  barangId     Int             @map("id_barang_id")
+  adminId      Int             @map("id_admin_id")
+  noInvoice    String          @map("no_invoice")
+  noSuratJalan String          @map("no_surat_jalan")
+  stokMasuk    Int             @map("stok_masuk")
+  tglMasuk     DateTime        @map("tgl_masuk") @db.Date
+  jatuhTempo   DateTime        @map("jatuh_tempo") @db.Date
+  ongkir       Int
+  totalHarga   Int             @map("total_harga")
+  keterangan   String?
+  status       StatusTransaksi @default(BELUM_LUNAS)
+  createdAt    DateTime        @default(now()) @map("created_at")
+
+  // Relasi
+  barang Barang @relation(fields: [barangId], references: [id], onDelete: Cascade)
+  admin  Admin  @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([barangId])
+  @@index([adminId])
+  @@index([tglMasuk])
+  @@map("barang_masuk")
+}
+
+model BarangKeluar {
+  id           Int      @id @default(autoincrement()) @map("id_barang_keluar")
+  barangId     Int      @map("id_barang_id")
+  pelangganId  Int      @map("id_pelanggan_id")
+  adminId      Int      @map("id_admin_id")
+  noInvoice    String   @map("no_invoice")
+  jmlPembelian Int      @map("jml_pembelian")
+  hargaJual    Int      @map("harga_jual_produk")
+  totalOmset   Int      @map("total_omset")
+  totalModal   Int      @map("total_modal")
+  labaKotor    Int      @map("total_laba_kotor")
+  tglKeluar    DateTime @map("tgl_keluar") @db.Date
+  jatuhTempo   DateTime @map("jatuh_tempo") @db.Date
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relasi
+  barang    Barang    @relation(fields: [barangId], references: [id], onDelete: Cascade)
+  pelanggan Pelanggan @relation(fields: [pelangganId], references: [id], onDelete: Cascade)
+  admin     Admin     @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([barangId])
+  @@index([pelangganId])
+  @@index([adminId])
+  @@index([tglKeluar])
+  @@map("barang_keluar")
+}
+
+model Pelanggan {
+  id             Int      @id @default(autoincrement()) @map("id_pelanggan")
+  nama           String   @map("nama_pelanggan")
+  alamat         String
+  totalPembelian Int      @default(0) @map("total_pembelian")
+  adminId        Int      @map("id_admin")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  // Relasi
+  admin        Admin          @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  barangKeluar BarangKeluar[]
+
+  @@index([adminId])
+  @@map("pelanggan")
+}
+
+model TransaksiKeluar {
+  id               Int             @id @default(autoincrement()) @map("id_transaksi_keluar")
+  barangKeluarId   Int             @map("id_barang_keluar_id")
+  adminId          Int             @map("id_admin_id")
+  totalFee         Int             @map("total_fee")
+  ongkir           Int
+  totalBiayaKeluar Int             @map("total_biaya_keluar")
+  labaBerjalan     Int             @map("laba_berjalan")
+  status           StatusTransaksi @default(BELUM_LUNAS)
+  createdAt        DateTime        @default(now()) @map("created_at")
+
+  // Relasi
+  admin      Admin        @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  pendapatan Pendapatan[]
+
+  @@index([adminId])
+  @@map("transaksi_keluar")
+}
+
+model Pengeluaran {
+  id         Int      @id @default(autoincrement()) @map("id_pengeluaran")
+  adminId    Int      @map("id_admin_id")
+  keterangan String
+  jumlah     Int      @map("jumlah_barang")
+  totalHarga Int      @map("total_harga")
+  tanggal    DateTime @default(now()) @db.Date
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relasi
+  admin Admin @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+  @@index([tanggal])
+  @@map("pengeluaran")
+}
+
+model Pendapatan {
+  id                Int      @id @default(autoincrement()) @map("id_pendapat")
+  transaksiKeluarId Int      @map("id_transaksi_keluar_id")
+  pengeluaranId     Int      @map("id_pengeluaran_id")
+  bulan             String
+  owner1            Int
+  owner2            Int
+  owner3            Int
+  cv                Int
+  tanggal           DateTime @default(now()) @db.Date
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  // Relasi
+  transaksiKeluar TransaksiKeluar @relation(fields: [transaksiKeluarId], references: [id], onDelete: Cascade)
+
+  @@index([transaksiKeluarId])
+  @@index([bulan])
+  @@map("pendapatan")
+}
+
+model LogAktivitas {
+  id          Int      @id @default(autoincrement()) @map("id_log")
+  adminId     Int      @map("id_admin")
+  aksi        String
+  tabelTarget String   @map("tabel_target")
+  dataLama    String?  @map("data_lama") @db.Text
+  dataBaru    String?  @map("data_baru") @db.Text
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  timestamp   DateTime @default(now())
+
+  // Relasi
+  admin Admin @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+  @@index([timestamp])
+  @@map("log_aktivitas")
+}
