@@ -53,52 +53,48 @@ export default function AblDashboardPage() {
 
   return (
     <InventarisDashboard user={user}>
-      <div className="flex gap-3 mb-6">
-        {/* Card Total Penjualan (fixed width) */}
-
-        {/* Card lainnya fleksibel */}
-        <Card className="flex-1 shadow-sm">
-          <CardContent className="flex items-center gap-3 p-4">
-            <div className="p-3 rounded-lg bg-indigo-50">
-              <BoxTime size={28} color="#00B7FE" variant="Bold" />
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm mb-1">
-                Peringatan Stok Minimum
-              </p>
-              <p className="text-xl font-medium text-gray-900">300 Produk</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="flex-1 shadow-sm">
-          <CardContent className="flex items-center gap-3 p-4">
-            <div className="p-3 rounded-lg bg-indigo-50">
-              <BoxTick size={28} color="#6366F1" variant="Bold" />
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm mb-1">
-                Peringatan Stok Minimum
-              </p>
-              <p className="text-xl font-medium text-gray-900">300 Produk</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="basis-[408px] shadow-sm">
-          <CardContent className="flex items-center gap-3 p-4">
-            <div className="p-3 rounded-lg bg-yellow-50">
-              <BoxTick size={28} color="#FF6A00" variant="Bold" />
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm mb-1">Total Penjualan</p>
-              <p className="text-xl font-medium text-gray-900">
-                Rp. 523.000.000
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+   <div className="flex flex-wrap gap-3 mb-6">
+  {/* Card fleksibel */}
+  <Card className="flex-1 min-w-[250px] shadow-sm">
+    <CardContent className="flex items-center gap-3 p-4">
+      <div className="p-3 rounded-lg bg-indigo-50">
+        <BoxTime size={28} color="#00B7FE" variant="Bold" />
       </div>
+      <div>
+        <p className="text-gray-500 text-sm mb-1">Peringatan Stok Minimum</p>
+        <p className="text-xl font-medium text-gray-900">300 Produk</p>
+      </div>
+    </CardContent>
+  </Card>
+
+  <Card className="flex-1 min-w-[250px] shadow-sm">
+    <CardContent className="flex items-center gap-3 p-4">
+      <div className="p-3 rounded-lg bg-indigo-50">
+        <BoxTick size={28} color="#6366F1" variant="Bold" />
+      </div>
+      <div>
+        <p className="text-gray-500 text-sm mb-1">Peringatan Stok Minimum</p>
+        <p className="text-xl font-medium text-gray-900">300 Produk</p>
+      </div>
+    </CardContent>
+  </Card>
+
+  {/* Card Total Penjualan (fixed width) */}
+  <Card className="basis-[408px] min-w-[250px] shadow-sm">
+    <CardContent className="flex items-center gap-3 p-4">
+      <div className="p-3 rounded-lg bg-yellow-50">
+        <BoxTick size={28} color="#FF6A00" variant="Bold" />
+      </div>
+      <div>
+        <p className="text-gray-500 text-sm mb-1">Total Penjualan</p>
+        <p className="text-xl font-medium text-gray-900">
+          Rp. 523.000.000
+        </p>
+      </div>
+    </CardContent>
+  </Card>
+</div>
+
 
       {/* Bagian Chart & Tagihan */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
