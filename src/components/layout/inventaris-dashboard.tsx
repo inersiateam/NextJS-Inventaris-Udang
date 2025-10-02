@@ -50,7 +50,7 @@ const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
           setOpen={setSidebarOpen}
         />
 
-        {/* Konten utama */}
+    
         <SidebarInset className="flex flex-1 flex-col min-w-0 w-full">
           <AppNavbar
             title={title}
