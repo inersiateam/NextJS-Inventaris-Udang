@@ -54,7 +54,11 @@ export default function AppSidebar({ menuItems }: AppSidebarProps) {
                       : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                   )}
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon
+                    size={20}
+                    color={active ? "#fff" : "#000"}
+                    variant="Bold"
+                  />{" "}
                   <span>{item.label}</span>
                 </Link>
 

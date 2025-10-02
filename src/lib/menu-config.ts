@@ -1,41 +1,30 @@
-import {
-  LayoutDashboard,
-  PackagePlus,
-  PackageMinus,
-  Wallet,
-  Users,
-  FileText,
-  CreditCard,
-} from "lucide-react";
+import { Element4, BoxTick, BoxRemove, CardSend, Profile2User, ClipboardText, Category, } from "iconsax-react";
+import { IconProps } from "iconsax-react";
 
 export type Role = "abl" | "atm";
 
 export interface MenuItem {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<IconProps>;
 }
 
 export function getMenuItemsByRole(role: Role): MenuItem[] {
   if (role === "abl") {
     return [
-      { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-      { label: "Barang Masuk", href: "/barang-masuk", icon: PackagePlus },
-      { label: "Barang Keluar", href: "/barang-keluar", icon: PackageMinus },
-      { label: "Pengeluaran", href: "/pengeluaran", icon: Wallet },
-      { label: "Pelanggan", href: "/pelanggan", icon: Users },
-      { label: "Laporan", href: "/laporan", icon: FileText },
+      { label: "Dashboard", href: "/dashboard", icon: Element4 },
+      { label: "Barang Masuk", href: "/barang-masuk", icon: BoxTick },
+      { label: "Barang Keluar", href: "/barang-keluar", icon: BoxRemove },
+      { label: "Pengeluaran", href: "/pengeluaran", icon: CardSend },
+      { label: "Pelanggan", href: "/pelanggan", icon: Profile2User },
+      { label: "Laporan", href: "/laporan", icon: ClipboardText },
     ];
   }
-
   if (role === "atm") {
     return [
-      { label: "Dashboard", href: "/atm/dashboard", icon: LayoutDashboard },
-      { label: "Transaksi", href: "/atm/transaksi", icon: CreditCard },
-      { label: "Tagihan", href: "/atm/tagihan", icon: Wallet },
-      { label: "Laporan", href: "/atm/laporan", icon: FileText },
+      { label: "Dashboard", href: "/atm/dashboard", icon: Category },
+      { label: "Laporan", href: "/atm/laporan", icon: ClipboardText },
     ];
   }
-
   return [];
 }
