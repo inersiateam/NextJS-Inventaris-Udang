@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/layout/sidebar-layout";
 import AppNavbar from "@/components/layout/navbar-layout";
@@ -14,7 +14,7 @@ interface User {
 
 interface InventarisDashboardProps {
   user: User;
-  title?: string; // ✅ tambahan prop title
+  title?: string;
   children: React.ReactNode;
 }
 
@@ -25,6 +25,7 @@ const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
 }) => {
   const router = useRouter();
   const menuItems = useMemo(() => getMenuItemsByRole(user.role), [user.role]);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleProfileClick = () => {
     router.push(`/${user.role}/settings`);
@@ -34,19 +35,28 @@ const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
     router.push("/");
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-950">
         {/* Sidebar */}
-        <AppSidebar menuItems={menuItems} />
+        <AppSidebar 
+          menuItems={menuItems} 
+          open={sidebarOpen}
+        />
 
         {/* Konten utama */}
         <SidebarInset className="flex flex-1 flex-col min-w-0">
           <AppNavbar
-            title={title} // ✅ oper ke navbar
+            title={title}
             user={user}
             onProfileClick={handleProfileClick}
             onLogout={handleLogout}
+            onMenuClick={toggleSidebar}
+            sidebarOpen={sidebarOpen}
           />
           <main className="flex-1 p-4 sm:p-6 bg-gray-50/50 dark:bg-gray-950/50 overflow-auto">
             {children}

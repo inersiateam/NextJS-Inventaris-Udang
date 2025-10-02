@@ -172,7 +172,8 @@ export default function AblDashboardPage() {
 
             <div
               className="cursor-pointer bg-white rounded-lg p-3 mb-4 border-2 border-gray 
-                        shadow-[4px_4px_0px_#2674A4] transition-all duration-200 
+            shadow-[4px_4px_0px_#2674A4] 
+        transition-all duration-200 
         hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none 
         active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
             >

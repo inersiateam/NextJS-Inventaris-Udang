@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, CircleUser } from "lucide-react";
+import { Bell, CircleUser, Menu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +16,8 @@ interface AppNavbarProps {
   };
   onProfileClick?: () => void;
   onLogout?: () => void;
+  onMenuClick?: () => void;
+  sidebarOpen?: boolean;
 }
 
 export default function AppNavbar({
@@ -23,10 +25,22 @@ export default function AppNavbar({
   user,
   onProfileClick,
   onLogout,
+  onMenuClick,
+  sidebarOpen,
 }: AppNavbarProps) {
   return (
     <header className="flex items-center justify-between px-6 h-16 border-b bg-white dark:bg-gray-900 shadow-sm">
-      <h1 className="text-lg font-semibold">{title}</h1>
+      <div className="flex items-center gap-3">
+        {/* Menu Button - selalu ditampilkan */}
+        <button
+          onClick={onMenuClick}
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
+        >
+          <Menu className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+        </button>
+        
+        <h1 className="text-lg font-semibold">{title}</h1>
+      </div>
 
       <div className="flex items-center gap-4">
         <button>
@@ -35,7 +49,6 @@ export default function AppNavbar({
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 focus:outline-none">
             <CircleUser className="h-8 w-8" />
-            {/* <span className="hidden sm:inline text-sm">{user.name}</span> */}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="mt-2 w-40">
             <DropdownMenuItem onClick={onProfileClick}>Profil</DropdownMenuItem>
