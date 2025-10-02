@@ -41,49 +41,54 @@ export default function AblDashboardPage() {
 
   return (
     <InventarisDashboard user={user}>
-   <div className="flex flex-col md:flex-row gap-3 mb-6">
-  {/* Kumpulan card fleksibel di kiri */}
-  <div className="flex flex-wrap gap-3 flex-1">
-    <Card className="flex-1 min-w-[200px] shadow-sm">
-      <CardContent className="flex items-center gap-3 p-4">
-        <div className="p-3 rounded-lg bg-indigo-50">
-          <BoxTime size={28} color="#00B7FE" variant="Bold" />
-        </div>
-        <div>
-          <p className="text-gray-500 text-sm mb-1">Peringatan Stok Minimum</p>
-          <p className="text-xl font-medium text-gray-900">300 Produk</p>
-        </div>
-      </CardContent>
-    </Card>
+      <div className="flex flex-col md:flex-row gap-3 mb-6">
+        {/* Kumpulan card fleksibel di kiri */}
+        <div className="flex flex-wrap gap-3 flex-1">
+          <Card className="flex-1 min-w-[200px] shadow-sm">
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className="p-3 rounded-lg bg-indigo-50">
+                <BoxTime size={28} color="#00B7FE" variant="Bold" />
+              </div>
+              <div>
+                <p className="text-gray-500 text-sm mb-1">
+                  Peringatan Stok Minimum
+                </p>
+                <p className="text-xl font-medium text-gray-900">300 Produk</p>
+              </div>
+            </CardContent>
+          </Card>
+          
 
-    <Card className="flex-1 min-w-[200px] shadow-sm">
-      <CardContent className="flex items-center gap-3 p-4">
-        <div className="p-3 rounded-lg bg-indigo-50">
-          <BoxTick size={28} color="#6366F1" variant="Bold" />
+          <Card className="flex-1 min-w-[200px] shadow-sm">
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className="p-3 rounded-lg bg-indigo-50">
+                <BoxTick size={28} color="#6366F1" variant="Bold" />
+              </div>
+              <div>
+                <p className="text-gray-500 text-sm mb-1">
+                  Peringatan Stok Minimum
+                </p>
+                <p className="text-xl font-medium text-gray-900">300 Produk</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        <div>
-          <p className="text-gray-500 text-sm mb-1">Peringatan Stok Minimum</p>
-          <p className="text-xl font-medium text-gray-900">300 Produk</p>
-        </div>
-      </CardContent>
-    </Card>
-  </div>
 
-  {/* Card Total Penjualan */}
-  <Card className="w-full md:basis-[370px] shadow-sm">
-    <CardContent className="flex items-center gap-3 p-4">
-      <div className="p-3 rounded-lg bg-yellow-50">
-        <BoxTick size={28} color="#FF6A00" variant="Bold" />
+        {/* Card Total Penjualan */}
+        <Card className="w-full md:basis-[400px] shadow-sm">
+          <CardContent className="flex items-center gap-3 p-4">
+            <div className="p-3 rounded-lg bg-yellow-50">
+              <BoxTick size={28} color="#FF6A00" variant="Bold" />
+            </div>
+            <div>
+              <p className="text-gray-500 text-sm mb-1">Total Penjualan</p>
+              <p className="text-xl font-medium text-gray-900">
+                Rp. 523.000.000
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-      <div>
-        <p className="text-gray-500 text-sm mb-1">Total Penjualan</p>
-        <p className="text-xl font-medium text-gray-900">Rp. 523.000.000</p>
-      </div>
-    </CardContent>
-  </Card>
-</div>
-
-
 
       {/* Bagian Chart & Tagihan */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
@@ -190,12 +195,10 @@ export default function AblDashboardPage() {
                 <span>03-08-2026</span>
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                  Status Barang : Keluar / Masuk
+                  Status Barang : Masuk
                 </span>
               </div>
             </div>
-
-            {/* Tambah Card item lain kalau perlu */}
             <div
               className="cursor-pointer bg-white rounded-lg p-3 mb-4 border-2 border-gray 
         shadow-[4px_4px_0px_#2674A4] 
@@ -218,7 +221,7 @@ export default function AblDashboardPage() {
                 <span>03-08-2026</span>
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                  Status Barang : Keluar / Masuk
+                  Status Barang : Keluar
                 </span>
               </div>
             </div>

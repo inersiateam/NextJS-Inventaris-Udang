@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/layout/sidebar-layout";
 import AppNavbar from "@/components/layout/navbar-layout";
@@ -25,7 +25,8 @@ const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
 }) => {
   const router = useRouter();
   const menuItems = useMemo(() => getMenuItemsByRole(user.role), [user.role]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
 
   const handleProfileClick = () => {
     router.push(`/${user.role}/settings`);
@@ -46,10 +47,11 @@ const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
         <AppSidebar 
           menuItems={menuItems} 
           open={sidebarOpen}
+          setOpen={setSidebarOpen}
         />
 
         {/* Konten utama */}
-        <SidebarInset className="flex flex-1 flex-col min-w-0">
+        <SidebarInset className="flex flex-1 flex-col min-w-0 w-full">
           <AppNavbar
             title={title}
             user={user}
