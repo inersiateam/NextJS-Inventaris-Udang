@@ -78,9 +78,7 @@ export default function FormBarangMasuk() {
     }
   };
 
-  return (
-    <InventarisDashboard user={user} title="Barang Masuk">
-     
+  return (     
       <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6">Form Barang Masuk</h2>
 
@@ -230,6 +228,5 @@ export default function FormBarangMasuk() {
           </button>
         </form>
       </div>
-    </InventarisDashboard>
   );
 }

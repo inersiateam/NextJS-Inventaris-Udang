@@ -14,19 +14,32 @@ interface User {
 
 interface InventarisDashboardProps {
   user: User;
-  title?: string;
   children: React.ReactNode;
 }
 
 const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
   user,
-  title,
   children,
 }) => {
   const router = useRouter();
   const menuItems = useMemo(() => getMenuItemsByRole(user.role), [user.role]);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isClient, setIsClient] = useState(false); 
 
+  useEffect(() => {
+    setIsClient(true);
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(true);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleProfileClick = () => {
     router.push(`/${user.role}/settings`);
@@ -37,23 +50,24 @@ const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
   };
 
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+    setSidebarOpen((prev) => !prev);
   };
 
+  if (!isClient) return null;
+
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen={sidebarOpen}>
       <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-950">
         {/* Sidebar */}
-        <AppSidebar 
-          menuItems={menuItems} 
+        <AppSidebar
+          menuItems={menuItems}
           open={sidebarOpen}
           setOpen={setSidebarOpen}
         />
 
-    
+        {/* Main area */}
         <SidebarInset className="flex flex-1 flex-col min-w-0 w-full">
           <AppNavbar
-            title={title}
             user={user}
             onProfileClick={handleProfileClick}
             onLogout={handleLogout}

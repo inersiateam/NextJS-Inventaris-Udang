@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Quicksand } from "next/font/google";
 import "./globals.css";
-import Providers from "./provider";
+import Providers from "../provider";
+import InventarisDashboard from "@/components/layout/inventaris-dashboard";
 
-// Configure the Quicksand font
 const quicksand = Quicksand({
   subsets: ["latin"],
   variable: "--font-quicksand",
@@ -16,13 +16,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  // Dummy user untuk frontend saja
+  const user = {
+    name: "Admin Inventaris",
+    role: "abl" as const,
+  };
+
   return (
     <html lang="en" className={quicksand.variable}>
       <body className="font-quicksand antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          {/* Client component boleh dipanggil di sini */}
+          <InventarisDashboard user={user}>{children}</InventarisDashboard>
+        </Providers>
       </body>
     </html>
   );

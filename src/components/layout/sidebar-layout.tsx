@@ -19,7 +19,7 @@ export default function AppSidebar({ menuItems, open, setOpen }: AppSidebarProps
       {/* Sidebar */}
       <aside
         className={cn(
-          "h-screen bg-white dark:bg-gray-900 transition-all duration-300 z-40",
+          "h-full bg-white dark:bg-gray-900 transition-all duration-300 z-40 rounded-r-lg shadow-lg",
           // Desktop: inline sidebar dengan width toggle
           "hidden md:block md:border-r",
           open ? "md:w-56" : "md:w-0 md:border-r-0 md:overflow-hidden",
@@ -29,17 +29,17 @@ export default function AppSidebar({ menuItems, open, setOpen }: AppSidebarProps
         )}
       >
         {/* Logo + Brand */}
-        <div className="h-16 flex items-center justify-center border-b">
+        <div className="h-16 flex items-center justify-center">
           <div className="flex items-center space-x-2">
             <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
-            <span className="text-xl font-bold text-primary font-poppins">
+            <span className="text-xl font-bold text-primary">
               CV. ABL
             </span>
           </div>
         </div>
 
         {/* Menu */}
-        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto h-[calc(100vh-4rem)]">
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto h-[calc(100vh-4rem)] font-bold">
           {menuItems.map((item, idx) => {
             const active = pathname === item.href;
             const Icon = item.icon;
@@ -56,7 +56,7 @@ export default function AppSidebar({ menuItems, open, setOpen }: AppSidebarProps
                     }
                   }}
                   className={cn(
-                    "flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition",
+                    "flex items-center space-x-3 px-3 py-2 rounded-md text-base font-base transition",
                     active
                       ? "bg-primary text-white rounded-2xl"
                       : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
