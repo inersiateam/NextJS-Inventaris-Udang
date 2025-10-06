@@ -1,18 +1,18 @@
 import prisma from "../prisma";
 
 export async function generateNoInvoice(
-  tglMasuk: Date,
+  tglKeluar: Date,
   jabatan: string
 ): Promise<string> {
-  const year = tglMasuk.getFullYear();
-  const month = String(tglMasuk.getMonth() + 1).padStart(2, "0");
-  const day = String(tglMasuk.getDate()).padStart(2, "0");
-  const startOfMonth = new Date(year, tglMasuk.getMonth(), 1);
-  const endOfMonth = new Date(year, tglMasuk.getMonth() + 1, 0, 23, 59, 59);
+  const year = tglKeluar.getFullYear();
+  const month = String(tglKeluar.getMonth() + 1).padStart(2, "0");
+  const day = String(tglKeluar.getDate()).padStart(2, "0");
+  const startOfMonth = new Date(year, tglKeluar.getMonth(), 1);
+  const endOfMonth = new Date(year, tglKeluar.getMonth() + 1, 0, 23, 59, 59);
 
-  const count = await prisma.barangMasuk.count({
+  const count = await prisma.barangKeluar.count({
     where: {
-      tglMasuk: {
+      tglKeluar: {
         gte: startOfMonth,
         lte: endOfMonth,
       },
