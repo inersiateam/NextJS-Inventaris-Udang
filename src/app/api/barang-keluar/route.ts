@@ -269,10 +269,10 @@ export async function POST(request: NextRequest) {
     const labaBersih = labaBerjalan - totalPengeluaran;
 
     // Pembagian laba
-    const owner1 = Math.floor(labaBersih * 0.3);
-    const owner2 = Math.floor(labaBersih * 0.3);
-    const owner3 = Math.floor(labaBersih * 0.3);
-    const cv = Math.floor(labaBersih * 0.1);
+    const owner1 = Math.floor(labaBerjalan * 0.3);
+    const owner2 = Math.floor(labaBerjalan * 0.3);
+    const owner3 = Math.floor(labaBerjalan * 0.3);
+    const cv = Math.floor(labaBerjalan * 0.1);
 
     // Transaction
     const result = await prisma.$transaction(async (tx) => {
@@ -331,7 +331,6 @@ export async function POST(request: NextRequest) {
           transaksiKeluarId: transaksiKeluar.id,
           bulan,
           tahun,
-          totalPengeluaran,
           owner1,
           owner2,
           owner3,
