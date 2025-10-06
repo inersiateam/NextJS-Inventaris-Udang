@@ -22,7 +22,7 @@ export default function BarangMasuk() {
       <div className="mb-4 flex justify-end">
         <Button>Tambah data</Button>
       </div>
-      <div className="w-full overflow-x-auto">
+      <div className="w-full overflow-x-auto bg-white rounded-lg ">
         <Table>
           <TableHeader>
             <TableRow className="bg-sky-600 text-white">
