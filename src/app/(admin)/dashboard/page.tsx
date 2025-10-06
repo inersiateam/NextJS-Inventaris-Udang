@@ -89,7 +89,7 @@ export default function Page() {
       {/* Bagian atas: kartu ringkasan */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {/* Card Total Omset */}
-<Card className="shadow-md rounded-xl h-[160px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
+        <Card className="shadow-md rounded-xl h-[160px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
               <div className="bg-green-500 p-3 rounded-full animate-bounce">
@@ -123,7 +123,7 @@ export default function Page() {
         </Card>
 
         {/* Card ke-3 */}
-<Card className="shadow-md rounded-xl h-[160px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
+        <Card className="shadow-md rounded-xl h-[160px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
               <div className="bg-primary p-3 rounded-full animate-bounce">
@@ -145,7 +145,7 @@ export default function Page() {
         </Card>
 
         {/* Card ke-4 */}
-<Card className="shadow-md rounded-xl h-[160px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
+        <Card className="shadow-md rounded-xl h-[160px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
               <div className="bg-teal-300 p-3 rounded-full animate-bounce">
@@ -169,7 +169,7 @@ export default function Page() {
         {/* Kolom kiri: Statistik dan Donut */}
         <div className="flex flex-col gap-3">
           {/* Statistik */}
-          <Card className="shadow-sm h-[320px] w-full">
+          <Card className="shadow-sm h-[350px] w-full  hover:shadow-xl">
             <CardHeader className="pb-2">
               <CardTitle className="text-xl font-bold">Statistic</CardTitle>
             </CardHeader>
@@ -210,7 +210,7 @@ export default function Page() {
           </Card>
 
           {/* Donut Chart */}
-          <Card className="shadow-sm h-[238px] w-full">
+          <Card className="shadow-sm h-[238px] w-full hover:shadow-xl">
             <CardHeader className="pb-1 flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-xl font-bold">{selected}</CardTitle>
