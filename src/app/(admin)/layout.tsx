@@ -18,10 +18,11 @@ export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
+
 }) {
   // Dummy user untuk frontend saja
   const user = {
-    name: "Admin Inventaris",
+    name: "Admin ABL",
     role: "abl" as const,
   };
 

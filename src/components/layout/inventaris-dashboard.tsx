@@ -23,16 +23,17 @@ const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
 }) => {
   const router = useRouter();
   const menuItems = useMemo(() => getMenuItemsByRole(user.role), [user.role]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [isClient, setIsClient] = useState(false); 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
+
     const handleResize = () => {
       if (window.innerWidth < 768) {
-        setSidebarOpen(false);
+        setSidebarOpen(false); // mobile: tertutup
       } else {
-        setSidebarOpen(true);
+        setSidebarOpen(false); // desktop: hanya icon
       }
     };
 
@@ -41,17 +42,9 @@ const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleProfileClick = () => {
-    router.push(`/${user.role}/settings`);
-  };
-
-  const handleLogout = () => {
-    router.push("/");
-  };
-
-  const toggleSidebar = () => {
-    setSidebarOpen((prev) => !prev);
-  };
+  const handleProfileClick = () => router.push(`/${user.role}/settings`);
+  const handleLogout = () => router.push("/");
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   if (!isClient) return null;
 
@@ -66,7 +59,7 @@ const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
         />
 
         {/* Main area */}
-        <SidebarInset className="flex flex-1 flex-col min-w-0 w-full">
+        <SidebarInset className="flex flex-1 flex-col min-w-0 w-full transition-all duration-300">
           <AppNavbar
             user={user}
             onProfileClick={handleProfileClick}
