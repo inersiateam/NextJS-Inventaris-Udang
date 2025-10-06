@@ -1,10 +1,11 @@
 "use client";
-
+import Link from "next/link";
 import { Bell, CircleUser, Menu, Search } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -33,12 +34,12 @@ export default function AppNavbar({
       {/* Kiri: tombol menu + judul */}
       <div className="flex items-center gap-3">
         {/* Menu Button */}
-       <button
-  onClick={onMenuClick}
-  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition border"
->
-  <Menu className="h-6 w-6 text-gray-700 dark:text-gray-300" />
-</button>
+        <button
+          onClick={onMenuClick}
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition border"
+        >
+          <Menu className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+        </button>
       </div>
 
       {/* Kanan */}
@@ -70,8 +71,12 @@ export default function AppNavbar({
             <CircleUser className="h-8 w-8 text-gray-700 dark:text-gray-300" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="mt-2 w-40">
-            <DropdownMenuItem onClick={onProfileClick}>Profil</DropdownMenuItem>
-            <DropdownMenuItem onClick={onLogout}>Logout</DropdownMenuItem>
+            <DropdownMenuItem>Hai admin ABl!</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/profile">Profil</Link>
+            </DropdownMenuItem>{" "}
+            <DropdownMenuItem variant="destructive">Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
