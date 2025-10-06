@@ -3,11 +3,14 @@ import { useState } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { EyeOff, Eye, LockIcon, Mail } from "lucide-react";
+
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
+ const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -40,8 +43,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen white">
+      <div className="bg-white p-8 w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-4">
           <img
@@ -70,38 +73,53 @@ export default function LoginPage() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Username */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Username <span className="text-red-500">*</span>
+         <div className="relative">
+            <label
+              className={`absolute left-12 transition-all duration-200 pointer-events-none ${
+                username
+                  ? "-top-2 text-xs text-gray-500 bg-white px-1"
+                  : "top-4 text-sm text-gray-400"
+              }`}
+            >
+              Email Address
             </label>
+            <Mail className="absolute left-4 top-4 text-gray-400 w-4 h-4" />
             <input
-              id="username"
-              name="username"
-              type="text"
-              required
-              className="mt-1 block w-full border border-blue-400 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Enter your username"
+              type="email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-black"
             />
           </div>
 
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Password <span className="text-red-500">*</span>
+          <div className="relative">
+            <label
+              className={`absolute left-12 transition-all duration-200 pointer-events-none ${
+                password
+                  ? "-top-2 text-xs text-gray-500 bg-white px-1"
+                  : "top-4 text-sm text-gray-400"
+              }`}
+            >
+              Password
             </label>
+            <LockIcon className="absolute left-4 top-4 text-gray-400 w-4 h-4" />
             <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="mt-1 block w-full border border-blue-400 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Enter your password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="w-full pl-12 pr-12 py-4 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-black"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+            >
+              {showPassword ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+            </button>
           </div>
 
           {/* Remember me & Forgot password */}
@@ -115,12 +133,14 @@ export default function LoginPage() {
               />
               <span className="ml-2 text-gray-600">Remember me</span>
             </label>
-            <a href="/forgot-password" className="text-blue-600 hover:underline">
+            <a
+              href="/forgot-password"
+              className="text-blue-600 hover:underline"
+            >
               Forgot password
             </a>
           </div>
 
-     
           <Button
             type="submit"
             disabled={isLoading}
