@@ -1,27 +1,83 @@
 "use client";
-
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BoxTick, BoxTime, Calendar, EmptyWallet } from "iconsax-react";
+import { BoxTick, Calendar, EmptyWallet, User } from "iconsax-react";
+import { ArrowSwapHorizontal } from "iconsax-react";
 import { Button } from "@/components/ui/button";
-import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut, Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+  Title,
+} from "chart.js";
 import { Badge } from "@/components/ui/badge";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+// PENTING: Registrasi semua elemen yang dibutuhkan
+ChartJS.register(
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+  Title
+);
 
-const data = {
-  labels: ["Aqua Water", "Aqua Difire"],
+const barData = {
+  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
   datasets: [
     {
-      label: "Total Barang Keluar",
-      data: [30, 50],
-      backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)"],
-      hoverOffset: 4,
+      label: "Pengeluaran",
+      data: [40, 20, 15, 70, 60, 15],
+      backgroundColor: "#ACDFFF",
+      borderRadius: 8,
+    },
+    {
+      label: "Pendapatan",
+      data: [120, 65, 85, 100, 80, 100],
+      backgroundColor: "#00B8FB",
+      borderRadius: 8,
     },
   ],
 };
 
 export default function Page() {
+  const [selected, setSelected] = useState<"Aqua Water" | "Aqua Difire">(
+    "Aqua Water"
+  );
+  const chartData = {
+    "Aqua Water": {
+      labels: ["Barang terjual", "Barang masuk"],
+      datasets: [
+        {
+          data: [70, 30],
+          backgroundColor: ["#f43f5e", "#0ea5e9"],
+          hoverOffset: 4,
+        },
+      ],
+    },
+    "Aqua Difire": {
+      labels: ["Barang terjual", "Barang masuk"],
+      datasets: [
+        {
+          data: [40, 60],
+          backgroundColor: ["#f43f5e", "#0ea5e9"],
+          hoverOffset: 4,
+        },
+      ],
+    },
+  };
+  const toggleProduct = () => {
+    setSelected((prev) =>
+      prev === "Aqua Water" ? "Aqua Difire" : "Aqua Water"
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -57,8 +113,8 @@ export default function Page() {
               <h2 className="text-lg font-semibold">Stok Minimum Aqua Water</h2>
             </div>
             <div className="flex items-center justify-between mt-4">
-              <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                Stok terisi
+             <Badge variant="default">
+                Stok Terisi
               </Badge>
               <div className="text-right">
                 <p className="text-2xl font-bold">100</p>
@@ -75,11 +131,14 @@ export default function Page() {
               <div className="bg-primary p-3 rounded-full">
                 <BoxTick size={24} color="white" variant="Bold" />
               </div>
-              <h2 className="text-lg font-semibold">Stok Minimum Aqua Water</h2>
+              <h2 className="text-lg font-semibold">
+                {" "}
+                Stok Minimum Aqua Difire
+              </h2>
             </div>
             <div className="flex items-center justify-between mt-4">
-              <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                Stok terisi
+              <Badge variant="secondary">
+                Stok Menipis
               </Badge>
               <div className="text-right">
                 <p className="text-2xl font-bold">100</p>
@@ -93,15 +152,13 @@ export default function Page() {
         <Card className="shadow-md rounded-xl h-[180px]">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
-              <div className="bg-primary p-3 rounded-full">
-                <BoxTick size={24} color="white" variant="Bold" />
+              <div className="bg-teal-300 p-3 rounded-full">
+                <User size={24} color="white" variant="Bold" />
               </div>
-              <h2 className="text-lg font-semibold">Stok Minimum Aqua Water</h2>
+              <h2 className="text-lg font-semibold">Pelanggan Aktif</h2>
             </div>
             <div className="flex items-center justify-between mt-4">
-              <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                Stok terisi
-              </Badge>
+              <div></div>
               <div className="text-right">
                 <p className="text-2xl font-bold">100</p>
                 <p className="text-xs text-gray-500">stok persediaan</p>
@@ -114,39 +171,96 @@ export default function Page() {
       {/* Bagian bawah: kiri (penjualan), kanan (donut + tagihan) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {/* Kiri: Data Penjualan */}
-        <Card className="shadow-sm">
-          <CardHeader className="p-3 pb-0">
-            <CardTitle className="text-sm font-semibold">
-              Penjualan per Bulan (Lunas)
-            </CardTitle>
+        <Card className="shadow-sm h-[420px] w-full">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg font-bold">Statistic</CardTitle>
           </CardHeader>
-          <CardContent className="h-24 flex items-center justify-center text-gray-400">
-            (Chart penjualan bulan belum tersedia)
+          <CardContent>
+            <Bar
+              data={barData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                  legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                      usePointStyle: true,
+                      padding: 15,
+                    },
+                  },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    max: 120,
+                    ticks: {
+                      stepSize: 20,
+                      callback: (value) => value + "jt",
+                    },
+                  },
+                  x: {
+                    grid: {
+                      display: false,
+                    },
+                  },
+                },
+              }}
+            />
           </CardContent>
         </Card>
 
-        {/* Kanan: Donut + Tagihan */}
-        <div className="space-y-3">
+        {/* Kanan: Donut Chart + Tagihan */}
+        <div className="space-y-4">
           {/* Donut Chart */}
-          <Card className="shadow-sm">
-            <CardHeader className="p-3 pb-0">
-              <CardTitle className="text-sm font-semibold">
-                Kuantitas Barang Keluar per Produk (Periode)
-              </CardTitle>
+          <Card className="shadow-sm h-[240px]">
+            <CardHeader className="pb-1 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-bold">
+                  {selected}
+                </CardTitle>
+              </div>
+              <button
+                onClick={toggleProduct}
+                className="p-1 rounded hover:bg-gray-100"
+              >
+                <ArrowSwapHorizontal size="24" color="black" />
+              </button>
             </CardHeader>
-            <CardContent className="flex items-center justify-center h-22">
-              <div className="w-22 h-22">
+
+            <CardContent className="relative flex flex-col items-center justify-center p-2">
+              {/* Donut */}
+              <div className="w-32 h-32">
                 <Doughnut
-                  data={data}
+                  data={chartData[selected]}
                   options={{
-                    plugins: { legend: { display: false } },
-                    maintainAspectRatio: true,
                     responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                      legend: {
+                        display: false, // legend bawaan disembunyikan
+                      },
+                    },
+                    cutout: "70%",
                   }}
                 />
               </div>
+
+              {/* Custom Legend */}
+              <div className="absolute bottom-2 left-3 flex flex-col gap-1 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="w-4 h-4 rounded-sm bg-pink-500"></span>
+                  <span>Barang terjual</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-4 h-4 rounded-sm bg-sky-400"></span>
+                  <span>Barang masuk</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
+
           {/* Tagihan Jatuh Tempo */}
           <Card className="shadow-xl">
             <CardHeader className="p-3 pb-0">
@@ -247,7 +361,6 @@ export default function Page() {
                     </span>
                   </div>
                 </div>
-
               </div>
             </CardContent>
           </Card>
