@@ -169,45 +169,45 @@ export default function Page() {
         {/* Kolom kiri: Statistik dan Donut */}
         <div className="flex flex-col gap-3">
           {/* Statistik */}
-          <Card className="shadow-sm h-[350px] w-full  hover:shadow-xl">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-bold">Statistic</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Bar
-                data={barData}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: true,
-                  plugins: {
-                    legend: {
-                      display: true,
-                      position: "bottom",
-                      labels: {
-                        usePointStyle: true,
-                        padding: 15,
-                      },
-                    },
-                  },
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      max: 120,
-                      ticks: {
-                        stepSize: 20,
-                        callback: (value) => value + "jt",
-                      },
-                    },
-                    x: {
-                      grid: {
-                        display: false,
-                      },
-                    },
-                  },
-                }}
-              />
-            </CardContent>
-          </Card>
+         <Card className="shadow-sm h-[350px] sm:h-[400px] w-full hover:shadow-xl">
+  <CardHeader className="pb-2">
+    <CardTitle className="text-xl font-bold">Statistic</CardTitle>
+  </CardHeader>
+  <CardContent className="!p-2 sm:!p-4">
+    <Bar
+      data={barData}
+      options={{
+        responsive: true,
+        maintainAspectRatio: false, // penting supaya chart isi penuh tinggi card
+        plugins: {
+          legend: {
+            display: true,
+            position: "bottom",
+            labels: {
+              usePointStyle: true,
+              padding: 15,
+            },
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 120,
+            ticks: {
+              stepSize: 20,
+              callback: (value) => value + "jt",
+            },
+          },
+          x: {
+            grid: { display: false },
+          },
+        },
+      }}
+      height={250} // tambah tinggi chart biar penuh di mobile
+    />
+  </CardContent>
+</Card>
+
 
           {/* Donut Chart */}
           <Card className="shadow-sm h-[238px] w-full hover:shadow-xl">
