@@ -169,45 +169,44 @@ export default function Page() {
         {/* Kolom kiri: Statistik dan Donut */}
         <div className="flex flex-col gap-3">
           {/* Statistik */}
-         <Card className="shadow-sm h-[350px] sm:h-[400px] w-full hover:shadow-xl">
-  <CardHeader className="pb-2">
-    <CardTitle className="text-xl font-bold">Statistic</CardTitle>
-  </CardHeader>
-  <CardContent className="!p-2 sm:!p-4">
-    <Bar
-      data={barData}
-      options={{
-        responsive: true,
-        maintainAspectRatio: false, // penting supaya chart isi penuh tinggi card
-        plugins: {
-          legend: {
-            display: true,
-            position: "bottom",
-            labels: {
-              usePointStyle: true,
-              padding: 15,
-            },
-          },
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 120,
-            ticks: {
-              stepSize: 20,
-              callback: (value) => value + "jt",
-            },
-          },
-          x: {
-            grid: { display: false },
-          },
-        },
-      }}
-      height={250} // tambah tinggi chart biar penuh di mobile
-    />
-  </CardContent>
-</Card>
-
+          <Card className="shadow-sm h-[350px] sm:h-[400px] w-full hover:shadow-xl">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xl font-bold">Statistic</CardTitle>
+            </CardHeader>
+            <CardContent className="!p-2 sm:!p-4">
+              <Bar
+                data={barData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false, // penting supaya chart isi penuh tinggi card
+                  plugins: {
+                    legend: {
+                      display: true,
+                      position: "bottom",
+                      labels: {
+                        usePointStyle: true,
+                        padding: 15,
+                      },
+                    },
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      max: 120,
+                      ticks: {
+                        stepSize: 20,
+                        callback: (value) => value + "jt",
+                      },
+                    },
+                    x: {
+                      grid: { display: false },
+                    },
+                  },
+                }}
+                height={250} // tambah tinggi chart biar penuh di mobile
+              />
+            </CardContent>
+          </Card>
 
           {/* Donut Chart */}
           <Card className="shadow-sm h-[238px] w-full hover:shadow-xl">
@@ -256,7 +255,7 @@ export default function Page() {
           </Card>
         </div>
 
-        <Card className="shadow-xl">
+        <Card className="shadow-xl pb-20 md:pb-0">
           <CardTitle className="text-xl px-4 font-bold">
             Tagihan Jatuh Tempo
           </CardTitle>
@@ -275,7 +274,7 @@ export default function Page() {
             </div>
 
             {/* Daftar Tagihan dengan scroll */}
-            <div className="space-y-3 max-h-104 overflow-y-auto pr-1">
+            <div className="space-y-3 max-h-120 overflow-y-auto pr-1">
               {/* Tagihan 1 */}
               <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
                 <div className="flex justify-between items-start mb-2">
