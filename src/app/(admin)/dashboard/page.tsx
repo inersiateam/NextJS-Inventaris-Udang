@@ -89,11 +89,11 @@ export default function Page() {
       {/* Bagian atas: kartu ringkasan */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {/* Card Total Omset */}
-        <Card className="shadow-md rounded-xl h-[180px]">
+        <Card className="shadow-md rounded-xl h-[160px]">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
-              <div className="bg-green-500 p-3 rounded-full">
-                <EmptyWallet size={24} color="#fff" variant="Bold" />
+              <div className="bg-green-500 p-3 rounded-full animate-bounce">
+                <EmptyWallet size={24} color="#fff" variant="Bold"  />
               </div>
               <h2 className="text-lg font-bold">Total Omset</h2>
             </div>
@@ -104,18 +104,16 @@ export default function Page() {
         </Card>
 
         {/* Card Stok Minimum */}
-        <Card className="shadow-md rounded-xl h-[180px]">
+        <Card className="shadow-md rounded-xl h-[160px]">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
-              <div className="bg-primary p-3 rounded-full">
+              <div className="bg-primary p-3 rounded-full animate-bounce">
                 <BoxTick size={24} color="white" variant="Bold" />
               </div>
               <h2 className="text-lg font-semibold">Stok Minimum Aqua Water</h2>
             </div>
             <div className="flex items-center justify-between mt-4">
-             <Badge variant="default">
-                Stok Terisi
-              </Badge>
+              <Badge variant="default">Stok Terisi</Badge>
               <div className="text-right">
                 <p className="text-2xl font-bold">100</p>
                 <p className="text-xs text-gray-500">stok persediaan</p>
@@ -125,10 +123,10 @@ export default function Page() {
         </Card>
 
         {/* Card ke-3 */}
-        <Card className="shadow-md rounded-xl h-[180px]">
+        <Card className="shadow-md rounded-xl h-[160px]">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
-              <div className="bg-primary p-3 rounded-full">
+              <div className="bg-primary p-3 rounded-full animate-bounce">
                 <BoxTick size={24} color="white" variant="Bold" />
               </div>
               <h2 className="text-lg font-semibold">
@@ -137,9 +135,7 @@ export default function Page() {
               </h2>
             </div>
             <div className="flex items-center justify-between mt-4">
-              <Badge variant="secondary">
-                Stok Menipis
-              </Badge>
+              <Badge variant="secondary">Stok Menipis</Badge>
               <div className="text-right">
                 <p className="text-2xl font-bold">30</p>
                 <p className="text-xs text-gray-500">stok persediaan</p>
@@ -149,10 +145,10 @@ export default function Page() {
         </Card>
 
         {/* Card ke-4 */}
-        <Card className="shadow-md rounded-xl h-[180px]">
+        <Card className="shadow-md rounded-xl h-[160px]">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
-              <div className="bg-teal-300 p-3 rounded-full">
+              <div className="bg-teal-300 p-3 rounded-full animate-bounce">
                 <User size={24} color="white" variant="Bold" />
               </div>
               <h2 className="text-lg font-semibold">Pelanggan Aktif</h2>
@@ -168,56 +164,56 @@ export default function Page() {
         </Card>
       </div>
 
-      {/* Bagian bawah: kiri (penjualan), kanan (donut + tagihan) */}
+      {/* Bagian bawah: kiri (statistik + donut), kanan (tagihan) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        {/* Kiri: Data Penjualan */}
-        <Card className="shadow-sm h-[420px] w-full">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-bold">Statistic</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Bar
-              data={barData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                  legend: {
-                    display: true,
-                    position: "bottom",
-                    labels: {
-                      usePointStyle: true,
-                      padding: 15,
+        {/* Kolom kiri: Statistik dan Donut */}
+        <div className="flex flex-col gap-3">
+          {/* Statistik */}
+          <Card className="shadow-sm h-[320px] w-full">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xl font-bold">Statistic</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Bar
+                data={barData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: true,
+                  plugins: {
+                    legend: {
+                      display: true,
+                      position: "bottom",
+                      labels: {
+                        usePointStyle: true,
+                        padding: 15,
+                      },
                     },
                   },
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    max: 120,
-                    ticks: {
-                      stepSize: 20,
-                      callback: (value) => value + "jt",
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      max: 120,
+                      ticks: {
+                        stepSize: 20,
+                        callback: (value) => value + "jt",
+                      },
+                    },
+                    x: {
+                      grid: {
+                        display: false,
+                      },
                     },
                   },
-                  x: {
-                    grid: {
-                      display: false,
-                    },
-                  },
-                },
-              }}
-            />
-          </CardContent>
-        </Card>
+                }}
+              />
+            </CardContent>
+          </Card>
 
-        {/* Kanan: Donut Chart + Tagihan */}
-        <div className="space-y-4">
           {/* Donut Chart */}
-          <Card className="shadow-sm h-[240px]">
+          <Card className="shadow-sm h-[238px] w-full">
             <CardHeader className="pb-1 flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="text-base font-bold">
+                <CardTitle className="text-xl font-bold">
                   {selected}
                 </CardTitle>
               </div>
@@ -239,7 +235,7 @@ export default function Page() {
                     maintainAspectRatio: true,
                     plugins: {
                       legend: {
-                        display: false, // legend bawaan disembunyikan
+                        display: false,
                       },
                     },
                     cutout: "70%",
@@ -260,111 +256,127 @@ export default function Page() {
               </div>
             </CardContent>
           </Card>
-
-          {/* Tagihan Jatuh Tempo */}
-          <Card className="shadow-xl">
-            <CardHeader className="p-3 pb-0">
-              <CardTitle className="text-sm font-semibold">
-                Tagihan Jatuh Tempo
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-3">
-              {/* Filter Buttons */}
-              <div className="flex gap-2 mb-3">
-                <Button size="sm" className="bg-primary text-white">
-                  All
-                </Button>
-                <Button size="sm" variant="outline">
-                  Barang Keluar
-                </Button>
-                <Button size="sm" variant="outline">
-                  Barang Masuk
-                </Button>
-              </div>
-
-              {/* Daftar Tagihan dengan scroll */}
-              <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
-                {/* Tagihan 1 */}
-                <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="text-base font-bold">AQUA WATER</h4>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-600">Total Biaya :</p>
-                      <p className="text-primary font-bold text-gray-900">
-                        Rp. 14.520.000
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-gray-600">
-                    <Calendar size={14} color="#00B7FE" variant="Bold" />
-                    <span>03-08-2026</span>
-                    <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                      Status Barang : Masuk
-                    </span>
-                  </div>
-                </div>
-                <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="text-base font-bold">AQUA WATER</h4>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-600">Total Biaya :</p>
-                      <p className="text-primary font-bold text-gray-900">
-                        Rp. 14.520.000
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-gray-600">
-                    <Calendar size={14} color="#00B7FE" variant="Bold" />
-                    <span>03-08-2026</span>
-                    <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                      Status Barang : Masuk
-                    </span>
-                  </div>
-                </div>
-                <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="text-base font-bold">AQUA WATER</h4>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-600">Total Biaya :</p>
-                      <p className="text-primary font-bold text-gray-900">
-                        Rp. 14.520.000
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-gray-600">
-                    <Calendar size={14} color="#00B7FE" variant="Bold" />
-                    <span>03-08-2026</span>
-                    <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                      Status Barang : Masuk
-                    </span>
-                  </div>
-                </div>
-                <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="text-base font-bold">AQUA WATER</h4>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-600">Total Biaya :</p>
-                      <p className="text-primary font-bold text-gray-900">
-                        Rp. 14.520.000
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-gray-600">
-                    <Calendar size={14} color="#00B7FE" variant="Bold" />
-                    <span>03-08-2026</span>
-                    <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                      Status Barang : Masuk
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
+
+        <Card className="shadow-xl">
+          <CardTitle className="text-xl px-4 font-bold">
+            Tagihan Jatuh Tempo
+          </CardTitle>
+          <CardContent className="px-4 pt-0 ">
+            {/* Filter Buttons */}
+            <div className="flex gap-2 mb-3">
+              <Button size="sm" className="bg-primary text-white">
+                All
+              </Button>
+              <Button size="sm" variant="outline">
+                Barang Keluar
+              </Button>
+              <Button size="sm" variant="outline">
+                Barang Masuk
+              </Button>
+            </div>
+
+            {/* Daftar Tagihan dengan scroll */}
+            <div className="space-y-3 max-h-104 overflow-y-auto pr-1">
+              {/* Tagihan 1 */}
+              <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="text-base font-bold">AQUA WATER</h4>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-600">Total Biaya :</p>
+                    <p className="text-primary font-bold text-gray-900">
+                      Rp. 14.520.000
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <Calendar size={14} color="#00B7FE" variant="Bold" />
+                  <span>03-08-2026</span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Status Barang : Masuk
+                  </span>
+                </div>
+              </div>
+              <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="text-base font-bold">AQUA WATER</h4>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-600">Total Biaya :</p>
+                    <p className="text-primary font-bold text-gray-900">
+                      Rp. 14.520.000
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <Calendar size={14} color="#00B7FE" variant="Bold" />
+                  <span>03-08-2026</span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Status Barang : Masuk
+                  </span>
+                </div>
+              </div>
+              <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="text-base font-bold">AQUA WATER</h4>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-600">Total Biaya :</p>
+                    <p className="text-primary font-bold text-gray-900">
+                      Rp. 14.520.000
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <Calendar size={14} color="#00B7FE" variant="Bold" />
+                  <span>03-08-2026</span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Status Barang : Masuk
+                  </span>
+                </div>
+              </div>
+              <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="text-base font-bold">AQUA WATER</h4>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-600">Total Biaya :</p>
+                    <p className="text-primary font-bold text-gray-900">
+                      Rp. 14.520.000
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <Calendar size={14} color="#00B7FE" variant="Bold" />
+                  <span>03-08-2026</span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Status Barang : Masuk
+                  </span>
+                </div>
+              </div>
+              <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="text-base font-bold">AQUA WATER</h4>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-600">Total Biaya :</p>
+                    <p className="text-primary font-bold text-gray-900">
+                      Rp. 14.520.000
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <Calendar size={14} color="#00B7FE" variant="Bold" />
+                  <span>03-08-2026</span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Status Barang : Masuk
+                  </span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
