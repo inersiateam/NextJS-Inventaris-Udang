@@ -141,7 +141,7 @@ export default function Page() {
                 Stok Menipis
               </Badge>
               <div className="text-right">
-                <p className="text-2xl font-bold">100</p>
+                <p className="text-2xl font-bold">30</p>
                 <p className="text-xs text-gray-500">stok persediaan</p>
               </div>
             </div>
