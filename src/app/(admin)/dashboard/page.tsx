@@ -92,7 +92,7 @@ export default function Page() {
         <Card className="shadow-md rounded-xl h-[160px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
-              <div className="bg-green-500 p-3 rounded-full animate-bounce">
+              <div className="bg-green-500 p-3 rounded-full">
                 <EmptyWallet size={24} color="#fff" variant="Bold" />
               </div>
               <h2 className="text-lg font-bold">Total Omset</h2>
@@ -107,7 +107,7 @@ export default function Page() {
         <Card className="shadow-md rounded-xl h-[160px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
-              <div className="bg-primary p-3 rounded-full animate-bounce">
+              <div className="bg-primary p-3 rounded-full">
                 <BoxTick size={24} color="white" variant="Bold" />
               </div>
               <h2 className="text-lg font-semibold">Stok Minimum Aqua Water</h2>
@@ -126,7 +126,7 @@ export default function Page() {
         <Card className="shadow-md rounded-xl h-[160px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
-              <div className="bg-primary p-3 rounded-full animate-bounce">
+              <div className="bg-primary p-3 rounded-full">
                 <BoxTick size={24} color="white" variant="Bold" />
               </div>
               <h2 className="text-lg font-semibold">
@@ -148,7 +148,7 @@ export default function Page() {
         <Card className="shadow-md rounded-xl h-[160px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
-              <div className="bg-teal-300 p-3 rounded-full animate-bounce">
+              <div className="bg-teal-300 p-3 rounded-full">
                 <User size={24} color="white" variant="Bold" />
               </div>
               <h2 className="text-lg font-semibold">Pelanggan Aktif</h2>

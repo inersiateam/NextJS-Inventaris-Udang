@@ -32,7 +32,7 @@ export default function LoginPage() {
       } else {
         const session = await getSession();
         if (session) {
-          router.push("/");
+          router.push("/dashboard");
         }
       }
     } catch (error) {
@@ -81,11 +81,11 @@ export default function LoginPage() {
                   : "top-4 text-sm text-gray-400"
               }`}
             >
-              Email Address
+              Username
             </label>
             <Mail className="absolute left-4 top-4 text-gray-400 w-4 h-4" />
             <input
-              type="email"
+              type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full pl-12 pr-4 py-4 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-black"
