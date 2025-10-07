@@ -70,7 +70,7 @@ export default function AppNavbar({
             <DropdownMenuItem disabled>Hai, {user.name}!</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href={`/${user.role}/settings`}>Profil</Link>
+              <Link href={`/profile`}>Profil</Link>
             </DropdownMenuItem>
             <DropdownMenuItem variant="destructive" onClick={onLogout}>
               Logout
