@@ -27,13 +27,9 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={quicksand.variable}>
-      <body className="font-quicksand antialiased">
         <Providers>
           {/* Client component boleh dipanggil di sini */}
           <InventarisDashboard user={user}>{children}</InventarisDashboard>
         </Providers>
-      </body>
-    </html>
   );
 }
