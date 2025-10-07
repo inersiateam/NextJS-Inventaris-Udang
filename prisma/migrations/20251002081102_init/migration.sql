@@ -10,8 +10,6 @@ CREATE TABLE "public"."admin" (
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "jabatan" "public"."Jabatan" NOT NULL,
-    "email" TEXT,
-    "no_telp" TEXT,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -25,8 +23,6 @@ CREATE TABLE "public"."barang" (
     "nama_barang" TEXT NOT NULL,
     "harga" INTEGER NOT NULL,
     "stok" INTEGER NOT NULL,
-    "kategori" TEXT,
-    "satuan" TEXT DEFAULT 'pcs',
     "id_admin" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -40,13 +36,14 @@ CREATE TABLE "public"."barang_masuk" (
     "id_barang_id" INTEGER NOT NULL,
     "id_admin_id" INTEGER NOT NULL,
     "no_invoice" TEXT NOT NULL,
+    "no_surat_jalan" TEXT NOT NULL,
     "stok_masuk" INTEGER NOT NULL,
     "tgl_masuk" DATE NOT NULL,
+    "jatuh_tempo" DATE NOT NULL,
     "ongkir" INTEGER NOT NULL,
     "total_harga" INTEGER NOT NULL,
     "keterangan" TEXT,
     "status" "public"."StatusTransaksi" NOT NULL DEFAULT 'BELUM_LUNAS',
-    "catatan" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "barang_masuk_pkey" PRIMARY KEY ("id_barang_masuk")
@@ -58,12 +55,14 @@ CREATE TABLE "public"."barang_keluar" (
     "id_barang_id" INTEGER NOT NULL,
     "id_pelanggan_id" INTEGER NOT NULL,
     "id_admin_id" INTEGER NOT NULL,
+    "no_invoice" TEXT NOT NULL,
     "jml_pembelian" INTEGER NOT NULL,
     "harga_jual_produk" INTEGER NOT NULL,
     "total_omset" INTEGER NOT NULL,
+    "total_modal" INTEGER NOT NULL,
     "total_laba_kotor" INTEGER NOT NULL,
     "tgl_keluar" DATE NOT NULL,
-    "catatan" TEXT,
+    "jatuh_tempo" DATE NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "barang_keluar_pkey" PRIMARY KEY ("id_barang_keluar")
@@ -74,8 +73,6 @@ CREATE TABLE "public"."pelanggan" (
     "id_pelanggan" SERIAL NOT NULL,
     "nama_pelanggan" TEXT NOT NULL,
     "alamat" TEXT NOT NULL,
-    "no_telp" TEXT,
-    "email" TEXT,
     "id_admin" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -87,16 +84,12 @@ CREATE TABLE "public"."pelanggan" (
 CREATE TABLE "public"."transaksi_keluar" (
     "id_transaksi_keluar" SERIAL NOT NULL,
     "id_barang_keluar_id" INTEGER NOT NULL,
-    "id_pelanggan_id" INTEGER NOT NULL,
     "id_admin_id" INTEGER NOT NULL,
-    "teknisi" INTEGER NOT NULL,
-    "manager" INTEGER NOT NULL,
+    "total_fee" INTEGER NOT NULL,
     "ongkir" INTEGER NOT NULL,
+    "total_biaya_keluar" INTEGER NOT NULL,
     "laba_berjalan" INTEGER NOT NULL,
     "status" "public"."StatusTransaksi" NOT NULL DEFAULT 'BELUM_LUNAS',
-    "metode_pembayaran" TEXT,
-    "catatan" TEXT,
-    "tanggal" DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "transaksi_keluar_pkey" PRIMARY KEY ("id_transaksi_keluar")
@@ -109,8 +102,6 @@ CREATE TABLE "public"."pengeluaran" (
     "keterangan" TEXT NOT NULL,
     "jumlah_barang" INTEGER NOT NULL,
     "total_harga" INTEGER NOT NULL,
-    "kategori_pengeluaran" TEXT,
-    "bukti_file" TEXT,
     "tanggal" DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -152,9 +143,6 @@ CREATE TABLE "public"."log_aktivitas" (
 CREATE UNIQUE INDEX "admin_username_key" ON "public"."admin"("username");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "admin_email_key" ON "public"."admin"("email");
-
--- CreateIndex
 CREATE INDEX "barang_id_admin_idx" ON "public"."barang"("id_admin");
 
 -- CreateIndex
@@ -182,13 +170,7 @@ CREATE INDEX "barang_keluar_tgl_keluar_idx" ON "public"."barang_keluar"("tgl_kel
 CREATE INDEX "pelanggan_id_admin_idx" ON "public"."pelanggan"("id_admin");
 
 -- CreateIndex
-CREATE INDEX "transaksi_keluar_id_pelanggan_id_idx" ON "public"."transaksi_keluar"("id_pelanggan_id");
-
--- CreateIndex
 CREATE INDEX "transaksi_keluar_id_admin_id_idx" ON "public"."transaksi_keluar"("id_admin_id");
-
--- CreateIndex
-CREATE INDEX "transaksi_keluar_tanggal_idx" ON "public"."transaksi_keluar"("tanggal");
 
 -- CreateIndex
 CREATE INDEX "pengeluaran_id_admin_id_idx" ON "public"."pengeluaran"("id_admin_id");
@@ -228,9 +210,6 @@ ALTER TABLE "public"."barang_keluar" ADD CONSTRAINT "barang_keluar_id_admin_id_f
 
 -- AddForeignKey
 ALTER TABLE "public"."pelanggan" ADD CONSTRAINT "pelanggan_id_admin_fkey" FOREIGN KEY ("id_admin") REFERENCES "public"."admin"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."transaksi_keluar" ADD CONSTRAINT "transaksi_keluar_id_pelanggan_id_fkey" FOREIGN KEY ("id_pelanggan_id") REFERENCES "public"."pelanggan"("id_pelanggan") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."transaksi_keluar" ADD CONSTRAINT "transaksi_keluar_id_admin_id_fkey" FOREIGN KEY ("id_admin_id") REFERENCES "public"."admin"("id") ON DELETE CASCADE ON UPDATE CASCADE;

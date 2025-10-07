@@ -27,8 +27,14 @@ export async function GET(req: NextRequest) {
         },
         include: {
           barangKeluar: {
+            where: {
+              admin: {
+                jabatan: session.user.jabatan as Jabatan,
+              },
+            },
             include: {
               admin: true,
+              details: true,
             },
           },
         },
@@ -37,20 +43,32 @@ export async function GET(req: NextRequest) {
       const pelangganWithStats = await Promise.all(
         topPelanggan.map(async (pelanggan) => {
           const barangKeluarIds = pelanggan.barangKeluar.map((bk) => bk.id);
+
           const transaksiLunas = await prisma.transaksiKeluar.findMany({
             where: {
               barangKeluarId: {
                 in: barangKeluarIds,
               },
               status: "LUNAS",
+              admin: {
+                jabatan: session.user.jabatan as Jabatan,
+              },
             },
           });
 
+          // Hitung total pembelian dari semua details
           const totalPembelian = pelanggan.barangKeluar
             .filter((bk) =>
               transaksiLunas.some((t) => t.barangKeluarId === bk.id)
             )
-            .reduce((sum, bk) => sum + bk.jmlPembelian, 0);
+            .reduce((sum, bk) => {
+              // Sum semua jmlPembelian dari details
+              const detailSum = bk.details.reduce(
+                (detailSum, detail) => detailSum + detail.jmlPembelian,
+                0
+              );
+              return sum + detailSum;
+            }, 0);
 
           return {
             id: pelanggan.id,
@@ -87,15 +105,69 @@ export async function GET(req: NextRequest) {
             jabatan: true,
           },
         },
+        barangKeluar: {
+          where: {
+            admin: {
+              jabatan: session.user.jabatan as Jabatan,
+            },
+          },
+          include: {
+            details: true, // Include details untuk hitung total pembelian
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
       },
     });
 
+    const pelangganWithTotalPembelian = await Promise.all(
+      pelanggan.map(async (p) => {
+        const barangKeluarIds = p.barangKeluar.map((bk) => bk.id);
+
+        const transaksiLunas = await prisma.transaksiKeluar.findMany({
+          where: {
+            barangKeluarId: {
+              in: barangKeluarIds,
+            },
+            status: "LUNAS",
+            admin: {
+              jabatan: session.user.jabatan as Jabatan,
+            },
+          },
+        });
+
+        // Hitung total pembelian dari semua details
+        const totalPembelian = p.barangKeluar
+          .filter((bk) =>
+            transaksiLunas.some((t) => t.barangKeluarId === bk.id)
+          )
+          .reduce((sum, bk) => {
+            // Sum semua jmlPembelian dari details
+            const detailSum = bk.details.reduce(
+              (detailSum, detail) => detailSum + detail.jmlPembelian,
+              0
+            );
+            return sum + detailSum;
+          }, 0);
+
+        return {
+          id: p.id,
+          nama: p.nama,
+          alamat: p.alamat,
+          totalPembelian,
+          adminId: p.adminId,
+          createdAt: p.createdAt,
+          updatedAt: p.updatedAt,
+          admin: p.admin,
+        };
+      })
+    );
+
     return NextResponse.json({
       success: true,
-      data: pelanggan,
+      data: pelangganWithTotalPembelian,
+      jabatan: session.user.jabatan,
     });
   } catch (error) {
     console.error("GET pelanggan error:", error);
@@ -121,10 +193,14 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const validatedData = pelangganSchema.parse(body);
+    console.log(session.user.jabatan);
     const existingPelanggan = await prisma.pelanggan.findFirst({
       where: {
         nama: validatedData.nama,
         alamat: validatedData.alamat,
+        admin: {
+          jabatan: session.user.jabatan as Jabatan,
+        },
       },
     });
 
@@ -161,6 +237,11 @@ export async function POST(req: NextRequest) {
         aksi: "CREATE",
         tabelTarget: "pelanggan",
         dataBaru: JSON.stringify(pelanggan),
+        ipAddress:
+          req.headers.get("x-forwarded-for") ||
+          req.headers.get("x-real-ip") ||
+          "unknown",
+        userAgent: req.headers.get("user-agent") || "unknown",
         timestamp: new Date(),
       },
     });
