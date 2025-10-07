@@ -82,7 +82,7 @@ export default function AppSidebar({
                     <Icon
                       size={open ? 22 : 24}
                       color={active ? "#fff" : "#000"}
-                      variant="Bold"
+                      variant="Linear"
                     />
                   </motion.div>
 
@@ -140,7 +140,7 @@ export default function AppSidebar({
                   <Icon
                     size={28}
                     color={active ? "#fff" : "#000"}
-                    variant="Bold"
+                    variant="Outline"
                   />
                 </motion.div>
                 <motion.span

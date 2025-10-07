@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface AppNavbarProps {
-  title?: string;
   user: {
     name: string;
     role: "abl" | "atm";
@@ -23,7 +22,6 @@ interface AppNavbarProps {
 }
 
 export default function AppNavbar({
-  title = "Dashboard",
   user,
   onProfileClick,
   onLogout,
@@ -39,9 +37,6 @@ export default function AppNavbar({
         >
           <Menu className="h-6 w-6 text-gray-700 dark:text-gray-300" />
         </button>
-        <h1 className="text-lg font-semibold text-gray-800 dark:text-gray-100 hidden sm:block">
-          {title}
-        </h1>
       </div>
 
       {/* Kanan */}
