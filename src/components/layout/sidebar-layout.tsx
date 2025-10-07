@@ -33,12 +33,12 @@ export default function AppSidebar({
       {/* Sidebar untuk Desktop */}
       <aside
         className={cn(
-          "hidden md:flex flex-col h-full bg-white dark:bg-gray-900 shadow-lg transition-all duration-300 border-r z-40",
+          "hidden md:flex flex-col bg-white h-full dark:bg-gray-900 shadow-lg transition-all duration-300 rounded-xl shadow-gray-100 border",
           open ? "w-56" : "w-20"
         )}
       >
         {/* Logo + Brand */}
-        <div className="h-16 flex items-center justify-center border-b">
+        <div className="h-16 flex items-center justify-center">
           <div className="flex items-center space-x-2">
             <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
             {open && (

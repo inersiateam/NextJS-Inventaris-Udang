@@ -28,13 +28,12 @@ export default function AppNavbar({
   onMenuClick,
 }: AppNavbarProps) {
   return (
-    <header className="flex items-center justify-between px-4 md:px-6 h-16 bg-white dark:bg-gray-900 shadow-sm">
+    <header className="flex items-center justify-between px-4 md:px-6 h-16 bg-white dark:bg-gray-900">
       {/* Kiri: tombol menu */}
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}
-          className="hidden md:block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition border"
-        >
+          className="hidden md:block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"       >
           <Menu className="h-6 w-6 text-gray-700 dark:text-gray-300" />
         </button>
       </div>
