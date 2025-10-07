@@ -1,4 +1,4 @@
-import { Element4, BoxTick, BoxRemove, CardSend, Profile2User, ClipboardText, Category, } from "iconsax-react";
+import { Element4, BoxTick, BoxRemove, CardSend, Profile2User, ClipboardText, Category, Stickynote, } from "iconsax-react";
 import { IconProps } from "iconsax-react";
 
 export type Role = "abl" | "atm";
@@ -17,7 +17,7 @@ export function getMenuItemsByRole(role: Role): MenuItem[] {
       { label: "Barang Keluar", href: "/barang-keluar", icon: BoxRemove },
       { label: "Pengeluaran", href: "/pengeluaran", icon: CardSend },
       { label: "Pelanggan", href: "/pelanggan", icon: Profile2User },
-      { label: "Laporan", href: "/laporan", icon: ClipboardText },
+      { label: "Laporan", href: "/laporan", icon: Stickynote },
     ];
   }
   if (role === "atm") {
