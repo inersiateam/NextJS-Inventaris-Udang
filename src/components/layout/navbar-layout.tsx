@@ -1,5 +1,6 @@
 "use client";
 
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { Bell, CircleUser, Menu, Search } from "lucide-react";
 import {
@@ -23,7 +24,6 @@ interface AppNavbarProps {
 
 export default function AppNavbar({
   user,
-  onProfileClick,
   onLogout,
   onMenuClick,
 }: AppNavbarProps) {
@@ -72,7 +72,13 @@ export default function AppNavbar({
             <DropdownMenuItem asChild>
               <Link href={`/profile`}>Profil</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem variant="destructive" onClick={onLogout}>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() => {
+                if (onLogout) onLogout();
+                signOut({ callbackUrl: "/login" }); // redirect setelah logout
+              }}
+            >
               Logout
             </DropdownMenuItem>
           </DropdownMenuContent>

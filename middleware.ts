@@ -5,24 +5,22 @@ export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token;
 
-    // Kalau tidak ada token (belum login) -> redirect ke login
+    // Jika belum login → redirect ke /login
     if (!token) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
+    // Kalau sudah login → lanjut ke halaman yang diminta
     return NextResponse.next();
   },
   {
     callbacks: {
-      authorized: ({ token }) => true, 
+      authorized: ({ token }) => !!token, // hanya izinkan jika ada token
     },
   }
 );
 
-
-// semua route yang perlu proteksi
+// Lindungi semua halaman dashboard & admin
 export const config = {
-  matcher: [
-    "/(admin)/:path*", // lindungi semua halaman di dalam folder (admin)
-  ],
+  matcher: [ "/(admin)/:path*"],
 };
