@@ -139,7 +139,6 @@ export async function GET(request: NextRequest) {
       const bulanInt = parseInt(bulan);
       const tahunInt = parseInt(tahun);
 
-      // Ambil semua pendapatan di bulan tersebut
       const pendapatanBulan = await prisma.pendapatan.findMany({
         where: {
           bulan: bulanInt,

@@ -31,7 +31,6 @@ export async function GET(request: NextRequest) {
       },
     };
 
-    // Filter bulan dan tahun
     if (filterBulan && filterTahun) {
       const bulan = parseInt(filterBulan);
       const tahun = parseInt(filterTahun);
@@ -63,7 +62,6 @@ export async function GET(request: NextRequest) {
       prisma.pengeluaran.count({ where }),
     ]);
 
-    // Hitung total pengeluaran untuk summary
     const totalPengeluaranAggregate = await prisma.pengeluaran.aggregate({
       where,
       _sum: {

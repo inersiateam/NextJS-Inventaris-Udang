@@ -179,7 +179,6 @@ model Pengeluaran {
   @@map("pengeluaran")
 }
 
-// ✅ Pendapatan/Pembagian Laba (1-to-1 dengan TransaksiKeluar)
 model Pendapatan {
   id                Int      @id @default(autoincrement()) @map("id_pendapat")
   transaksiKeluarId Int      @unique @map("id_transaksi_keluar_id")
@@ -204,7 +203,7 @@ model Pendapatan {
 model LogAktivitas {
   id          Int      @id @default(autoincrement()) @map("id_log")
   adminId     Int      @map("id_admin")
-  aksi        String // CREATE, READ, UPDATE, DELETE
+  aksi        String
   tabelTarget String   @map("tabel_target")
   dataLama    String?  @map("data_lama") @db.Text
   dataBaru    String?  @map("data_baru") @db.Text

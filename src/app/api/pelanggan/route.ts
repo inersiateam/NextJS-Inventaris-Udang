@@ -56,13 +56,11 @@ export async function GET(req: NextRequest) {
             },
           });
 
-          // Hitung total pembelian dari semua details
           const totalPembelian = pelanggan.barangKeluar
             .filter((bk) =>
               transaksiLunas.some((t) => t.barangKeluarId === bk.id)
             )
             .reduce((sum, bk) => {
-              // Sum semua jmlPembelian dari details
               const detailSum = bk.details.reduce(
                 (detailSum, detail) => detailSum + detail.jmlPembelian,
                 0
@@ -112,7 +110,7 @@ export async function GET(req: NextRequest) {
             },
           },
           include: {
-            details: true, // Include details untuk hitung total pembelian
+            details: true,
           },
         },
       },
@@ -137,13 +135,11 @@ export async function GET(req: NextRequest) {
           },
         });
 
-        // Hitung total pembelian dari semua details
         const totalPembelian = p.barangKeluar
           .filter((bk) =>
             transaksiLunas.some((t) => t.barangKeluarId === bk.id)
           )
           .reduce((sum, bk) => {
-            // Sum semua jmlPembelian dari details
             const detailSum = bk.details.reduce(
               (detailSum, detail) => detailSum + detail.jmlPembelian,
               0

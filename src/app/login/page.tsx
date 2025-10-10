@@ -36,7 +36,7 @@ export default function LoginPage() {
         }
       }
     } catch (error) {
-      setError("Terjadi kesalahan saat login");
+      setError("Terjadi kesalahan saat login. Silahkan tunggu 5 menit");
     } finally {
       setIsLoading(false);
     }
