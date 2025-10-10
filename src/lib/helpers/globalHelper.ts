@@ -1,4 +1,35 @@
 import prisma from "../prisma";
+import { headers } from "next/headers";
+import { Jabatan } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../authOptions";
+import { redirect } from "next/navigation";
+
+export async function getJabatan(): Promise<Jabatan> {
+  const headersList = await headers();
+  const jabatanFromHeader = headersList.get("x-user-jabatan");
+  
+  if (jabatanFromHeader) {
+    return jabatanFromHeader as Jabatan;
+  }
+
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.jabatan) {
+    redirect("/login");
+  }
+
+  return session.user.jabatan as Jabatan;
+}
+
+export async function getUserFromHeaders() {
+  const headersList = await headers();
+
+  return {
+    jabatan: headersList.get("x-user-jabatan") as Jabatan | null,
+    id: headersList.get("x-user-id"),
+    username: headersList.get("x-user-username"),
+  };
+}
 
 export async function generateNoInvoice(
   tglKeluar: Date,

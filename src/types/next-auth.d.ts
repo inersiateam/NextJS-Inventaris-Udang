@@ -1,10 +1,11 @@
+import { Jabatan } from "@prisma/client";
 import "next-auth";
 
 declare module "next-auth" {
   interface User {
     id: string;
     username: string;
-    jabatan: string;
+    jabatan: Jabatan;
     isActive: boolean;
   }
 
@@ -12,7 +13,7 @@ declare module "next-auth" {
     user: {
       id: string;
       username: string;
-      jabatan: string;
+      jabatan: Jabatan;
     };
   }
 }
@@ -21,6 +22,6 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     username: string;
-    jabatan: string;
+    jabatan: Jabatan;
   }
 }
