@@ -1,6 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Table,
   TableBody,
   TableCell,
@@ -8,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit, Trash } from "iconsax-react";
+import { Edit2, Eye, More, Trash } from "iconsax-react";
 
 export default function BarangKeluar() {
   return (
@@ -72,14 +78,37 @@ export default function BarangKeluar() {
                 </Badge>
               </TableCell>
               <TableCell className="whitespace-nowrap">
-                <div className="flex gap-2">
-                  <Button variant="edit" size="icon" className="rounded-2xl">
-                    <Edit size="20" color="black" />
-                  </Button>
-                  <Button variant="delete" size="icon" className="rounded-2xl">
-                    <Trash size="20" color="#dc2626" />
-                  </Button>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="Open actions"
+                      className="inline-flex items-center justify-end rounded-md p-1 hover:bg-muted/40 focus:outline-none focus:ring-2 focus:ring-ring"
+                    >
+                      <More size="20" color="#000" variant="Outline" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    side="bottom"
+                    align="end"
+                    className="w-36"
+                  >
+                    <DropdownMenuItem className="flex items-center gap-2">
+                      <Edit2 size="18" color="#000" variant="Linear" />{" "}
+                      <span className="text-sm">Edit</span>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem className="flex items-center gap-2 text-destructive">
+                      <Trash size="18" color="#DC2626" variant="Bold" />
+                      <span className="text-sm">Delete</span>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem className="flex items-center gap-2">
+                      <Eye size="18" color="#000" variant="Linear" />
+                      <span className="text-sm">Detail</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </TableCell>
             </TableRow>
           </TableBody>
