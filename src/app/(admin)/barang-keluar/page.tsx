@@ -77,7 +77,7 @@ export default function BarangKeluar() {
                   Lunas
                 </Badge>
               </TableCell>
-              <TableCell className="whitespace-nowrap">
+              <TableCell className="whitespace-nowrap px-4">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
@@ -97,15 +97,14 @@ export default function BarangKeluar() {
                       <Edit2 size="18" color="#000" variant="Linear" />{" "}
                       <span className="text-sm">Edit</span>
                     </DropdownMenuItem>
-
-                    <DropdownMenuItem className="flex items-center gap-2 text-destructive">
-                      <Trash size="18" color="#DC2626" variant="Bold" />
-                      <span className="text-sm">Delete</span>
-                    </DropdownMenuItem>
-
                     <DropdownMenuItem className="flex items-center gap-2">
                       <Eye size="18" color="#000" variant="Linear" />
                       <span className="text-sm">Detail</span>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem className="flex items-center gap-2">
+                      <Trash size="18" color="#000" variant="Bold" />
+                      <span className="text-sm">Delete</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
