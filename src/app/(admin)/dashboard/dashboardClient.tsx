@@ -15,8 +15,12 @@ import {
   Legend,
   Title,
 } from "chart.js";
+import {
+  ChartBarangItem,
+  DashboardClientProps,
+} from "@/types/interfaces/dashboard/IDashboard";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
-// PENTING: Registrasi semua elemen yang dibutuhkan
 ChartJS.register(
   ArcElement,
   CategoryScale,
@@ -27,63 +31,73 @@ ChartJS.register(
   Title
 );
 
-const barData = {
-  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-  datasets: [
-    {
-      label: "Pengeluaran",
-      data: [40, 20, 15, 70, 60, 15],
-      backgroundColor: "#ACDFFF",
-      borderRadius: 8,
-    },
-    {
-      label: "Pendapatan",
-      data: [120, 65, 85, 100, 80, 100],
-      backgroundColor: "#00B8FB",
-      borderRadius: 8,
-    },
-  ],
-};
+export default function DashboardClient({
+  chartStatistik,
+  chartBarang,
+  tagihanJatuhTempo,
+}: DashboardClientProps) {
+  const [selectedProductIndex, setSelectedProductIndex] = useState(0);
+  const [filterTagihan, setFilterTagihan] = useState<
+    "All" | "Keluar" | "Masuk"
+  >("All");
 
-export default function DashboardClient() {
-  const [selected, setSelected] = useState<"Aqua Water" | "Aqua Difire">(
-    "Aqua Water"
-  );
+  const barData = {
+    labels: chartStatistik.labels,
+    datasets: [
+      {
+        label: "Pengeluaran",
+        data: chartStatistik.pengeluaran,
+        backgroundColor: "#ACDFFF",
+        borderRadius: 8,
+      },
+      {
+        label: "Pendapatan",
+        data: chartStatistik.pendapatan,
+        backgroundColor: "#00B8FB",
+        borderRadius: 8,
+      },
+    ],
+  };
 
-  const chartData = {
-    "Aqua Water": {
-      labels: ["Barang terjual", "Barang masuk"],
+  const getChartDataForProduct = (product: ChartBarangItem) => {
+    const totalData = product.data.reduce((sum, val) => sum + val, 0);
+    const isEmpty = totalData === 0;
+
+    return {
+      labels: product.labels,
       datasets: [
         {
-          data: [70, 30],
-          backgroundColor: ["#f43f5e", "#0ea5e9"],
-          hoverOffset: 4,
+          data: isEmpty ? [1, 1] : product.data,
+          backgroundColor: isEmpty
+            ? ["#d1d5db", "#d1d5db"]
+            : ["#f43f5e", "#0ea5e9"],
+          hoverOffset: isEmpty ? 0 : 4,
+          borderWidth: 0,
         },
       ],
-    },
-    "Aqua Difire": {
-      labels: ["Barang terjual", "Barang masuk"],
-      datasets: [
-        {
-          data: [40, 60],
-          backgroundColor: ["#f43f5e", "#0ea5e9"],
-          hoverOffset: 4,
-        },
-      ],
-    },
+    };
   };
 
   const toggleProduct = () => {
-    setSelected((prev) =>
-      prev === "Aqua Water" ? "Aqua Difire" : "Aqua Water"
+    if (chartBarang.length === 0) return;
+    setSelectedProductIndex((prev) =>
+      prev >= chartBarang.length - 1 ? 0 : prev + 1
     );
   };
 
+  const currentProduct = chartBarang[selectedProductIndex];
+  const hasData = currentProduct
+    ? currentProduct.data.reduce((sum, val) => sum + val, 0) > 0
+    : false;
+
+  const filteredTagihan = tagihanJatuhTempo.filter((tagihan) => {
+    if (filterTagihan === "All") return true;
+    return tagihan.status === filterTagihan;
+  });
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-      {/* Kolom kiri: Statistik dan Donut */}
       <div className="flex flex-col gap-3">
-        {/* Statistik */}
         <Card className="shadow-sm h-[350px] sm:h-[400px] w-full hover:shadow-xl">
           <CardHeader className="pb-2">
             <CardTitle className="text-xl font-bold">Statistic</CardTitle>
@@ -107,7 +121,6 @@ export default function DashboardClient() {
                 scales: {
                   y: {
                     beginAtZero: true,
-                    max: 120,
                     ticks: {
                       stepSize: 20,
                       callback: (value) => value + "jt",
@@ -123,170 +136,169 @@ export default function DashboardClient() {
           </CardContent>
         </Card>
 
-        {/* Donut Chart */}
-        <Card className="shadow-sm h-[238px] w-full hover:shadow-xl">
-          <CardHeader className="pb-1 flex flex-row items-center justify-between">
+        <Card className="shadow-sm h-[250px] w-full hover:shadow-xl">
+          <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle className="text-xl font-bold">{selected}</CardTitle>
+              <CardTitle className="text-xl font-bold line-clamp-1">
+                {currentProduct ? currentProduct.nama : "Tidak ada data"}
+              </CardTitle>
+              {chartBarang.length > 1 && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {selectedProductIndex + 1} dari {chartBarang.length} produk
+                </p>
+              )}
             </div>
-            <button
-              onClick={toggleProduct}
-              className="p-1 rounded hover:bg-gray-100"
-            >
-              <ArrowSwapHorizontal size="24" color="black" />
-            </button>
+            {chartBarang.length > 1 && (
+              <button
+                onClick={toggleProduct}
+                className="p-1 rounded hover:bg-gray-100 transition-colors"
+                aria-label="Toggle product"
+              >
+                <ArrowSwapHorizontal size="24" color="black" />
+              </button>
+            )}
           </CardHeader>
 
-          <CardContent className="relative flex flex-col items-center justify-center p-2">
-            {/* Donut */}
-            <div className="w-32 h-32">
-              <Doughnut
-                data={chartData[selected]}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: true,
-                  plugins: {
-                    legend: {
-                      display: false,
-                    },
-                  },
-                  cutout: "70%",
-                }}
-              />
-            </div>
+          <CardContent className="relative flex flex-col items-center justify-center bottom-6">
+            {currentProduct ? (
+              <>
+                <div className="w-32 h-32">
+                  <Doughnut
+                    data={getChartDataForProduct(currentProduct)}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: true,
+                      plugins: {
+                        legend: {
+                          display: false,
+                        },
+                        tooltip: {
+                          enabled: hasData,
+                        },
+                      },
+                      cutout: "70%",
+                      events: hasData
+                        ? [
+                            "mousemove",
+                            "mouseout",
+                            "click",
+                            "touchstart",
+                            "touchmove",
+                          ]
+                        : [],
+                    }}
+                  />
+                </div>
 
-            {/* Custom Legend */}
-            <div className="absolute bottom-2 left-3 flex flex-col gap-1 text-xs">
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-sm bg-pink-500"></span>
-                <span>Barang terjual</span>
+                <div className="absolute top-32 left-3 flex flex-col gap-1 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`w-4 h-4 rounded-sm ${
+                        hasData ? "bg-pink-500" : "bg-gray-300"
+                      }`}
+                    ></span>
+                    <span className={hasData ? "" : "text-gray-400"}>
+                      Barang terjual
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`w-4 h-4 rounded-sm ${
+                        hasData ? "bg-sky-400" : "bg-gray-300"
+                      }`}
+                    ></span>
+                    <span className={hasData ? "" : "text-gray-400"}>
+                      Barang masuk
+                    </span>
+                  </div>
+                </div>
+
+                {!hasData && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <p className="text-gray-400 text-sm">Tidak ada data</p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-gray-400 text-sm">Belum ada produk</p>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-sm bg-sky-400"></span>
-                <span>Barang masuk</span>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Kolom kanan: Tagihan */}
       <Card className="shadow-xl pb-20 md:pb-0">
-        <CardTitle className="text-xl px-4 font-bold">
+        <CardTitle className="text-xl px-4 pt-6 font-bold">
           Tagihan Jatuh Tempo
         </CardTitle>
-        <CardContent className="px-4 pt-0 ">
-          {/* Filter Buttons */}
-          <div className="flex gap-2 mb-3">
-            <Button size="sm" className="bg-primary text-white">
+        <CardContent className="px-4 pt-4">
+          <div className="flex gap-2 mb-3 flex-wrap">
+            <Button
+              size="sm"
+              className={filterTagihan === "All" ? "bg-primary text-white" : ""}
+              variant={filterTagihan === "All" ? "default" : "outline"}
+              onClick={() => setFilterTagihan("All")}
+            >
               All
             </Button>
-            <Button size="sm" variant="outline">
+            <Button
+              size="sm"
+              variant={filterTagihan === "Keluar" ? "default" : "outline"}
+              onClick={() => setFilterTagihan("Keluar")}
+            >
               Barang Keluar
             </Button>
-            <Button size="sm" variant="outline">
+            <Button
+              size="sm"
+              variant={filterTagihan === "Masuk" ? "default" : "outline"}
+              onClick={() => setFilterTagihan("Masuk")}
+            >
               Barang Masuk
             </Button>
           </div>
 
-          {/* Daftar Tagihan dengan scroll */}
-          <div className="space-y-3 max-h-120 overflow-y-auto pr-1">
-            {/* Tagihan 1 */}
-            <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="text-base font-bold">AQUA WATER</h4>
-                <div className="text-right">
-                  <p className="text-xs text-gray-600">Total Biaya :</p>
-                  <p className="text-primary font-bold text-gray-900">
-                    Rp. 14.520.000
-                  </p>
+          <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
+            {filteredTagihan.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <p>Tidak ada tagihan jatuh tempo</p>
+              </div>
+            ) : (
+              filteredTagihan.map((tagihan) => (
+                <div
+                  key={`${tagihan.status}-${tagihan.id}`}
+                  className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="text-base font-bold line-clamp-2">
+                      {tagihan.namaBarang}
+                    </h4>
+                    <div className="text-right ml-2">
+                      <p className="text-xs text-gray-600">Total Biaya :</p>
+                      <p className="text-primary font-bold text-gray-900">
+                        {formatCurrency(tagihan.totalBiaya)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-gray-600 flex-wrap">
+                    <div className="flex items-center gap-1">
+                      <Calendar size={14} color="#00B7FE" variant="Bold" />
+                      <span>{formatDate(tagihan.jatuhTempo)}</span>
+                    </div>
+                    <span className="flex items-center gap-1">
+                      <span
+                        className={`w-2 h-2 rounded-full ${
+                          tagihan.status === "Masuk"
+                            ? "bg-blue-500"
+                            : "bg-orange-500"
+                        }`}
+                      ></span>
+                      Status Barang : {tagihan.status}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600">
-                <Calendar size={14} color="#00B7FE" variant="Bold" />
-                <span>03-08-2026</span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                  Status Barang : Masuk
-                </span>
-              </div>
-            </div>
-            <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="text-base font-bold">AQUA WATER</h4>
-                <div className="text-right">
-                  <p className="text-xs text-gray-600">Total Biaya :</p>
-                  <p className="text-primary font-bold text-gray-900">
-                    Rp. 14.520.000
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600">
-                <Calendar size={14} color="#00B7FE" variant="Bold" />
-                <span>03-08-2026</span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                  Status Barang : Masuk
-                </span>
-              </div>
-            </div>
-            <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="text-base font-bold">AQUA WATER</h4>
-                <div className="text-right">
-                  <p className="text-xs text-gray-600">Total Biaya :</p>
-                  <p className="text-primary font-bold text-gray-900">
-                    Rp. 14.520.000
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600">
-                <Calendar size={14} color="#00B7FE" variant="Bold" />
-                <span>03-08-2026</span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                  Status Barang : Masuk
-                </span>
-              </div>
-            </div>
-            <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="text-base font-bold">AQUA WATER</h4>
-                <div className="text-right">
-                  <p className="text-xs text-gray-600">Total Biaya :</p>
-                  <p className="text-primary font-bold text-gray-900">
-                    Rp. 14.520.000
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600">
-                <Calendar size={14} color="#00B7FE" variant="Bold" />
-                <span>03-08-2026</span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                  Status Barang : Masuk
-                </span>
-              </div>
-            </div>
-            <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="text-base font-bold">AQUA WATER</h4>
-                <div className="text-right">
-                  <p className="text-xs text-gray-600">Total Biaya :</p>
-                  <p className="text-primary font-bold text-gray-900">
-                    Rp. 14.520.000
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600">
-                <Calendar size={14} color="#00B7FE" variant="Bold" />
-                <span>03-08-2026</span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                  Status Barang : Masuk
-                </span>
-              </div>
-            </div>
+              ))
+            )}
           </div>
         </CardContent>
       </Card>
