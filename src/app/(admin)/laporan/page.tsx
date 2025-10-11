@@ -310,6 +310,34 @@ export default function Page() {
                   Rp. 33.000.000
                 </TableCell>
               </TableRow>
+              <TableRow>
+                <TableCell className="whitespace-nowrap px-4">
+                  Rp. 33.000.000
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4">
+                  Rp. 33.000.000
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4">
+                  Rp. 33.000.000
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4">
+                  Rp. 33.000.000
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="whitespace-nowrap px-4">
+                  Rp. 33.000.000
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4">
+                  Rp. 33.000.000
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4">
+                  Rp. 33.000.000
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4">
+                  Rp. 33.000.000
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </Card>
