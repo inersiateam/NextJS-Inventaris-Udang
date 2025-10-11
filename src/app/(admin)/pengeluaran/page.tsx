@@ -1,10 +1,3 @@
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -13,9 +6,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit2, Eye, More, Trash } from "iconsax-react";
+import PengeluaranDialog from "./component/Dialog";
+import PengeluaranDropdown from "./component/Pengeluaran-dropdown";
 
 export default function Pengeluaran() {
+  // contoh data dummy (bisa nanti ganti ambil dari DB)
+  const data = [
+    {
+      id: 1,
+      tanggal: "2025-10-01",
+      keterangan: "Beli Galon Aqua",
+      quantity: 10,
+      harga: 50000,
+    },
+    {
+      id: 2,
+      tanggal: "2025-10-03",
+      keterangan: "Beli Tisu Kantor",
+      quantity: 5,
+      harga: 30000,
+    },
+  ];
+
   return (
     <>
       <div>
@@ -24,78 +36,47 @@ export default function Pengeluaran() {
           Tambahkan item baru ke sistem, pantau stok lebih rapi
         </p>
       </div>
+
       <div className="mb-4 flex justify-end">
-        <Button>Tambah data</Button>
+        <PengeluaranDialog />
       </div>
-      <div className="w-full overflow-x-auto">
+
+      <div className="w-full overflow-x-auto bg-white rounded-lg shadow">
         <Table>
           <TableHeader>
             <TableRow className="bg-sky-600 text-white">
-              <TableHead className="text-white whitespace-nowrap px-4">
+              <TableHead className="text-white px-4 whitespace-nowrap">
                 Tanggal
               </TableHead>
-              <TableHead className="text-white whitespace-nowrap px-4">
+              <TableHead className="text-white px-4 whitespace-nowrap">
                 Keterangan
               </TableHead>
-              <TableHead className="text-white whitespace-nowrap px-4">
+              <TableHead className="text-white px-4 whitespace-nowrap">
                 Quantity
               </TableHead>
-              <TableHead className="text-white whitespace-nowrap px-4">
+              <TableHead className="text-white px-4 whitespace-nowrap">
                 Harga
               </TableHead>
-              <TableHead className="text-white whitespace-nowrap px-4">
+              <TableHead className="text-white px-4 whitespace-nowrap">
                 Aksi
               </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell className="whitespace-nowrap px-4">
-                2025-10-01
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4">
-                Aqua Water
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4">
-                Tambak Makmur Jaya
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4">
-                Banyuwangi
-              </TableCell>
-              
-              <TableCell className="whitespace-nowrap px-4">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                      type="button"
-                      aria-label="Open actions"
-                      className="inline-flex items-center justify-end rounded-md p-1 hover:bg-muted/40 focus:outline-none focus:ring-2 focus:ring-ring"
-                    >
-                      <More size="20" color="#000" variant="Outline" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    side="bottom"
-                    align="end"
-                    className="w-36"
-                  >
-                    <DropdownMenuItem className="flex items-center gap-2">
-                      <Edit2 size="18" color="#000" variant="Linear" />{" "}
-                      <span className="text-sm">Edit</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="flex items-center gap-2">
-                      <Eye size="18" color="#000" variant="Linear" />
-                      <span className="text-sm">Detail</span>
-                    </DropdownMenuItem>
 
-                    <DropdownMenuItem className="flex items-center gap-2">
-                      <Trash size="18" color="#000" variant="Bold" />
-                      <span className="text-sm">Delete</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
+          <TableBody>
+            {data.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell className="px-4 whitespace-nowrap">{item.tanggal}</TableCell>
+                <TableCell className="px-4 whitespace-nowrap">{item.keterangan}</TableCell>
+                <TableCell className="px-4 whitespace-nowrap">{item.quantity}</TableCell>
+                <TableCell className="px-4 whitespace-nowrap">
+                  Rp {item.harga.toLocaleString("id-ID")}
+                </TableCell>
+                <TableCell className="px-4 whitespace-nowrap">
+                  <PengeluaranDropdown item={item} />
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>

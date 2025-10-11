@@ -1,4 +1,3 @@
-// app/pelanggan/_components/Pelanggan.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -43,13 +42,13 @@ export default function Pelanggan({ data }: { data: any[] }) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="bottom" align="end" className="w-36">
                       <DropdownMenuItem className="flex items-center gap-2">
-                        <Edit2 size="18" /> <span className="text-sm">Edit</span>
+                        <Edit2 size="20" color="#000" variant="Outline" /> <span className="text-sm">Edit</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem className="flex items-center gap-2">
-                        <Eye size="18" /> <span className="text-sm">Detail</span>
+                        <Eye size="20" color="#000" variant="Outline" /> <span className="text-sm">Detail</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem className="flex items-center gap-2">
-                        <Trash size="18" /> <span className="text-sm">Delete</span>
+                        <Trash size="20" color="#000" variant="Outline" /> <span className="text-sm">Delete</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
