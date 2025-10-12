@@ -92,3 +92,11 @@ export function calculatePercentageChange(
   if (previous === 0) return current > 0 ? 100 : 0;
   return Number((((current - previous) / previous) * 100).toFixed(2));
 }
+
+export const calculateTotalModal = (
+  hargaBarang: number,
+  jumlah: number,
+  ongkir: number
+): number => {
+  return hargaBarang * jumlah + ongkir;
+};

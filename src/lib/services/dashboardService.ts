@@ -4,7 +4,7 @@ import { cache } from "react";
 import {
   BarangWithAdmin,
   GetBarangParams,
-} from "@/types/interfaces/dashboard/IDashboard";
+} from "@/types/interfaces/IDashboard";
 import { DASHBOARD } from "@/lib/constants";
 import { calculatePercentageChange, getMonthDateRange, getPreviousMonthDateRange, getWeekFromDate } from "../helpers/globalHelper";
 
@@ -51,31 +51,6 @@ export const getBarangList = cache(
       return barangList as BarangWithAdmin[];
     } catch (error) {
       console.error("Error fetching barang list:", error);
-      throw new Error("Terjadi kesalahan saat mengambil data barang");
-    }
-  }
-);
-
-export const getBarangById = cache(
-  async (id: number, jabatan: Jabatan): Promise<BarangWithAdmin | null> => {
-    try {
-      const barang = await prisma.barang.findFirst({
-        where: {
-          id,
-          admin: {
-            jabatan: jabatan as Jabatan,
-          },
-        },
-        include: {
-          admin: {
-            select: { username: true, jabatan: true },
-          },
-        },
-      });
-
-      return barang;
-    } catch (error) {
-      console.error("Error fetching barang by ID:", error);
       throw new Error("Terjadi kesalahan saat mengambil data barang");
     }
   }

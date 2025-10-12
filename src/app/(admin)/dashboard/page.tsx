@@ -5,7 +5,7 @@ import {
   getChartStatistik,
   getChartBarang,
   getTagihanJatuhTempo,
-} from "@/lib/services/barangService";
+} from "@/lib/services/dashboardService";
 import DashboardClient from "./dashboardClient";
 import {
   OmsetCard,

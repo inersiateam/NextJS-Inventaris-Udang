@@ -18,7 +18,7 @@ import {
 import {
   ChartBarangItem,
   DashboardClientProps,
-} from "@/types/interfaces/dashboard/IDashboard";
+} from "@/types/interfaces/IDashboard";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 ChartJS.register(

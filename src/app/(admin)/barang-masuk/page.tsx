@@ -1,29 +1,33 @@
-// app/barang-masuk/page.tsx
-import BarangMasukTable from "./component/Barang-masuk";
+import { getJabatan } from "@/lib/helpers/globalHelper";
+import {
+  getBarangMasukList,
+  getBarangOptions,
+} from "@/lib/services/barangMasukService";
+import BarangMasukClient from "./barangMasukClient";
 
 export default async function Page() {
-  const data = [
-    {
-      id: 1,
-      tanggal: "1/10/2025",
-      tempo: "3/10/2025",
-      invoice: "IN/013/10/ABL/05/2025",
-      surat: "DP.ABL.013/10/05/2025",
-      nama: "Aqua Water",
-      qty: 120,
-      ongkir: "Rp. 230.500",
-      total: "Rp. 13.230.500",
-      status: "Lunas",
-    },
-  ];
+  const jabatan = await getJabatan();
+
+  const [barangMasukList, barangOptions] = await Promise.all([
+    getBarangMasukList(jabatan),
+    getBarangOptions(jabatan),
+  ]);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900">Barang Masuk</h1>
-      <p className="text-gray-500 text-sm">
-        Tambahkan item baru ke sistem, pantau stok lebih rapi
-      </p>
-      <BarangMasukTable data={data} />
+    <div className="space-y-6 p-2">
+      <header>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+          Barang Masuk
+        </h1>
+        <p className="text-gray-500 text-sm md:text-base mt-1">
+          Tambahkan item baru ke sistem, pantau stok lebih rapi
+        </p>
+      </header>
+
+      <BarangMasukClient
+        barangMasukList={barangMasukList}
+        barangOptions={barangOptions}
+      />
     </div>
   );
 }
