@@ -23,6 +23,7 @@ import {
   getPelangganListAction,
 } from "../actions/barangKeluarActions";
 import { useRouter } from "next/navigation";
+import { formatCurrency } from "@/lib/utils";
 
 interface BarangItem {
   barangId: number;
@@ -199,8 +200,6 @@ export default function BarangKeluarDialog({
     }
   };
 
-  const formatRupiah = (num: number) =>
-    num.toLocaleString("id-ID", { style: "currency", currency: "IDR" });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -404,7 +403,7 @@ export default function BarangKeluarDialog({
           <div className="pt-3 text-gray-900 text-sm sm:text-base font-semibold border-t flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0">
             <span>Total Omset:</span>
             <span className="text-base sm:text-lg font-bold text-sky-700 sm:ml-2">
-              {formatRupiah(totalOmset)}
+              {formatCurrency(totalOmset)}
             </span>
           </div>
 

@@ -270,11 +270,11 @@ export default function BarangKeluarTable({
       case "thisMonth":
         return "Bulan Ini";
       case "3months":
-        return "3 Bulan Terakhir";
+        return "3 Bulan";
       case "6months":
-        return "6 Bulan Terakhir";
+        return "6 Bulan";
       case "1year":
-        return "1 Tahun Terakhir";
+        return "1 Tahun";
       default:
         return "Semua Data";
     }

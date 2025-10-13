@@ -1,85 +1,85 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import PengeluaranDialog from "./component/Dialog";
-import PengeluaranDropdown from "./component/Pengeluaran-dropdown";
+import { getPengeluaranAction } from "./actions/pengeluaranActions";
+import PengeluaranTable from "./component/pengeluaran-table";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
-export default function Pengeluaran() {
-  // contoh data dummy (bisa nanti ganti ambil dari DB)
-  const data = [
-    {
-      id: 1,
-      tanggal: "2025-10-01",
-      keterangan: "Beli Galon Aqua",
-      quantity: 10,
-      harga: 50000,
-    },
-    {
-      id: 2,
-      tanggal: "2025-10-03",
-      keterangan: "Beli Tisu Kantor",
-      quantity: 5,
-      harga: 30000,
-    },
-  ];
+interface PageProps {
+  searchParams: Promise<{
+    page?: string;
+    bulan?: string;
+    tahun?: string;
+  }>;
+}
 
+function TableSkeleton() {
   return (
-    <>
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Pengeluaran</h1>
-        <p className="text-gray-500 text-sm">
-          Tambahkan item baru ke sistem, pantau stok lebih rapi
-        </p>
-      </div>
-
-      <div className="mb-4 flex justify-end">
-        <PengeluaranDialog />
-      </div>
-
-      <div className="w-full overflow-x-auto bg-white rounded-lg shadow">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-sky-600 text-white">
-              <TableHead className="text-white px-4 whitespace-nowrap">
-                Tanggal
-              </TableHead>
-              <TableHead className="text-white px-4 whitespace-nowrap">
-                Keterangan
-              </TableHead>
-              <TableHead className="text-white px-4 whitespace-nowrap">
-                Quantity
-              </TableHead>
-              <TableHead className="text-white px-4 whitespace-nowrap">
-                Harga
-              </TableHead>
-              <TableHead className="text-white px-4 whitespace-nowrap">
-                Aksi
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {data.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell className="px-4 whitespace-nowrap">{item.tanggal}</TableCell>
-                <TableCell className="px-4 whitespace-nowrap">{item.keterangan}</TableCell>
-                <TableCell className="px-4 whitespace-nowrap">{item.quantity}</TableCell>
-                <TableCell className="px-4 whitespace-nowrap">
-                  Rp {item.harga.toLocaleString("id-ID")}
-                </TableCell>
-                <TableCell className="px-4 whitespace-nowrap">
-                  <PengeluaranDropdown item={item} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    </>
+    <div className="space-y-4 animate-pulse">
+      <div className="h-10 bg-gray-200 rounded-lg w-full" />
+      <div className="h-64 bg-gray-200 rounded-lg w-full" />
+      <div className="h-10 bg-gray-200 rounded-lg w-1/3 ml-auto" />
+    </div>
   );
 }
+
+async function PengeluaranContent({ searchParams }: PageProps) {
+  const params = await searchParams;
+
+  const page = parseInt(params.page || "1");
+  const bulan = params.bulan ? parseInt(params.bulan) : undefined;
+  const tahun = params.tahun ? parseInt(params.tahun) : undefined;
+
+  const result = await getPengeluaranAction({
+    page,
+    limit: 10,
+    bulan: bulan?.toString(),
+    tahun: tahun?.toString(),
+  });
+
+  if ("error" in result) {
+    return (
+      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <p className="font-medium">Error</p>
+        <p className="text-sm">{result.error}</p>
+      </div>
+    );
+  }
+
+  return (
+    <PengeluaranTable
+      data={result.data}
+      pagination={result.pagination}
+      summary={result.summary}
+      currentFilters={{ bulan, tahun }}
+    />
+  );
+}
+
+export default async function Pengeluaran({ searchParams }: PageProps) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    redirect("/login");
+  }
+
+  return (
+    <div className="space-y-6 p-2">
+      <header>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+          Pengeluaran
+        </h1>
+        <p className="text-gray-500 text-sm md:text-base mt-1">
+          Kelola data pengeluaran, pantau keuangan lebih rapi
+        </p>
+      </header>
+
+      <Suspense fallback={<TableSkeleton />}>
+        <PengeluaranContent searchParams={searchParams} />
+      </Suspense>
+    </div>
+  );
+}
+
+export const revalidate = 0;
+export const dynamic = "force-dynamic";

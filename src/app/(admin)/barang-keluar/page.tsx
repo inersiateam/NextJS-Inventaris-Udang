@@ -5,12 +5,12 @@ import { getBarangKeluarAction } from "./actions/barangKeluarActions";
 import BarangKeluarTable from "./component/Barang-keluar";
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     bulan?: string;
     tahun?: string;
     status?: "BELUM_LUNAS" | "LUNAS";
-  };
+  }>;
 }
 
 export default async function BarangKeluarPage({ searchParams }: PageProps) {
@@ -20,10 +20,13 @@ export default async function BarangKeluarPage({ searchParams }: PageProps) {
     redirect("/login");
   }
 
-  const page = parseInt(searchParams.page || "1");
-  const bulan = searchParams.bulan ? parseInt(searchParams.bulan) : undefined;
-  const tahun = searchParams.tahun ? parseInt(searchParams.tahun) : undefined;
-  const status = searchParams.status;
+
+  const params = await searchParams;
+
+  const page = parseInt(params.page || "1");
+  const bulan = params.bulan ? parseInt(params.bulan) : undefined;
+  const tahun = params.tahun ? parseInt(params.tahun) : undefined;
+  const status = params.status;
 
   const result = await getBarangKeluarAction({
     page,
