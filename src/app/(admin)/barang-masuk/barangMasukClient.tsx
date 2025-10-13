@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -32,7 +33,10 @@ import BarangMasukDialog from "./component/Dialog";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { deleteBarangMasukAction } from "@/app/(admin)/barang-masuk/actions/barangMasukActions";
 import { useRouter } from "next/navigation";
-import { BarangMasukWithRelations, BarangOption } from "@/types/interfaces/IBarangMasuk";
+import {
+  BarangMasukWithRelations,
+  BarangOption,
+} from "@/types/interfaces/IBarangMasuk";
 
 interface BarangMasukClientProps {
   barangMasukList: BarangMasukWithRelations[];
@@ -46,7 +50,9 @@ export default function BarangMasukClient({
   const router = useRouter();
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
-  const [editData, setEditData] = useState<BarangMasukWithRelations | null>(null);
+  const [editData, setEditData] = useState<BarangMasukWithRelations | null>(
+    null
+  );
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -76,6 +82,7 @@ export default function BarangMasukClient({
     setOpenDialog(true);
   };
 
+
   const handleEdit = (item: BarangMasukWithRelations) => {
     setDialogMode("edit");
     setEditData(item);
@@ -87,27 +94,48 @@ export default function BarangMasukClient({
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = async () => {
-    if (!itemToDelete) return;
+const handleDeleteConfirm = async () => {
+  if (!itemToDelete) return;
 
-    setIsDeleting(true);
-    try {
-      const result = await deleteBarangMasukAction(itemToDelete);
+  setIsDeleting(true);
+  const toastId = toast.loading("Menghapus data...");
 
-      if (!result.success) {
-        throw new Error(result.success || "Gagal menghapus barang masuk");
-      }
+  try {
+    const result = await deleteBarangMasukAction(itemToDelete);
 
-      setDeleteDialogOpen(false);
-      setItemToDelete(null);
-      router.refresh();
-    } catch (error) {
-      console.error("Error:", error);
-      alert(error instanceof Error ? error.message : "Terjadi kesalahan");
-    } finally {
-      setIsDeleting(false);
+    if (!result.success) {
+      throw new Error(result.error || "Gagal menghapus barang masuk");
     }
-  };
+
+    setDeleteDialogOpen(false);
+    setItemToDelete(null);
+    router.refresh();
+
+    // ✅ Update toast yang sama (ganti loading jadi success)
+    toast.success("Data berhasil dihapus", {
+      id: toastId,
+      description: new Date().toLocaleString("id-ID", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    });
+  } catch (error) {
+    console.error("Error:", error);
+
+    // ✅ Update toast yang sama jadi error
+    toast.error(
+      error instanceof Error ? error.message : "Terjadi kesalahan server",
+      { id: toastId }
+    );
+  } finally {
+    setIsDeleting(false);
+  }
+};
+
 
   const getPageNumbers = () => {
     const pages = [];
@@ -144,7 +172,9 @@ export default function BarangMasukClient({
     <>
       <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <p className="text-sm text-gray-600">
-          Menampilkan {startIndex + 1} - {Math.min(endIndex, barangMasukList.length)} dari {barangMasukList.length} data
+          Menampilkan {startIndex + 1} -{" "}
+          {Math.min(endIndex, barangMasukList.length)} dari{" "}
+          {barangMasukList.length} data
         </p>
         <Button onClick={handleAddNew} className="w-full sm:w-auto">
           Tambah Data
@@ -184,8 +214,12 @@ export default function BarangMasukClient({
                   className="text-center py-12 text-gray-500"
                 >
                   <div className="flex flex-col items-center gap-2">
-                    <p className="text-base md:text-lg font-medium">Belum ada data barang masuk</p>
-                    <p className="text-xs md:text-sm">Klik tombol "Tambah Data" untuk menambahkan barang masuk</p>
+                    <p className="text-base md:text-lg font-medium">
+                      Belum ada data barang masuk
+                    </p>
+                    <p className="text-xs md:text-sm">
+                      Klik tombol "Tambah Data" untuk menambahkan barang masuk
+                    </p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -238,18 +272,22 @@ export default function BarangMasukClient({
                         align="end"
                         className="w-36"
                       >
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           className="flex items-center gap-2 cursor-pointer"
                           onClick={() => handleEdit(item)}
                         >
                           <Edit2 size="20" color="#000" variant="Outline" />{" "}
                           <span className="text-sm">Edit</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           className="flex items-center gap-2 cursor-pointer text-red-500"
                           onClick={() => handleDeleteClick(item.id)}
                         >
-                          <Trash size="18" color="#ff0000ff" variant="Outline" />{" "}
+                          <Trash
+                            size="18"
+                            color="#ff0000ff"
+                            variant="Outline"
+                          />{" "}
                           <span className="text-sm">Delete</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -267,7 +305,7 @@ export default function BarangMasukClient({
           <p className="text-xs md:text-sm text-gray-600 order-2 sm:order-1">
             Halaman {currentPage} dari {totalPages}
           </p>
-          
+
           <div className="flex items-center gap-2 order-1 sm:order-2 w-full sm:w-auto justify-center">
             <Button
               variant="outline"
@@ -286,7 +324,9 @@ export default function BarangMasukClient({
                   key={index}
                   variant={page === currentPage ? "default" : "outline"}
                   size="sm"
-                  onClick={() => typeof page === "number" && handlePageClick(page)}
+                  onClick={() =>
+                    typeof page === "number" && handlePageClick(page)
+                  }
                   disabled={page === "..."}
                   className={`min-w-[32px] md:min-w-[40px] text-xs md:text-sm ${
                     page === "..." ? "cursor-default hover:bg-transparent" : ""
@@ -324,7 +364,8 @@ export default function BarangMasukClient({
           <AlertDialogHeader>
             <AlertDialogTitle>Hapus Barang Masuk?</AlertDialogTitle>
             <AlertDialogDescription>
-              Tindakan ini tidak dapat dibatalkan. Data barang masuk akan dihapus permanen dan stok barang akan dikurangi.
+              Tindakan ini tidak dapat dibatalkan. Data barang masuk akan
+              dihapus permanen dan stok barang akan dikurangi.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
