@@ -242,14 +242,14 @@ export default function BarangMasukClient({
                           className="flex items-center gap-2 cursor-pointer"
                           onClick={() => handleEdit(item)}
                         >
-                          <Edit2 size="18" />{" "}
+                          <Edit2 size="20" color="#000" variant="Outline" />{" "}
                           <span className="text-sm">Edit</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                           className="flex items-center gap-2 cursor-pointer text-red-500"
                           onClick={() => handleDeleteClick(item.id)}
                         >
-                          <Trash size="18" />{" "}
+                          <Trash size="18" color="#ff0000ff" variant="Outline" />{" "}
                           <span className="text-sm">Delete</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
