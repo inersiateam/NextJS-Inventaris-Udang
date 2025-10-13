@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={quicksand.variable}>
-      <body className="font-quicksand antialiased">
+      <body className="font-quicksand antialiased pb-20 md:pb-2">
         <Providers>{children}</Providers>
       </body>
     </html>

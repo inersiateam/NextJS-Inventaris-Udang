@@ -19,9 +19,12 @@ import {
 import { Edit2, Eye, More, Trash } from "iconsax-react";
 import { useState } from "react";
 import BarangKeluarDialog from "./Dialog";
+import BarangKeluarDetailDialog from "./Detail"; 
 
 export default function BarangKeluarTable({ data }: { data: any[] }) {
   const [openDialog, setOpenDialog] = useState(false);
+  const [openDetail, setOpenDetail] = useState(false); 
+  const [selectedData, setSelectedData] = useState<any>(null)
 
   return (
     <>
@@ -42,7 +45,10 @@ export default function BarangKeluarTable({ data }: { data: any[] }) {
                 "Status",
                 "Aksi",
               ].map((head) => (
-                <TableHead key={head} className="text-white whitespace-nowrap px-6">
+                <TableHead
+                  key={head}
+                  className="text-white whitespace-nowrap px-6"
+                >
                   {head}
                 </TableHead>
               ))}
@@ -58,7 +64,7 @@ export default function BarangKeluarTable({ data }: { data: any[] }) {
                 <TableCell className="px-6">{item.pelanggan}</TableCell>
                 <TableCell className="px-6">{item.alamat}</TableCell>
                 <TableCell className="px-6">
-                  <Badge variant={"default"} className="text-white">
+                  <Badge variant="default" className="text-white">
                     {item.status}
                   </Badge>
                 </TableCell>
@@ -73,15 +79,31 @@ export default function BarangKeluarTable({ data }: { data: any[] }) {
                         <More size="20" color="#000" variant="Outline" />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent side="bottom" align="end" className="w-36">
+
+                    <DropdownMenuContent
+                      side="bottom"
+                      align="end"
+                      className="w-36"
+                    >
                       <DropdownMenuItem className="flex items-center gap-2">
-                        <Edit2 size="18" color="#000" variant="Outline" /> <span className="text-sm">Edit</span>
+                        <Edit2 size="18" color="#000" variant="Outline" />{" "}
+                        <span className="text-sm">Edit</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="flex items-center gap-2">
-                        <Eye size="18" color="#000" variant="Outline" /> <span className="text-sm">Detail</span>
+
+                      <DropdownMenuItem
+                        className="flex items-center gap-2"
+                        onClick={() => {
+                          setSelectedData(item);
+                          setOpenDetail(true);
+                        }}
+                      >
+                        <Eye size="18" color="#000" variant="Outline" />
+                        <span className="text-sm">Detail</span>
                       </DropdownMenuItem>
+
                       <DropdownMenuItem className="flex items-center gap-2">
-                        <Trash size="18" color="#000" variant="Outline" /> <span className="text-sm">Delete</span>
+                        <Trash size="18" color="#000" variant="Outline" />{" "}
+                        <span className="text-sm">Delete</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -92,7 +114,15 @@ export default function BarangKeluarTable({ data }: { data: any[] }) {
         </Table>
       </div>
 
+      {/* ✅ Modal Tambah Data */}
       <BarangKeluarDialog open={openDialog} onOpenChange={setOpenDialog} />
+
+      {/* ✅ Modal Detail Barang */}
+      <BarangKeluarDetailDialog
+        open={openDetail}
+        onOpenChange={setOpenDetail}
+        data={selectedData}
+      />
     </>
   );
 }
