@@ -48,7 +48,7 @@ export default async function BarangKeluarPage({ searchParams }: PageProps) {
     <div className="space-y-6 p-2">
       <header>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-          Barang Masuk
+          Barang Keluar
         </h1>
         <p className="text-gray-500 text-sm md:text-base mt-1">
           Kelola data transaksi barang keluar, pantau stok lebih rapi
