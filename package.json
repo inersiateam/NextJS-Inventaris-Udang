@@ -30,6 +30,8 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.22",
     "iconsax-react": "^0.0.8",
+    "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.544.0",
     "next": "15.5.4",
     "next-auth": "^4.24.11",
