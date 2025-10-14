@@ -5,12 +5,11 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { EyeOff, Eye, LockIcon, Mail } from "lucide-react";
 
-
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
- const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -73,7 +72,7 @@ export default function LoginPage() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-         <div className="relative">
+          <div className="relative">
             <label
               className={`absolute left-12 transition-all duration-200 pointer-events-none ${
                 username
@@ -149,7 +148,16 @@ export default function LoginPage() {
           >
             {isLoading ? "Signing in..." : "Sign in"}
           </Button>
-        
+          <div className="w-full border-t border-gray-300"></div>
+          <Button
+            type="button"
+            disabled={isLoading}
+            variant="outline"
+            className="w-full text-gray-500 border-gray-300 hover:bg-gray-50"
+            onClick={() => (window.location.href = "/dashboard")}
+          >
+            Login sebagai tamu
+          </Button>
         </form>
       </div>
     </div>
