@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface AppSidebarProps {
   menuItems: MenuItem[];
@@ -20,6 +21,17 @@ export default function AppSidebar({
 }: AppSidebarProps) {
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
+  const { data: session } = useSession();
+  const jabatan = session?.user?.jabatan;
+   const logoSrc =
+    jabatan === "ATM"
+      ? "/ATM.png"
+      : "/logo.png"; // default ke logo ABL kalau bukan ATM
+
+  const label =
+    jabatan === "ATM"
+      ? "CV. ATM"
+      : "CV. ABL";
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -38,22 +50,21 @@ export default function AppSidebar({
         )}
       >
         {/* Logo + Brand */}
-        <div className="h-16 flex items-center justify-center">
-          <div className="flex items-center space-x-2">
-            <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
-            {open && (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                className="text-xl font-bold text-primary"
-              >
-                CV. ABL
-              </motion.span>
-            )}
-          </div>
-        </div>
-
+       <div className="h-16 flex items-center justify-center">
+      <div className="flex items-center space-x-2">
+        <img src={logoSrc} alt="Logo" className="h-8 w-auto" />
+        {open && (
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="text-xl font-bold text-primary"
+          >
+            {label}
+          </motion.span>
+        )}
+      </div>
+    </div>
         {/* Menu */}
         <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
           {menuItems.map((item, idx) => {
