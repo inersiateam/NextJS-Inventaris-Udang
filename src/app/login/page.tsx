@@ -46,13 +46,13 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen white">
       <div className="bg-white p-8 w-full max-w-md">
         {/* Logo */}
-        <div className="flex justify-center mb-4">
+        {/* <div className="flex justify-center mb-4">
           <img
             src="/logo.png"
             alt="Logo"
             className="h-32" // lebih besar
           />
-        </div>
+        </div> */}
 
         {/* Title */}
         <h2 className="text-center text-2xl font-semibold text-gray-800 mb-2">
@@ -149,6 +149,7 @@ export default function LoginPage() {
           >
             {isLoading ? "Signing in..." : "Sign in"}
           </Button>
+        
         </form>
       </div>
     </div>

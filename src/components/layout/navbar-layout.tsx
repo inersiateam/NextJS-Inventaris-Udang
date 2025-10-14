@@ -1,6 +1,6 @@
 "use client";
 
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { Bell, CircleUser, Menu, Search } from "lucide-react";
 import {
@@ -12,10 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface AppNavbarProps {
-  user: {
-    name: string;
-    role: "abl" | "atm";
-  };
+  
   onProfileClick?: () => void;
   onLogout?: () => void;
   onMenuClick?: () => void;
@@ -23,10 +20,11 @@ interface AppNavbarProps {
 }
 
 export default function AppNavbar({
-  user,
   onLogout,
   onMenuClick,
 }: AppNavbarProps) {
+  const { data: session } = useSession();
+  const username = session?.user?.username;
   return (
     <header className="flex items-center justify-between px-4 md:px-6 h-16 bg-white dark:bg-gray-900">
       {/* Kiri: tombol menu */}
@@ -66,7 +64,7 @@ export default function AppNavbar({
             <CircleUser className="h-8 w-8 text-gray-700 dark:text-gray-300" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="mt-2 w-40">
-            <DropdownMenuItem disabled>Hai, {user.name}!</DropdownMenuItem>
+<DropdownMenuItem disabled>Hai, {username}</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href={`/profile`}>Profil</Link>
