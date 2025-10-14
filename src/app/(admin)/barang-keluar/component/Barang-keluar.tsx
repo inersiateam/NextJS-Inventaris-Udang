@@ -34,6 +34,7 @@ import {
   ArrowLeft2,
   ArrowRight2,
   Filter,
+  Sort,
 } from "iconsax-react";
 import { useState } from "react";
 import BarangKeluarDialog from "./Dialog";
@@ -293,7 +294,7 @@ export default function BarangKeluarTable({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="w-full sm:w-auto gap-2">
-                <Filter size="18" />
+                 <Sort size="20" color="#000" variant="Outline"/>
                 <span>{getFilterLabel(currentFilterPeriod)}</span>
               </Button>
             </DropdownMenuTrigger>

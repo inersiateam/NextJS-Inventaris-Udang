@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EmptyWallet } from "iconsax-react";
+import { EmptyWallet, Sort } from "iconsax-react";
 import { ArrowSwapHorizontal } from "iconsax-react";
 import { Button } from "@/components/ui/button";
 import { Doughnut, Bar } from "react-chartjs-2";
@@ -21,7 +21,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -98,7 +98,10 @@ export default function Page() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Laporan</h1>
         <div className="items-end justify-end">
-          <Button>Filter</Button>
+          <Button>
+            <Sort size={24} color="#fff" variant="Outline" />
+            Filter
+          </Button>
         </div>
       </div>
       {/* Bagian atas card*/}
@@ -162,20 +165,20 @@ export default function Page() {
         {/* --- Kolom 1: Statistik (2/3 layar) --- */}
         <Card className="shadow-sm w-full hover:shadow-xl lg:col-span-2">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-  <CardTitle className="text-xl font-bold">Statistic</CardTitle>
+            <CardTitle className="text-xl font-bold">Statistic</CardTitle>
 
-  <Select defaultValue="6bulan" onValueChange={(v) => console.log(v)}>
-    <SelectTrigger className="w-[120px] rounded-full border-gray-300 text-sm font-medium shadow-none focus:ring-1 focus:ring-gray-300">
-      <SelectValue placeholder="Periode" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="1bulan">1 Bulan</SelectItem>
-      <SelectItem value="3bulan">3 Bulan</SelectItem>
-      <SelectItem value="6bulan">6 Bulan</SelectItem>
-      <SelectItem value="12bulan">12 Bulan</SelectItem>
-    </SelectContent>
-  </Select>
-</CardHeader>
+            <Select defaultValue="6bulan" onValueChange={(v) => console.log(v)}>
+              <SelectTrigger className="w-[120px] rounded-full border-gray-300 text-sm font-medium shadow-none focus:ring-1 focus:ring-gray-300">
+                <SelectValue placeholder="Periode" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1bulan">1 Bulan</SelectItem>
+                <SelectItem value="3bulan">3 Bulan</SelectItem>
+                <SelectItem value="6bulan">6 Bulan</SelectItem>
+                <SelectItem value="12bulan">12 Bulan</SelectItem>
+              </SelectContent>
+            </Select>
+          </CardHeader>
 
           <CardContent className="!p-2 sm:!p-4 h-full">
             <div className="h-[250px] lg:h-[300px]">
