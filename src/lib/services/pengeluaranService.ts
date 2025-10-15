@@ -29,7 +29,6 @@ export class PengeluaranService {
       },
     };
 
-    // Optimize date filtering
     if (filterBulan && filterTahun) {
       const bulan = parseInt(filterBulan);
       const tahun = parseInt(filterTahun);

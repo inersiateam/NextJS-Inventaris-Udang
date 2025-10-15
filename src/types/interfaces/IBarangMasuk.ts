@@ -1,7 +1,5 @@
 import { Jabatan } from "@prisma/client";
 
-// ========== INPUT INTERFACES (untuk Forms & Actions) ==========
-
 export interface CreateBarangMasukInput {
   barangId: number;
   noInvoice: string;
@@ -16,8 +14,6 @@ export interface CreateBarangMasukInput {
 export interface UpdateBarangMasukInput extends CreateBarangMasukInput {
   id: number;
 }
-
-// ========== SERVICE PARAMS (untuk Service Layer) ==========
 
 export interface CreateBarangMasukParams extends CreateBarangMasukInput {
   adminId: number;
@@ -38,8 +34,6 @@ export interface DeleteBarangMasukParams {
   userAgent?: string;
 }
 
-// ========== QUERY PARAMS ==========
-
 export interface GetBarangMasukParams {
   jabatan: Jabatan;
   page?: number;
@@ -47,8 +41,6 @@ export interface GetBarangMasukParams {
   filterBulan?: number;
   statusFilter?: "BELUM_LUNAS" | "LUNAS" | null;
 }
-
-// ========== OUTPUT INTERFACES (dari Database) ==========
 
 export interface BarangMasukWithRelations {
   id: number;
@@ -81,7 +73,11 @@ export interface BarangOption {
   stok: number;
 }
 
-// ========== RESPONSE INTERFACES ==========
+export interface PelangganOption {
+  id: number;
+  nama: string;
+  alamat: string;
+}
 
 export interface BarangMasukResponse {
   success: boolean;

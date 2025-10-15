@@ -1,8 +1,8 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useMemo, useCallback, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar } from "iconsax-react";
-import { ArrowSwapHorizontal } from "iconsax-react";
+import { Calendar, ArrowSwapHorizontal } from "iconsax-react";
 import { Button } from "@/components/ui/button";
 import { Doughnut, Bar } from "react-chartjs-2";
 import {
@@ -31,6 +31,51 @@ ChartJS.register(
   Title
 );
 
+const TagihanCard = memo(
+  ({
+    tagihan,
+  }: {
+    tagihan: {
+      id: number;
+      namaBarang: string;
+      noInvoice: string;
+      jatuhTempo: Date;
+      totalBiaya: number;
+      status: "Masuk" | "Keluar";
+    };
+  }) => (
+    <div className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all">
+      <div className="flex justify-between items-start mb-2">
+        <h4 className="text-base font-bold line-clamp-2">
+          {tagihan.namaBarang}
+        </h4>
+        <div className="text-right ml-2">
+          <p className="text-xs text-gray-600">Total Biaya :</p>
+          <p className="text-primary font-bold text-gray-900">
+            {formatCurrency(tagihan.totalBiaya)}
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 text-xs text-gray-600 flex-wrap">
+        <div className="flex items-center gap-1">
+          <Calendar size={14} color="#00B7FE" variant="Bold" />
+          <span>{formatDate(tagihan.jatuhTempo)}</span>
+        </div>
+        <span className="flex items-center gap-1">
+          <span
+            className={`w-2 h-2 rounded-full ${
+              tagihan.status === "Masuk" ? "bg-blue-500" : "bg-orange-500"
+            }`}
+          ></span>
+          Status Barang : {tagihan.status}
+        </span>
+      </div>
+    </div>
+  )
+);
+
+TagihanCard.displayName = "TagihanCard";
+
 export default function DashboardClient({
   chartStatistik,
   chartBarang,
@@ -41,33 +86,78 @@ export default function DashboardClient({
     "All" | "Keluar" | "Masuk"
   >("All");
 
-  const barData = {
-    labels: chartStatistik.labels,
-    datasets: [
-      {
-        label: "Pengeluaran",
-        data: chartStatistik.pengeluaran,
-        backgroundColor: "#ACDFFF",
-        borderRadius: 8,
-      },
-      {
-        label: "Pendapatan",
-        data: chartStatistik.pendapatan,
-        backgroundColor: "#00B8FB",
-        borderRadius: 8,
-      },
-    ],
-  };
+  const barData = useMemo(
+    () => ({
+      labels: chartStatistik.labels,
+      datasets: [
+        {
+          label: "Pengeluaran",
+          data: chartStatistik.pengeluaran,
+          backgroundColor: "#ACDFFF",
+          borderRadius: 8,
+        },
+        {
+          label: "Pendapatan",
+          data: chartStatistik.pendapatan,
+          backgroundColor: "#00B8FB",
+          borderRadius: 8,
+        },
+      ],
+    }),
+    [chartStatistik]
+  );
 
-  const getChartDataForProduct = (product: ChartBarangItem) => {
-    const totalData = product.data.reduce((sum, val) => sum + val, 0);
+  const barOptions = useMemo(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: "bottom" as const,
+          labels: {
+            usePointStyle: true,
+            padding: 15,
+          },
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 20,
+            callback: (value: any) => value + "jt",
+          },
+        },
+        x: {
+          grid: { display: false },
+        },
+      },
+    }),
+    []
+  );
+
+  const currentProduct = useMemo(
+    () => chartBarang[selectedProductIndex],
+    [chartBarang, selectedProductIndex]
+  );
+
+  const hasData = useMemo(() => {
+    if (!currentProduct) return false;
+    return currentProduct.data.reduce((sum, val) => sum + val, 0) > 0;
+  }, [currentProduct]);
+
+  const getDoughnutData = useMemo(() => {
+    if (!currentProduct) return null;
+
+    const totalData = currentProduct.data.reduce((sum, val) => sum + val, 0);
     const isEmpty = totalData === 0;
 
     return {
-      labels: product.labels,
+      labels: currentProduct.labels,
       datasets: [
         {
-          data: isEmpty ? [1, 1] : product.data,
+          data: isEmpty ? [1, 1] : currentProduct.data,
           backgroundColor: isEmpty
             ? ["#d1d5db", "#d1d5db"]
             : ["#f43f5e", "#0ea5e9"],
@@ -76,67 +166,64 @@ export default function DashboardClient({
         },
       ],
     };
-  };
+  }, [currentProduct]);
 
-  const toggleProduct = () => {
+  const doughnutOptions = useMemo(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          enabled: hasData,
+        },
+      },
+      cutout: "70%",
+      events: hasData
+        ? ["mousemove", "mouseout", "click", "touchstart", "touchmove"]
+        : ([] as any),
+    }),
+    [hasData]
+  );
+
+  const filteredTagihan = useMemo(() => {
+    if (filterTagihan === "All") return tagihanJatuhTempo;
+    return tagihanJatuhTempo.filter(
+      (tagihan) => tagihan.status === filterTagihan
+    );
+  }, [tagihanJatuhTempo, filterTagihan]);
+
+  const toggleProduct = useCallback(() => {
     if (chartBarang.length === 0) return;
     setSelectedProductIndex((prev) =>
       prev >= chartBarang.length - 1 ? 0 : prev + 1
     );
-  };
+  }, [chartBarang.length]);
 
-  const currentProduct = chartBarang[selectedProductIndex];
-  const hasData = currentProduct
-    ? currentProduct.data.reduce((sum, val) => sum + val, 0) > 0
-    : false;
-
-  const filteredTagihan = tagihanJatuhTempo.filter((tagihan) => {
-    if (filterTagihan === "All") return true;
-    return tagihan.status === filterTagihan;
-  });
+  const handleFilterTagihan = useCallback(
+    (filter: "All" | "Keluar" | "Masuk") => {
+      setFilterTagihan(filter);
+    },
+    []
+  );
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
       <div className="flex flex-col gap-3">
-        <Card className="shadow-sm h-[350px] sm:h-[400px] w-full hover:shadow-xl">
+        {/* Bar Chart */}
+        <Card className="shadow-sm h-[350px] sm:h-[400px] w-full hover:shadow-xl transition-shadow">
           <CardHeader className="pb-2">
             <CardTitle className="text-xl font-bold">Statistic</CardTitle>
           </CardHeader>
           <CardContent className="!p-2 sm:!p-4">
-            <Bar
-              data={barData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    display: true,
-                    position: "bottom",
-                    labels: {
-                      usePointStyle: true,
-                      padding: 15,
-                    },
-                  },
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: {
-                      stepSize: 20,
-                      callback: (value) => value + "jt",
-                    },
-                  },
-                  x: {
-                    grid: { display: false },
-                  },
-                },
-              }}
-              height={250}
-            />
+            <Bar data={barData} options={barOptions} height={250} />
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm h-[250px] w-full hover:shadow-xl">
+        {/* Doughnut Chart */}
+        <Card className="shadow-sm h-[250px] w-full hover:shadow-xl transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xl font-bold line-clamp-1">
@@ -163,31 +250,12 @@ export default function DashboardClient({
             {currentProduct ? (
               <>
                 <div className="w-32 h-32">
-                  <Doughnut
-                    data={getChartDataForProduct(currentProduct)}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: true,
-                      plugins: {
-                        legend: {
-                          display: false,
-                        },
-                        tooltip: {
-                          enabled: hasData,
-                        },
-                      },
-                      cutout: "70%",
-                      events: hasData
-                        ? [
-                            "mousemove",
-                            "mouseout",
-                            "click",
-                            "touchstart",
-                            "touchmove",
-                          ]
-                        : [],
-                    }}
-                  />
+                  {getDoughnutData && (
+                    <Doughnut
+                      data={getDoughnutData}
+                      options={doughnutOptions}
+                    />
+                  )}
                 </div>
 
                 <div className="absolute top-32 left-3 flex flex-col gap-1 text-xs">
@@ -228,6 +296,7 @@ export default function DashboardClient({
         </Card>
       </div>
 
+      {/* Tagihan Section */}
       <Card className="shadow-xl pb-20 md:pb-0">
         <CardTitle className="text-xl px-4 pt-6 font-bold">
           Tagihan Jatuh Tempo
@@ -236,23 +305,22 @@ export default function DashboardClient({
           <div className="flex gap-2 mb-3 flex-wrap">
             <Button
               size="sm"
-              className={filterTagihan === "All" ? "bg-primary text-white" : ""}
               variant={filterTagihan === "All" ? "default" : "outline"}
-              onClick={() => setFilterTagihan("All")}
+              onClick={() => handleFilterTagihan("All")}
             >
               All
             </Button>
             <Button
               size="sm"
               variant={filterTagihan === "Keluar" ? "default" : "outline"}
-              onClick={() => setFilterTagihan("Keluar")}
+              onClick={() => handleFilterTagihan("Keluar")}
             >
               Barang Keluar
             </Button>
             <Button
               size="sm"
               variant={filterTagihan === "Masuk" ? "default" : "outline"}
-              onClick={() => setFilterTagihan("Masuk")}
+              onClick={() => handleFilterTagihan("Masuk")}
             >
               Barang Masuk
             </Button>
@@ -265,38 +333,10 @@ export default function DashboardClient({
               </div>
             ) : (
               filteredTagihan.map((tagihan) => (
-                <div
+                <TagihanCard
                   key={`${tagihan.status}-${tagihan.id}`}
-                  className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="text-base font-bold line-clamp-2">
-                      {tagihan.namaBarang}
-                    </h4>
-                    <div className="text-right ml-2">
-                      <p className="text-xs text-gray-600">Total Biaya :</p>
-                      <p className="text-primary font-bold text-gray-900">
-                        {formatCurrency(tagihan.totalBiaya)}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-gray-600 flex-wrap">
-                    <div className="flex items-center gap-1">
-                      <Calendar size={14} color="#00B7FE" variant="Bold" />
-                      <span>{formatDate(tagihan.jatuhTempo)}</span>
-                    </div>
-                    <span className="flex items-center gap-1">
-                      <span
-                        className={`w-2 h-2 rounded-full ${
-                          tagihan.status === "Masuk"
-                            ? "bg-blue-500"
-                            : "bg-orange-500"
-                        }`}
-                      ></span>
-                      Status Barang : {tagihan.status}
-                    </span>
-                  </div>
-                </div>
+                  tagihan={tagihan}
+                />
               ))
             )}
           </div>
