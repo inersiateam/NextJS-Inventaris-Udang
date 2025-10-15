@@ -158,21 +158,21 @@ const BarangKeluarRow = memo(
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={handleView}
               >
-                <Eye size="18" />
+                <Eye size={24} color="#000" variant="Outline" />
                 <span className="text-sm">Detail</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={handleEdit}
               >
-                <Edit2 size="18" />
+                <Edit2 size={24} color="#000" variant="Outline" />
                 <span className="text-sm">Edit</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer text-red-500"
                 onClick={handleDelete}
               >
-                <Trash size="18" />
+                <Trash size={24} color="#fd0000ff" variant="Outline" />
                 <span className="text-sm">Delete</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -443,8 +443,7 @@ export default function BarangKeluarClient({
                 className="w-full sm:w-auto gap-2"
                 disabled={isPending}
               >
-                <Filter size="18" />
-                <span>{FILTER_LABELS[currentFilterPeriod]}</span>
+<Sort size={24} color="#000" variant="Outline" />                <span>{FILTER_LABELS[currentFilterPeriod]}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">

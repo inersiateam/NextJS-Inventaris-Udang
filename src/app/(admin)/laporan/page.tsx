@@ -218,7 +218,7 @@ export default function Page() {
 
         {/* --- Kolom 2: Donut Chart (1/3 layar) --- */}
         <Card className="shadow-sm w-full hover:shadow-xl flex flex-col justify-between">
-          <CardHeader className="pb-1 flex flex-row items-center justify-between">
+          <CardHeader className="pb-0 flex flex-row items-center justify-between mt-0 md:mt-4">
             <div>
               <CardTitle className="text-xl font-bold">
                 Transaksi Barang {selected} (Periode)
@@ -232,28 +232,26 @@ export default function Page() {
             </button>
           </CardHeader>
 
-          <CardContent className="flex flex-col items-center justify-center gap-4 pb-4">
+          <CardContent className="flex flex-col items-center justify-center pt-0 pb-2 rounded-b-lg mt-4">
             {/* Donut */}
-            <div className="w-36 h-36">
+            <div className="w-40 h-40 md:w-52 md:h-52 -mt-2">
               <Doughnut
                 data={chartData[selected]}
                 options={{
                   responsive: true,
                   maintainAspectRatio: true,
                   plugins: {
-                    legend: {
-                      display: false,
-                    },
+                    legend: { display: false },
                   },
                   cutout: "70%",
                 }}
               />
             </div>
 
-            {/* Legend di bawah Donut */}
-            <div className="flex flex-col gap-1 text-xs">
+            {/* Legend */}
+            <div className="flex flex-col gap-1 text-xs mt-10 mb-2">
               <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-sm bg-pink-500"></span>
+                <span className="w-4 h-4 rounded-sm bg-red-500"></span>
                 <span>Barang terjual</span>
               </div>
               <div className="flex items-center gap-2">
@@ -347,18 +345,18 @@ export default function Page() {
 
         {/* --- Kolom 2: (1/3 layar) --- */}
         <Card className="p-4 lg:col-span-1">
-          <h3 className="text-lg font-semibold mb-4">Daftar Top Pelanggan</h3>
+          <h3 className="text-lg font-semibold">Daftar Top Pelanggan</h3>
           <Tabs defaultValue="aqua-water">
             <TabsList className="flex gap-2 mb-4">
               <TabsTrigger
                 value="aqua-water"
-                className="px-4 py-2 rounded-md border border-gray-300 data-[state=active]:bg-gray-200"
+                className="px-4 py-2 rounded-md border border-gray-300 data-[state=active]:bg-primary data-[state=active]:text-white"
               >
                 Aqua Water
               </TabsTrigger>
               <TabsTrigger
                 value="aqua-difire"
-                className="px-4 py-2 rounded-md border border-gray-300 data-[state=active]:bg-gray-200"
+                className="px-4 py-2 rounded-md border border-gray-300 data-[state=active]:bg-primary data-[state=active]:text-white"
               >
                 Aqua Difire
               </TabsTrigger>

@@ -3,7 +3,6 @@
 import { useState, useTransition, useMemo, memo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -34,7 +33,7 @@ import {
   Trash,
   ArrowLeft2,
   ArrowRight2,
-  Filter,
+  Sort,
 } from "iconsax-react";
 import dynamic from "next/dynamic";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -150,13 +149,13 @@ const BarangMasukRow = memo(
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={handleEdit}
               >
-                <Edit2 size="18" /> <span className="text-sm">Edit</span>
+                <Edit2 size={24} color="#000" variant="Outline" /> <span className="text-sm">Edit</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer text-red-500"
                 onClick={handleDelete}
               >
-                <Trash size="18" /> <span className="text-sm">Delete</span>
+                <Trash size={24} color="#fc0e0eff" variant="Outline" /> <span className="text-sm">Delete</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -302,7 +301,6 @@ export default function BarangMasukClient({
     return pages;
   }, [currentPage, totalPages]);
 
-
   const updateSearchParams = useCallback(
     (updates: Record<string, string | null>) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -401,7 +399,9 @@ export default function BarangMasukClient({
                 className="w-full sm:w-auto gap-2"
                 disabled={isPending}
               >
-                <Filter size="18" />
+                {currentFilterPeriod === "all" && (
+                  <Sort size={24} color="#000" variant="Outline" />
+                )}
                 <span>{FILTER_LABELS[currentFilterPeriod]}</span>
               </Button>
             </DropdownMenuTrigger>
