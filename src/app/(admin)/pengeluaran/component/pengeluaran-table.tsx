@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeft2, ArrowRight2, Filter } from "iconsax-react";
+import { ArrowLeft2, ArrowRight2, Filter, Sort } from "iconsax-react";
 import { useState, useTransition, useMemo, memo } from "react";
 import PengeluaranDialog from "./Dialog";
 import PengeluaranDropdown from "./Pengeluaran-dropdown";
@@ -175,7 +175,7 @@ export default function PengeluaranTable({
                 className="w-full sm:w-auto gap-2"
                 disabled={isPending}
               >
-                <Filter size="18" />
+                <Sort size={24} color="#f000" variant="Outline" />
                 <span>{currentMonth}</span>
               </Button>
             </DropdownMenuTrigger>
