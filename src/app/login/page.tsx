@@ -40,22 +40,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-6 sm:px-10">
+      <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-xs sm:max-w-sm md:max-w-md scale-95 transition-transform">
         {/* Logo */}
         <div className="flex justify-center mb-4">
-          <img
-            src="/logo.png"
-            alt="Logo"
-            className="h-32" // lebih besar
-          />
+          <img src="/logo.png" alt="Logo" className="h-20 sm:h-24" />
         </div>
 
         {/* Title */}
-        <h2 className="text-center text-2xl font-semibold text-gray-800 mb-2">
+        <h2 className="text-center text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
           Sign in
         </h2>
-        <p className="text-center text-sm text-gray-500 mb-6">
+        <p className="text-center text-xs sm:text-sm text-gray-500 mb-6">
           Do you already have an account?{" "}
           <a href="/signup" className="text-blue-600 hover:underline">
             Sign up
@@ -63,7 +59,7 @@ export default function LoginPage() {
         </p>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded mb-4 text-xs sm:text-sm">
             {error}
           </div>
         )}
@@ -72,7 +68,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Username */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700">
               Username <span className="text-red-500">*</span>
             </label>
             <input
@@ -80,7 +76,7 @@ export default function LoginPage() {
               name="username"
               type="text"
               required
-              className="mt-1 block w-full border border-blue-400 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full border border-blue-400 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
               placeholder="Enter your username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -89,7 +85,7 @@ export default function LoginPage() {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700">
               Password <span className="text-red-500">*</span>
             </label>
             <input
@@ -97,7 +93,7 @@ export default function LoginPage() {
               name="password"
               type="password"
               required
-              className="mt-1 block w-full border border-blue-400 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full border border-blue-400 rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -105,7 +101,7 @@ export default function LoginPage() {
           </div>
 
           {/* Remember me & Forgot password */}
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center justify-between text-xs sm:text-sm">
             <label className="flex items-center">
               <input
                 type="checkbox"
@@ -120,11 +116,10 @@ export default function LoginPage() {
             </a>
           </div>
 
-     
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full"
+            className="w-full text-sm sm:text-base py-2 sm:py-3"
             variant="default"
           >
             {isLoading ? "Signing in..." : "Sign in"}
