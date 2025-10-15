@@ -6,8 +6,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Edit2, Eye, More, Trash } from "iconsax-react";
 import PelangganDialog from "./Dialog";
 import { useState } from "react";
+import PelangganDetailDialog from "./Detail"; 
 import { PelangganWithAdmin } from "@/types/interfaces/IPelanggan";
-import { deletePelangganAction } from "../actions/pelangganActions";
+import { deletePelangganAction, getPelangganDetailAction } from "../actions/pelangganActions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -19,6 +20,8 @@ export default function Pelanggan({ data }: PelangganProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedPelanggan, setSelectedPelanggan] = useState<PelangganWithAdmin | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+   const [openDetail, setOpenDetail] = useState(false);
+  const [detailData, setDetailData] = useState<any>(null);
   const router = useRouter();
 
   const handleEdit = (pelanggan: PelangganWithAdmin) => {
@@ -31,9 +34,28 @@ export default function Pelanggan({ data }: PelangganProps) {
     setOpenDialog(true);
   };
 
-  const handleDetail = (id: number) => {
-    router.push(`/pelanggan/${id}`);
-  };
+const handleDetail = async (id: number) => {
+  try {
+    const result = await getPelangganDetailAction(id);
+
+    if (result.success) {
+      if ("data" in result) {
+        setDetailData(result.data);
+        setOpenDetail(true);
+      } else {
+        toast.error("Gagal memuat detail pelanggan");
+      }
+    } else {
+      // ⬇️ tambahkan pengecekan agar TypeScript paham
+      const errMsg = "error" in result ? result.error : "Gagal memuat detail pelanggan";
+      toast.error(errMsg);
+    }
+  } catch (error) {
+    console.error("Gagal memuat detail pelanggan:", error);
+    toast.error("Terjadi kesalahan saat memuat detail pelanggan");
+  }
+};
+
 
   const handleDelete = async (id: number, nama: string) => {
     if (!confirm(`Apakah Anda yakin ingin menghapus pelanggan "${nama}"?`)) {
@@ -125,7 +147,7 @@ export default function Pelanggan({ data }: PelangganProps) {
                         <DropdownMenuContent side="bottom" align="end" className="w-40">
                           <DropdownMenuItem 
                             className="flex items-center gap-2 cursor-pointer"
-                            onClick={() => handleDetail(item.id)}
+                             onClick={() => handleDetail(item.id)}
                           >
                             <Eye size="18" color="#374151" variant="Outline" />
                             <span className="text-sm">Detail</span>
@@ -160,6 +182,11 @@ export default function Pelanggan({ data }: PelangganProps) {
         open={openDialog} 
         onOpenChange={handleDialogClose}
         pelanggan={selectedPelanggan}
+      />
+      <PelangganDetailDialog
+        open={openDetail}
+        onOpenChange={setOpenDetail}
+        data={detailData}
       />
     </>
   );
