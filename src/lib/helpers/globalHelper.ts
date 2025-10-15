@@ -21,13 +21,14 @@ export async function getJabatan(): Promise<Jabatan> {
   return session.user.jabatan as Jabatan;
 }
 
-export async function getUserFromHeaders() {
+export async function getRequestHeaders() {
   const headersList = await headers();
-
   return {
-    jabatan: headersList.get("x-user-jabatan") as Jabatan | null,
-    id: headersList.get("x-user-id"),
-    username: headersList.get("x-user-username"),
+    ipAddress:
+      headersList.get("x-forwarded-for") ||
+      headersList.get("x-real-ip") ||
+      "unknown",
+    userAgent: headersList.get("user-agent") || "unknown",
   };
 }
 
@@ -100,3 +101,15 @@ export const calculateTotalModal = (
 ): number => {
   return hargaBarang * jumlah + ongkir;
 };
+
+
+export function getDateRange(filterBulan: number) {
+  const now = new Date();
+  const startDate = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+  startDate.setMonth(startDate.getMonth() - filterBulan);
+
+  const endDate = new Date(now);
+  endDate.setHours(23, 59, 59, 999);
+
+  return { startDate, endDate };
+}

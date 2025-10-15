@@ -1,7 +1,9 @@
+import { cache } from "react";
 import prisma from "@/lib/prisma";
 import {
   calculateJatuhTempo,
   generateNoInvoice,
+  getDateRange,
 } from "@/lib/helpers/globalHelper";
 import {
   IBarangKeluarInput,
@@ -10,147 +12,346 @@ import {
   IBarangKeluarListResponse,
 } from "@/types/interfaces/IBarangKeluar";
 import { Jabatan } from "@prisma/client";
+import { logActivity } from "../fileLogger";
 
-export class BarangKeluarService {
-  static async getBarangKeluar(
-    adminId: number,
+const BARANG_KELUAR_SELECT = {
+  id: true,
+  noInvoice: true,
+  tglKeluar: true,
+  jatuhTempo: true,
+  totalOmset: true,
+  totalModal: true,
+  labaKotor: true,
+  details: {
+    select: {
+      jmlPembelian: true,
+      hargaJual: true,
+      subtotal: true,
+      barang: {
+        select: {
+          nama: true,
+        },
+      },
+    },
+  },
+  pelanggan: {
+    select: {
+      nama: true,
+      alamat: true,
+    },
+  },
+  transaksiKeluar: {
+    select: {
+      totalFee: true,
+      ongkir: true,
+      totalBiayaKeluar: true,
+      labaBerjalan: true,
+      status: true,
+    },
+  },
+} as const;
+
+interface CreateBarangKeluarParams {
+  adminId: number;
+  jabatan: Jabatan;
+  data: IBarangKeluarInput;
+  ipAddress?: string;
+  userAgent?: string;
+}
+
+interface UpdateBarangKeluarParams {
+  id: number;
+  adminId: number;
+  jabatan: Jabatan;
+  data: IBarangKeluarInput;
+  ipAddress?: string;
+  userAgent?: string;
+}
+
+interface DeleteBarangKeluarParams {
+  id: number;
+  jabatan: Jabatan;
+  adminId: number;
+  ipAddress?: string;
+  userAgent?: string;
+}
+
+export const getBarangKeluarWithPagination = cache(
+  async (
     jabatan: Jabatan,
     filters: IBarangKeluarFilter = {}
-  ): Promise<IBarangKeluarListResponse> {
-    const page = filters.page || 1;
-    const limit = filters.limit || 10;
-    const skip = (page - 1) * limit;
+  ): Promise<IBarangKeluarListResponse> => {
+    try {
+      const page = filters.page || 1;
+      const limit = filters.limit || 10;
+      const skip = (page - 1) * limit;
 
-    const where: any = {
-      admin: {
-        jabatan: jabatan,
+      const where: any = {
+        admin: { jabatan },
+      };
+
+      if (filters.filterBulan && filters.filterBulan > 0) {
+        const { startDate, endDate } = getDateRange(filters.filterBulan);
+        where.tglKeluar = { gte: startDate, lte: endDate };
+      }
+
+      if (filters.status === "BELUM_LUNAS" || filters.status === "LUNAS") {
+        where.transaksiKeluar = {
+          some: { status: filters.status },
+        };
+      }
+
+      const [barangKeluar, total] = await Promise.all([
+        prisma.barangKeluar.findMany({
+          where,
+          skip,
+          take: limit,
+          orderBy: { tglKeluar: "desc" },
+          select: BARANG_KELUAR_SELECT,
+        }),
+        prisma.barangKeluar.count({ where }),
+      ]);
+
+      const barangKeluarFormatted: IBarangKeluarResponse[] = barangKeluar.map(
+        (item) => {
+          const transaksi = item.transaksiKeluar[0];
+
+          return {
+            id: item.id,
+            noInvoice: item.noInvoice,
+            tglKeluar: item.tglKeluar,
+            jatuhTempo: item.jatuhTempo,
+            namaPelanggan: item.pelanggan.nama,
+            alamatPelanggan: item.pelanggan.alamat,
+            items: item.details.map((detail) => ({
+              namaBarang: detail.barang.nama,
+              jmlPembelian: detail.jmlPembelian,
+              hargaJual: detail.hargaJual,
+              subtotal: detail.subtotal,
+            })),
+            totalOmset: item.totalOmset,
+            totalModal: item.totalModal,
+            labaKotor: item.labaKotor,
+            totalFee: transaksi?.totalFee || 0,
+            ongkir: transaksi?.ongkir || 0,
+            totalBiayaKeluar: transaksi?.totalBiayaKeluar || 0,
+            labaBerjalan: transaksi?.labaBerjalan || 0,
+            status: transaksi?.status || "BELUM_LUNAS",
+          };
+        }
+      );
+
+      return {
+        success: true,
+        data: barangKeluarFormatted,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+        jabatan,
+      };
+    } catch (error) {
+      console.error("Error fetching barang keluar:", error);
+      throw new Error("Terjadi kesalahan saat mengambil data barang keluar");
+    }
+  }
+);
+
+export const getBarangList = cache(async (jabatan: Jabatan) => {
+  try {
+    return prisma.barang.findMany({
+      where: {
+        admin: { jabatan },
+        stok: { gt: 0 },
       },
-    };
+      select: {
+        id: true,
+        nama: true,
+        harga: true,
+        stok: true,
+      },
+      orderBy: { nama: "asc" },
+    });
+  } catch (error) {
+    console.error("Error fetching barang list:", error);
+    throw new Error("Terjadi kesalahan saat mengambil data barang");
+  }
+});
 
-    if (filters.bulan && filters.tahun) {
-      const startDate = new Date(filters.tahun, filters.bulan - 1, 1);
-      const endDate = new Date();
+export const getPelangganList = cache(async (jabatan: Jabatan) => {
+  try {
+    return prisma.pelanggan.findMany({
+      where: {
+        admin: { jabatan },
+      },
+      select: {
+        id: true,
+        nama: true,
+        alamat: true,
+      },
+      orderBy: { nama: "asc" },
+    });
+  } catch (error) {
+    console.error("Error fetching pelanggan list:", error);
+    throw new Error("Terjadi kesalahan saat mengambil data pelanggan");
+  }
+});
 
-      where.tglKeluar = {
-        gte: startDate,
-        lte: endDate,
-      };
-    } else if (filters.tahun) {
-      const startDate = new Date(filters.tahun, 0, 1);
-      const endDate = new Date(filters.tahun, 11, 31, 23, 59, 59);
-
-      where.tglKeluar = {
-        gte: startDate,
-        lte: endDate,
-      };
-    }
-
-    if (filters.status === "BELUM_LUNAS") {
-      where.transaksiKeluar = {
-        some: {
-          status: "BELUM_LUNAS",
+export const getBarangKeluarById = cache(
+  async (id: number, jabatan: Jabatan) => {
+    try {
+      const barangKeluar = await prisma.barangKeluar.findFirst({
+        where: {
+          id,
+          admin: { jabatan },
         },
-      };
-    } else if (filters.status === "LUNAS") {
-      where.transaksiKeluar = {
-        some: {
-          status: "LUNAS",
-        },
-      };
-    }
+        select: BARANG_KELUAR_SELECT,
+      });
 
-    const [barangKeluar, total] = await Promise.all([
-      prisma.barangKeluar.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { tglKeluar: "desc" },
-        include: {
+      if (!barangKeluar) {
+        throw new Error("Data barang keluar tidak ditemukan");
+      }
+
+      const transaksi = barangKeluar.transaksiKeluar[0];
+
+      return {
+        id: barangKeluar.id,
+        noInvoice: barangKeluar.noInvoice,
+        tglKeluar: barangKeluar.tglKeluar,
+        jatuhTempo: barangKeluar.jatuhTempo,
+        namaPelanggan: barangKeluar.pelanggan.nama,
+        alamatPelanggan: barangKeluar.pelanggan.alamat,
+        items: barangKeluar.details.map((detail) => ({
+          namaBarang: detail.barang.nama,
+          jmlPembelian: detail.jmlPembelian,
+          hargaJual: detail.hargaJual,
+          subtotal: detail.subtotal,
+        })),
+        totalOmset: barangKeluar.totalOmset,
+        totalModal: barangKeluar.totalModal,
+        labaKotor: barangKeluar.labaKotor,
+        totalFee: transaksi?.totalFee || 0,
+        ongkir: transaksi?.ongkir || 0,
+        totalBiayaKeluar: transaksi?.totalBiayaKeluar || 0,
+        labaBerjalan: transaksi?.labaBerjalan || 0,
+        status: transaksi?.status || "BELUM_LUNAS",
+      };
+    } catch (error) {
+      console.error("Error fetching barang keluar detail:", error);
+      throw error;
+    }
+  }
+);
+
+export const getBarangKeluarByIdForEdit = cache(
+  async (id: number, jabatan: Jabatan) => {
+    try {
+      const barangKeluar = await prisma.barangKeluar.findFirst({
+        where: {
+          id,
+          admin: { jabatan },
+        },
+        select: {
+          id: true,
+          pelangganId: true,
+          tglKeluar: true,
+          jatuhTempo: true,
+          noInvoice: true,
+          totalOmset: true,
+          totalModal: true,
+          labaKotor: true,
           details: {
-            include: {
+            select: {
+              barangId: true,
+              jmlPembelian: true,
+              hargaJual: true,
+              subtotal: true,
               barang: {
                 select: {
-                  id: true,
                   nama: true,
-                  harga: true,
                 },
               },
             },
           },
           pelanggan: {
             select: {
-              id: true,
               nama: true,
               alamat: true,
             },
           },
-          admin: {
+          transaksiKeluar: {
             select: {
-              id: true,
-              username: true,
-              jabatan: true,
+              ongkir: true,
+              status: true,
+              totalFee: true,
+              totalBiayaKeluar: true,
+              labaBerjalan: true,
             },
           },
-          transaksiKeluar: true,
         },
-      }),
-      prisma.barangKeluar.count({ where }),
-    ]);
+      });
 
-    const barangKeluarFormatted: IBarangKeluarResponse[] = barangKeluar.map(
-      (item) => {
-        const transaksi = item.transaksiKeluar[0];
-
-        return {
-          id: item.id,
-          noInvoice: item.noInvoice,
-          tglKeluar: item.tglKeluar,
-          jatuhTempo: item.jatuhTempo,
-          namaPelanggan: item.pelanggan.nama,
-          alamatPelanggan: item.pelanggan.alamat,
-          items: item.details.map((detail) => ({
-            namaBarang: detail.barang.nama,
-            jmlPembelian: detail.jmlPembelian,
-            hargaJual: detail.hargaJual,
-            subtotal: detail.subtotal,
-          })),
-          totalOmset: item.totalOmset,
-          totalModal: item.totalModal,
-          labaKotor: item.labaKotor,
-          totalFee: transaksi?.totalFee || 0,
-          ongkir: transaksi?.ongkir || 0,
-          totalBiayaKeluar: transaksi?.totalBiayaKeluar || 0,
-          labaBerjalan: transaksi?.labaBerjalan || 0,
-          status: transaksi?.status || "BELUM_LUNAS",
-        };
+      if (!barangKeluar) {
+        throw new Error("Data barang keluar tidak ditemukan");
       }
-    );
 
-    return {
-      success: true,
-      data: barangKeluarFormatted,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-      jabatan,
-    };
+      const transaksi = barangKeluar.transaksiKeluar[0];
+
+      return {
+        id: barangKeluar.id,
+        pelangganId: barangKeluar.pelangganId,
+        tglKeluar: barangKeluar.tglKeluar,
+        jatuhTempo: barangKeluar.jatuhTempo,
+        noInvoice: barangKeluar.noInvoice,
+        namaPelanggan: barangKeluar.pelanggan.nama,
+        alamatPelanggan: barangKeluar.pelanggan.alamat,
+        ongkir: transaksi?.ongkir || 0,
+        status: transaksi?.status || "BELUM_LUNAS",
+        items: barangKeluar.details.map((detail) => ({
+          barangId: detail.barangId,
+          namaBarang: detail.barang.nama,
+          jmlPembelian: detail.jmlPembelian,
+          hargaJual: detail.hargaJual,
+          subtotal: detail.subtotal,
+        })),
+        totalOmset: barangKeluar.totalOmset,
+        totalModal: barangKeluar.totalModal,
+        labaKotor: barangKeluar.labaKotor,
+        totalFee: transaksi?.totalFee || 0,
+        totalBiayaKeluar: transaksi?.totalBiayaKeluar || 0,
+        labaBerjalan: transaksi?.labaBerjalan || 0,
+      };
+    } catch (error) {
+      console.error("Error fetching barang keluar for edit:", error);
+      throw error;
+    }
   }
+);
 
-  static async createBarangKeluar(
-    adminId: number,
-    jabatan: Jabatan,
-    data: IBarangKeluarInput
-  ) {
+export async function createBarangKeluar(params: CreateBarangKeluarParams) {
+  try {
+    const { adminId, jabatan, data, ipAddress, userAgent } = params;
     const barangIds = data.items.map((item) => item.barangId);
-    const barangs = await prisma.barang.findMany({
-      where: { id: { in: barangIds } },
-    });
+
+    const [barangs, pelanggan] = await Promise.all([
+      prisma.barang.findMany({
+        where: { id: { in: barangIds } },
+        select: { id: true, nama: true, harga: true, stok: true },
+      }),
+      prisma.pelanggan.findUnique({
+        where: { id: data.pelangganId },
+        select: { id: true, nama: true },
+      }),
+    ]);
 
     if (barangs.length !== barangIds.length) {
       throw new Error("Ada barang yang tidak ditemukan");
+    }
+
+    if (!pelanggan) {
+      throw new Error("Pelanggan tidak ditemukan");
     }
 
     for (const item of data.items) {
@@ -160,14 +361,6 @@ export class BarangKeluarService {
           `Stok ${barang.nama} tidak mencukupi. Stok tersedia: ${barang.stok}`
         );
       }
-    }
-
-    const pelanggan = await prisma.pelanggan.findUnique({
-      where: { id: data.pelangganId },
-    });
-
-    if (!pelanggan) {
-      throw new Error("Pelanggan tidak ditemukan");
     }
 
     const tglKeluar = new Date(data.tglKeluar);
@@ -234,11 +427,7 @@ export class BarangKeluarService {
         data.items.map((item) =>
           tx.barang.update({
             where: { id: item.barangId },
-            data: {
-              stok: {
-                decrement: item.jmlPembelian,
-              },
-            },
+            data: { stok: { decrement: item.jmlPembelian } },
           })
         )
       );
@@ -271,43 +460,69 @@ export class BarangKeluarService {
       return { barangKeluar, transaksiKeluar, pendapatan };
     });
 
+    logActivity({
+      adminId,
+      aksi: "CREATE",
+      tabelTarget: "barang_keluar",
+      dataBaru: JSON.stringify({
+        id: result.barangKeluar.id,
+        noInvoice: result.barangKeluar.noInvoice,
+        pelangganId: data.pelangganId,
+        totalOmset: result.barangKeluar.totalOmset,
+        totalModal: result.barangKeluar.totalModal,
+        labaKotor: result.barangKeluar.labaKotor,
+      }),
+      ipAddress: ipAddress || "unknown",
+      userAgent: userAgent || "unknown",
+    });
+
     return {
       success: true,
       message: "Barang keluar berhasil ditambahkan",
       data: result,
     };
+  } catch (error) {
+    console.error("Error creating barang keluar:", error);
+    throw error;
   }
+}
 
-  static async updateBarangKeluar(
-    id: number,
-    adminId: number,
-    jabatan: Jabatan,
-    data: IBarangKeluarInput
-  ) {
-    const existing = await prisma.barangKeluar.findFirst({
-      where: {
-        id,
-        admin: {
-          jabatan: jabatan,
+export async function updateBarangKeluar(params: UpdateBarangKeluarParams) {
+  try {
+    const { id, adminId, jabatan, data, ipAddress, userAgent } = params;
+    const barangIds = data.items.map((item) => item.barangId);
+
+    const [existing, barangs, pelanggan] = await Promise.all([
+      prisma.barangKeluar.findFirst({
+        where: {
+          id,
+          admin: { jabatan },
         },
-      },
-      include: {
-        details: true,
-        transaksiKeluar: true,
-      },
-    });
+        include: {
+          details: { select: { barangId: true, jmlPembelian: true } },
+          transaksiKeluar: { select: { id: true } },
+        },
+      }),
+      prisma.barang.findMany({
+        where: { id: { in: barangIds } },
+        select: { id: true, nama: true, harga: true, stok: true },
+      }),
+      prisma.pelanggan.findUnique({
+        where: { id: data.pelangganId },
+        select: { id: true },
+      }),
+    ]);
 
     if (!existing) {
       throw new Error("Data barang keluar tidak ditemukan");
     }
 
-    const barangIds = data.items.map((item) => item.barangId);
-    const barangs = await prisma.barang.findMany({
-      where: { id: { in: barangIds } },
-    });
-
     if (barangs.length !== barangIds.length) {
       throw new Error("Ada barang yang tidak ditemukan");
+    }
+
+    if (!pelanggan) {
+      throw new Error("Pelanggan tidak ditemukan");
     }
 
     for (const item of data.items) {
@@ -325,14 +540,6 @@ export class BarangKeluarService {
           } tidak mencukupi. Stok tersedia: ${availableStok}`
         );
       }
-    }
-
-    const pelanggan = await prisma.pelanggan.findUnique({
-      where: { id: data.pelangganId },
-    });
-
-    if (!pelanggan) {
-      throw new Error("Pelanggan tidak ditemukan");
     }
 
     const tglKeluar = new Date(data.tglKeluar);
@@ -377,11 +584,7 @@ export class BarangKeluarService {
         existing.details.map((detail) =>
           tx.barang.update({
             where: { id: detail.barangId },
-            data: {
-              stok: {
-                increment: detail.jmlPembelian,
-              },
-            },
+            data: { stok: { increment: detail.jmlPembelian } },
           })
         )
       );
@@ -413,11 +616,7 @@ export class BarangKeluarService {
         data.items.map((item) =>
           tx.barang.update({
             where: { id: item.barangId },
-            data: {
-              stok: {
-                decrement: item.jmlPembelian,
-              },
-            },
+            data: { stok: { decrement: item.jmlPembelian } },
           })
         )
       );
@@ -450,192 +649,55 @@ export class BarangKeluarService {
       return { barangKeluar, transaksiKeluar };
     });
 
+    logActivity({
+      adminId,
+      aksi: "UPDATE",
+      tabelTarget: "barang_keluar",
+      dataLama: JSON.stringify({
+        id: existing.id,
+        totalOmset: existing.totalOmset,
+        totalModal: existing.totalModal,
+      }),
+      dataBaru: JSON.stringify({
+        id: result.barangKeluar.id,
+        totalOmset: result.barangKeluar.totalOmset,
+        totalModal: result.barangKeluar.totalModal,
+        labaKotor: result.barangKeluar.labaKotor,
+      }),
+      ipAddress: ipAddress || "unknown",
+      userAgent: userAgent || "unknown",
+    });
+
     return {
       success: true,
       message: "Barang keluar berhasil diperbarui",
       data: result,
     };
+  } catch (error) {
+    console.error("Error updating barang keluar:", error);
+    throw error;
   }
+}
 
-  static async getBarangKeluarById(id: number, jabatan: Jabatan) {
+export async function deleteBarangKeluar(params: DeleteBarangKeluarParams) {
+  try {
+    const { id, jabatan, adminId, ipAddress, userAgent } = params;
+
     const barangKeluar = await prisma.barangKeluar.findFirst({
       where: {
         id,
-        admin: {
-          jabatan: jabatan,
-        },
+        admin: { jabatan },
       },
-      include: {
+      select: {
+        id: true,
+        noInvoice: true,
+        totalOmset: true,
         details: {
-          include: {
-            barang: {
-              select: {
-                id: true,
-                nama: true,
-                harga: true,
-              },
-            },
-          },
-        },
-        pelanggan: {
           select: {
-            id: true,
-            nama: true,
-            alamat: true,
+            barangId: true,
+            jmlPembelian: true,
           },
         },
-        admin: {
-          select: {
-            id: true,
-            username: true,
-            jabatan: true,
-          },
-        },
-        transaksiKeluar: true,
-      },
-    });
-
-    if (!barangKeluar) {
-      throw new Error("Data barang keluar tidak ditemukan");
-    }
-
-    const transaksi = barangKeluar.transaksiKeluar[0];
-
-    return {
-      id: barangKeluar.id,
-      noInvoice: barangKeluar.noInvoice,
-      tglKeluar: barangKeluar.tglKeluar,
-      jatuhTempo: barangKeluar.jatuhTempo,
-      namaPelanggan: barangKeluar.pelanggan.nama,
-      alamatPelanggan: barangKeluar.pelanggan.alamat,
-      items: barangKeluar.details.map((detail) => ({
-        namaBarang: detail.barang.nama,
-        jmlPembelian: detail.jmlPembelian,
-        hargaJual: detail.hargaJual,
-        subtotal: detail.subtotal,
-      })),
-      totalOmset: barangKeluar.totalOmset,
-      totalModal: barangKeluar.totalModal,
-      labaKotor: barangKeluar.labaKotor,
-      totalFee: transaksi?.totalFee || 0,
-      ongkir: transaksi?.ongkir || 0,
-      totalBiayaKeluar: transaksi?.totalBiayaKeluar || 0,
-      labaBerjalan: transaksi?.labaBerjalan || 0,
-      status: transaksi?.status || "BELUM_LUNAS",
-    };
-  }
-
-  static async getBarangKeluarByIdForEdit(id: number, jabatan: Jabatan) {
-    const barangKeluar = await prisma.barangKeluar.findFirst({
-      where: {
-        id,
-        admin: {
-          jabatan: jabatan,
-        },
-      },
-      include: {
-        details: {
-          include: {
-            barang: {
-              select: {
-                id: true,
-                nama: true,
-                harga: true,
-              },
-            },
-          },
-        },
-        pelanggan: {
-          select: {
-            id: true,
-            nama: true,
-            alamat: true,
-          },
-        },
-        transaksiKeluar: true,
-      },
-    });
-
-    if (!barangKeluar) {
-      throw new Error("Data barang keluar tidak ditemukan");
-    }
-
-    const transaksi = barangKeluar.transaksiKeluar[0];
-
-    return {
-      id: barangKeluar.id,
-      pelangganId: barangKeluar.pelangganId,
-      tglKeluar: barangKeluar.tglKeluar,
-      jatuhTempo: barangKeluar.jatuhTempo,
-      noInvoice: barangKeluar.noInvoice,
-      namaPelanggan: barangKeluar.pelanggan.nama,
-      alamatPelanggan: barangKeluar.pelanggan.alamat,
-      ongkir: transaksi?.ongkir || 0,
-      status: transaksi?.status || "BELUM_LUNAS",
-      items: barangKeluar.details.map((detail) => ({
-        barangId: detail.barangId,
-        namaBarang: detail.barang.nama,
-        jmlPembelian: detail.jmlPembelian,
-        hargaJual: detail.hargaJual,
-        subtotal: detail.subtotal,
-      })),
-      totalOmset: barangKeluar.totalOmset,
-      totalModal: barangKeluar.totalModal,
-      labaKotor: barangKeluar.labaKotor,
-      totalFee: transaksi?.totalFee || 0,
-      totalBiayaKeluar: transaksi?.totalBiayaKeluar || 0,
-      labaBerjalan: transaksi?.labaBerjalan || 0,
-    };
-  }
-
-  static async updateStatus(
-    id: number,
-    status: "LUNAS" | "BELUM_LUNAS",
-    jabatan: Jabatan
-  ) {
-    const barangKeluar = await prisma.barangKeluar.findFirst({
-      where: {
-        id,
-        admin: {
-          jabatan: jabatan,
-        },
-      },
-      include: {
-        transaksiKeluar: true,
-      },
-    });
-
-    if (!barangKeluar) {
-      throw new Error("Data barang keluar tidak ditemukan");
-    }
-
-    const transaksi = barangKeluar.transaksiKeluar[0];
-    if (!transaksi) {
-      throw new Error("Transaksi tidak ditemukan");
-    }
-
-    const updated = await prisma.transaksiKeluar.update({
-      where: { id: transaksi.id },
-      data: { status },
-    });
-
-    return {
-      success: true,
-      message: "Status berhasil diupdate",
-      data: updated,
-    };
-  }
-
-  static async deleteBarangKeluar(id: number, jabatan: Jabatan) {
-    const barangKeluar = await prisma.barangKeluar.findFirst({
-      where: {
-        id,
-        admin: {
-          jabatan: jabatan,
-        },
-      },
-      include: {
-        details: true,
       },
     });
 
@@ -648,11 +710,7 @@ export class BarangKeluarService {
         barangKeluar.details.map((detail) =>
           tx.barang.update({
             where: { id: detail.barangId },
-            data: {
-              stok: {
-                increment: detail.jmlPembelian,
-              },
-            },
+            data: { stok: { increment: detail.jmlPembelian } },
           })
         )
       );
@@ -678,9 +736,25 @@ export class BarangKeluarService {
       });
     });
 
+    logActivity({
+      adminId,
+      aksi: "DELETE",
+      tabelTarget: "barang_keluar",
+      dataLama: JSON.stringify({
+        id: barangKeluar.id,
+        noInvoice: barangKeluar.noInvoice,
+        totalOmset: barangKeluar.totalOmset,
+      }),
+      ipAddress: ipAddress || "unknown",
+      userAgent: userAgent || "unknown",
+    });
+
     return {
       success: true,
       message: "Barang keluar berhasil dihapus",
     };
+  } catch (error) {
+    console.error("Error deleting barang keluar:", error);
+    throw error;
   }
 }

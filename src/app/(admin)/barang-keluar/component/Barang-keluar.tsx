@@ -1,7 +1,16 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import { useState, useTransition, useMemo, memo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,14 +28,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Edit2,
   Eye,
   More,
@@ -36,39 +37,220 @@ import {
   Filter,
   Sort,
 } from "iconsax-react";
-import { useState } from "react";
-import BarangKeluarDialog from "./Dialog";
-import DetailDialog from "./detailDialog";
-import {
-  IBarangKeluarResponse,
-  IBarangKeluarPagination,
-} from "@/types/interfaces/IBarangKeluar";
-import { useRouter, useSearchParams } from "next/navigation";
-import { formatDate, formatCurrency } from "@/lib/utils";
+import dynamic from "next/dynamic";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import {
   deleteBarangKeluarAction,
+  getBarangKeluarDetailAction,
   getBarangKeluarByIdAction,
 } from "../actions/barangKeluarActions";
+import { useRouter, useSearchParams } from "next/navigation";
+import { IBarangKeluarResponse } from "@/types/interfaces/IBarangKeluar";
+import { toast } from "sonner";
 
-interface Props {
-  data: IBarangKeluarResponse[] | null;
-  pagination: IBarangKeluarPagination | null;
+const BarangKeluarDialog = dynamic(() => import("../component/Dialog"), {
+  ssr: false,
+  loading: () => <div className="fixed inset-0 bg-black/20 z-50" />,
+});
+
+const DetailDialog = dynamic(() => import("../component/detailDialog"), {
+  ssr: false,
+  loading: () => <div className="fixed inset-0 bg-black/20 z-50" />,
+});
+
+interface BarangKeluarClientProps {
+  barangKeluarList: IBarangKeluarResponse[];
+  barangOptions: any[];
+  pelangganOptions: any[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
   currentFilters?: {
-    bulan?: number;
-    tahun?: number;
+    filterBulan?: number;
     status?: "BELUM_LUNAS" | "LUNAS";
   };
 }
 
 type FilterPeriod = "all" | "thisMonth" | "3months" | "6months" | "1year";
+const FILTER_LABELS: Record<FilterPeriod, string> = {
+  all: "Semua Data",
+  thisMonth: "Bulan Ini",
+  "3months": "3 Bulan Terakhir",
+  "6months": "6 Bulan Terakhir",
+  "1year": "1 Tahun Terakhir",
+};
 
-export default function BarangKeluarTable({
-  data,
+const FILTER_TO_MONTHS: Record<FilterPeriod, number | null> = {
+  all: null,
+  thisMonth: 1,
+  "3months": 3,
+  "6months": 6,
+  "1year": 12,
+};
+
+const StatusBadge = memo(({ status }: { status: string }) => (
+  <Badge
+    variant={status === "LUNAS" ? "default" : "secondary"}
+    className="text-white text-xs"
+  >
+    {status === "LUNAS" ? "Lunas" : "Belum Lunas"}
+  </Badge>
+));
+StatusBadge.displayName = "StatusBadge";
+
+const BarangKeluarRow = memo(
+  ({
+    item,
+    onEdit,
+    onView,
+    onDelete,
+  }: {
+    item: IBarangKeluarResponse;
+    onEdit: (item: IBarangKeluarResponse) => void;
+    onView: (id: number) => void;
+    onDelete: (id: number) => void;
+  }) => {
+    const handleEdit = useCallback(() => onEdit(item), [onEdit, item]);
+    const handleView = useCallback(() => onView(item.id), [onView, item.id]);
+    const handleDelete = useCallback(
+      () => onDelete(item.id),
+      [onDelete, item.id]
+    );
+
+    return (
+      <TableRow className="hover:bg-gray-50">
+        <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center font-medium text-xs md:text-sm">
+          {item.noInvoice}
+        </TableCell>
+        <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm">
+          {formatDate(item.tglKeluar)}
+        </TableCell>
+        <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm">
+          {formatDate(item.jatuhTempo)}
+        </TableCell>
+        <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center font-medium text-xs md:text-sm">
+          {item.namaPelanggan}
+        </TableCell>
+        <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm">
+          {item.alamatPelanggan}
+        </TableCell>
+        <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center font-semibold text-sky-700 text-xs md:text-sm">
+          {formatCurrency(item.totalOmset)}
+        </TableCell>
+        <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center font-semibold text-xs md:text-sm">
+          {formatCurrency(item.labaBerjalan)}
+        </TableCell>
+        <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center">
+          <StatusBadge status={item.status} />
+        </TableCell>
+        <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="inline-flex items-center justify-center rounded-md p-1 hover:bg-muted/40">
+                <More size="20" color="#000" variant="Outline" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="bottom" align="end" className="w-36">
+              <DropdownMenuItem
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={handleView}
+              >
+                <Eye size="18" />
+                <span className="text-sm">Detail</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={handleEdit}
+              >
+                <Edit2 size="18" />
+                <span className="text-sm">Edit</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="flex items-center gap-2 cursor-pointer text-red-500"
+                onClick={handleDelete}
+              >
+                <Trash size="18" />
+                <span className="text-sm">Delete</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </TableCell>
+      </TableRow>
+    );
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.item.id === nextProps.item.id &&
+      prevProps.item.status === nextProps.item.status &&
+      prevProps.item.totalOmset === nextProps.item.totalOmset
+    );
+  }
+);
+BarangKeluarRow.displayName = "BarangKeluarRow";
+
+const EmptyState = memo(() => (
+  <TableRow>
+    <TableCell colSpan={9} className="text-center py-12 text-gray-500">
+      <div className="flex flex-col items-center gap-2">
+        <p className="text-base md:text-lg font-medium">
+          Belum ada data barang keluar
+        </p>
+        <p className="text-xs md:text-sm">
+          Klik tombol "Tambah Data" untuk menambahkan barang keluar
+        </p>
+      </div>
+    </TableCell>
+  </TableRow>
+));
+EmptyState.displayName = "EmptyState";
+
+const PaginationButton = memo(
+  ({
+    page,
+    currentPage,
+    onClick,
+    disabled,
+  }: {
+    page: number | string;
+    currentPage: number;
+    onClick: (page: number) => void;
+    disabled: boolean;
+  }) => {
+    const handleClick = useCallback(() => {
+      if (typeof page === "number") onClick(page);
+    }, [page, onClick]);
+
+    return (
+      <Button
+        variant={page === currentPage ? "default" : "outline"}
+        size="sm"
+        onClick={handleClick}
+        disabled={page === "..." || disabled}
+        className={`min-w-[32px] md:min-w-[40px] text-xs md:text-sm ${
+          page === "..." ? "cursor-default hover:bg-transparent" : ""
+        }`}
+      >
+        {page}
+      </Button>
+    );
+  }
+);
+PaginationButton.displayName = "PaginationButton";
+
+export default function BarangKeluarClient({
+  barangKeluarList,
+  barangOptions,
+  pelangganOptions,
   pagination,
   currentFilters,
-}: Props) {
+}: BarangKeluarClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+
   const [openDialog, setOpenDialog] = useState(false);
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
@@ -76,106 +258,116 @@ export default function BarangKeluarTable({
   const [detailData, setDetailData] = useState<any | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [currentPage, setCurrentPage] = useState(pagination?.page || 1);
 
-  const itemsPerPage = pagination?.limit ?? 10;
-  const totalPages = pagination?.totalPages ?? 1;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, pagination?.total ?? 0);
+  const { currentPage, itemsPerPage, totalPages, startIndex, endIndex } =
+    useMemo(
+      () => ({
+        currentPage: pagination?.page || 1,
+        itemsPerPage: pagination?.limit || 5,
+        totalPages: pagination?.totalPages || 1,
+        startIndex: ((pagination?.page || 1) - 1) * (pagination?.limit || 5),
+        endIndex: Math.min(
+          ((pagination?.page || 1) - 1) * (pagination?.limit || 5) +
+            (pagination?.limit || 5),
+          pagination?.total || 0
+        ),
+      }),
+      [pagination]
+    );
 
-  const getCurrentFilterPeriod = (): FilterPeriod => {
-    if (!currentFilters?.bulan && !currentFilters?.tahun) return "all";
+  const currentFilterPeriod = useMemo((): FilterPeriod => {
+    const filterBulan = currentFilters?.filterBulan;
+    if (!filterBulan) return "all";
 
-    const now = new Date();
-    const currentMonth = now.getMonth() + 1;
-    const currentYear = now.getFullYear();
+    const periodMap: Record<number, FilterPeriod> = {
+      1: "thisMonth",
+      3: "3months",
+      6: "6months",
+      12: "1year",
+    };
 
-    if (
-      currentFilters.bulan === currentMonth &&
-      currentFilters.tahun === currentYear
-    ) {
-      return "thisMonth";
+    return periodMap[filterBulan] || "all";
+  }, [currentFilters?.filterBulan]);
+
+  const pageNumbers = useMemo(() => {
+    const pages: (number | string)[] = [];
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
 
-    return "all";
-  };
-
-  const handleFilterChange = (period: FilterPeriod) => {
-    const params = new URLSearchParams(searchParams.toString());
-    const now = new Date();
-    params.set("page", "1");
-
-    switch (period) {
-      case "all":
-        params.delete("bulan");
-        params.delete("tahun");
-        break;
-
-      case "thisMonth":
-        params.set("bulan", String(now.getMonth() + 1));
-        params.set("tahun", String(now.getFullYear()));
-        break;
-
-      case "3months":
-        const threeMonthsAgo = new Date(now);
-        threeMonthsAgo.setMonth(now.getMonth() - 2);
-        params.set("bulan", String(threeMonthsAgo.getMonth() + 1));
-        params.set("tahun", String(threeMonthsAgo.getFullYear()));
-        break;
-
-      case "6months":
-        const sixMonthsAgo = new Date(now);
-        sixMonthsAgo.setMonth(now.getMonth() - 5);
-        params.set("bulan", String(sixMonthsAgo.getMonth() + 1));
-        params.set("tahun", String(sixMonthsAgo.getFullYear()));
-        break;
-
-      case "1year":
-        const oneYearAgo = new Date(now);
-        oneYearAgo.setFullYear(now.getFullYear() - 1);
-        params.set("bulan", String(oneYearAgo.getMonth() + 1));
-        params.set("tahun", String(oneYearAgo.getFullYear()));
-        break;
+    if (currentPage <= 3) {
+      pages.push(...[1, 2, 3, 4, "...", totalPages]);
+    } else if (currentPage >= totalPages - 2) {
+      pages.push(
+        1,
+        "...",
+        ...Array.from({ length: 4 }, (_, i) => totalPages - 3 + i)
+      );
+    } else {
+      pages.push(
+        1,
+        "...",
+        currentPage - 1,
+        currentPage,
+        currentPage + 1,
+        "...",
+        totalPages
+      );
     }
 
-    router.push(`?${params.toString()}`);
-  };
+    return pages;
+  }, [currentPage, totalPages]);
 
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      const newPage = currentPage - 1;
-      setCurrentPage(newPage);
+  const updateSearchParams = useCallback(
+    (updates: Record<string, string | null>) => {
       const params = new URLSearchParams(searchParams.toString());
-      params.set("page", String(newPage));
-      router.push(`?${params.toString()}`);
-    }
-  };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      const newPage = currentPage + 1;
-      setCurrentPage(newPage);
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("page", String(newPage));
-      router.push(`?${params.toString()}`);
-    }
-  };
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value === null) {
+          params.delete(key);
+        } else {
+          params.set(key, value);
+        }
+      });
 
-  const handlePageClick = (page: number) => {
-    setCurrentPage(page);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(page));
-    router.push(`?${params.toString()}`);
-  };
+      return params.toString();
+    },
+    [searchParams]
+  );
 
-  const handleAddNew = () => {
+  const handleFilterChange = useCallback(
+    (period: FilterPeriod) => {
+      startTransition(() => {
+        const filterBulan = FILTER_TO_MONTHS[period];
+        const queryString = updateSearchParams({
+          page: "1",
+          filterBulan: filterBulan?.toString() || null,
+        });
+        router.push(`?${queryString}`, { scroll: false });
+      });
+    },
+    [router, updateSearchParams]
+  );
+
+  const updatePage = useCallback(
+    (page: number) => {
+      startTransition(() => {
+        const queryString = updateSearchParams({ page: String(page) });
+        router.push(`?${queryString}`, { scroll: false });
+      });
+    },
+    [router, updateSearchParams]
+  );
+
+  const handleAddNew = useCallback(() => {
     setDialogMode("create");
     setEditData(null);
     setOpenDialog(true);
-  };
+  }, []);
 
-  const handleEdit = async (item: IBarangKeluarResponse) => {
+  const handleEdit = useCallback(async (item: IBarangKeluarResponse) => {
     try {
       const result = await getBarangKeluarByIdAction(item.id);
       if (result.success && result.data) {
@@ -183,154 +375,88 @@ export default function BarangKeluarTable({
         setEditData(result.data);
         setOpenDialog(true);
       } else {
-        alert("Gagal mengambil data barang keluar");
+        toast.error("Gagal mengambil data barang keluar");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Terjadi kesalahan saat mengambil data");
+      toast.error("Terjadi kesalahan saat mengambil data");
     }
-  };
+  }, []);
 
-  const handleViewDetail = async (id: number) => {
+  const handleViewDetail = useCallback(async (id: number) => {
     try {
-      const result = await getBarangKeluarByIdAction(id);
+      const result = await getBarangKeluarDetailAction(id);
       if (result.success && result.data) {
         setDetailData(result.data);
         setOpenDetailDialog(true);
       } else {
-        alert("Gagal mengambil detail barang keluar");
+        toast.error("Gagal mengambil detail barang keluar");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Terjadi kesalahan saat mengambil detail");
+      toast.error("Terjadi kesalahan saat mengambil detail");
     }
-  };
+  }, []);
 
-  const handleDeleteClick = (id: number) => {
+  const handleDeleteClick = useCallback((id: number) => {
     setItemToDelete(id);
     setDeleteDialogOpen(true);
-  };
+  }, []);
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = useCallback(async () => {
     if (!itemToDelete) return;
 
-    setIsDeleting(true);
-    try {
-      const result = await deleteBarangKeluarAction(itemToDelete);
+    startTransition(async () => {
+      try {
+        const result = await deleteBarangKeluarAction(itemToDelete);
 
-      if (!result.success) {
-        throw new Error(result.success || "Gagal menghapus data");
+        if ("error" in result) {
+          toast.error(result.error);
+        } else {
+          toast.success(result.message || "Berhasil menghapus data");
+          setDeleteDialogOpen(false);
+          setItemToDelete(null);
+          router.refresh();
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        toast.error(
+          error instanceof Error ? error.message : "Terjadi kesalahan"
+        );
       }
-
-      setDeleteDialogOpen(false);
-      setItemToDelete(null);
-      router.refresh();
-    } catch (error) {
-      console.error("Error:", error);
-      alert(error instanceof Error ? error.message : "Terjadi kesalahan");
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisible = 5;
-
-    if (totalPages <= maxVisible) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      if (currentPage <= 3) {
-        for (let i = 1; i <= 4; i++) pages.push(i);
-        pages.push("...");
-        pages.push(totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1);
-        pages.push("...");
-        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
-      } else {
-        pages.push(1);
-        pages.push("...");
-        pages.push(currentPage - 1);
-        pages.push(currentPage);
-        pages.push(currentPage + 1);
-        pages.push("...");
-        pages.push(totalPages);
-      }
-    }
-
-    return pages;
-  };
-
-  const getFilterLabel = (period: FilterPeriod): string => {
-    switch (period) {
-      case "all":
-        return "Semua Data";
-      case "thisMonth":
-        return "Bulan Ini";
-      case "3months":
-        return "3 Bulan Terakhir";
-      case "6months":
-        return "6 Bulan Terakhir";
-      case "1year":
-        return "1 Tahun Terakhir";
-      default:
-        return "Semua Data";
-    }
-  };
-
-  const currentFilterPeriod = getCurrentFilterPeriod();
+    });
+  }, [itemToDelete, router]);
 
   return (
     <>
       <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <p className="text-sm text-gray-600">
-          Menampilkan {startIndex + 1} - {endIndex} dari {pagination?.total} data
+          Menampilkan {startIndex + 1} - {endIndex} dari{" "}
+          {pagination?.total || 0} data
         </p>
 
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full sm:w-auto gap-2">
-                 <Sort size="20" color="#000" variant="Outline"/>
-                <span>{getFilterLabel(currentFilterPeriod)}</span>
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto gap-2"
+                disabled={isPending}
+              >
+                <Filter size="18" />
+                <span>{FILTER_LABELS[currentFilterPeriod]}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem
-                onClick={() => handleFilterChange("all")}
-                className={currentFilterPeriod === "all" ? "bg-sky-50" : ""}
-              >
-                Semua Data
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleFilterChange("thisMonth")}
-                className={
-                  currentFilterPeriod === "thisMonth" ? "bg-sky-50" : ""
-                }
-              >
-                Bulan Ini
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleFilterChange("3months")}
-                className={currentFilterPeriod === "3months" ? "bg-sky-50" : ""}
-              >
-                3 Bulan Terakhir
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleFilterChange("6months")}
-                className={currentFilterPeriod === "6months" ? "bg-sky-50" : ""}
-              >
-                6 Bulan Terakhir
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleFilterChange("1year")}
-                className={currentFilterPeriod === "1year" ? "bg-sky-50" : ""}
-              >
-                1 Tahun Terakhir
-              </DropdownMenuItem>
+              {(Object.keys(FILTER_LABELS) as FilterPeriod[]).map((period) => (
+                <DropdownMenuItem
+                  key={period}
+                  onClick={() => handleFilterChange(period)}
+                  className={currentFilterPeriod === period ? "bg-sky-50" : ""}
+                >
+                  {FILTER_LABELS[period]}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -365,100 +491,24 @@ export default function BarangKeluarTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={9}
-                  className="text-center py-12 text-gray-500"
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    <p className="text-base md:text-lg font-medium">
-                      Belum ada data barang keluar
-                    </p>
-                    <p className="text-xs md:text-sm">
-                      Klik tombol "Tambah Data" untuk menambahkan barang keluar
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
+            {barangKeluarList.length === 0 ? (
+              <EmptyState />
             ) : (
-              data?.map((item) => (
-                <TableRow key={item.id} className="hover:bg-gray-50">
-                  <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center font-medium text-xs md:text-sm">
-                    {item.noInvoice}
-                  </TableCell>
-                  <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm">
-                    {formatDate(item.tglKeluar)}
-                  </TableCell>
-                  <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm">
-                    {formatDate(item.jatuhTempo)}
-                  </TableCell>
-                  <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center font-medium text-xs md:text-sm">
-                    {item.namaPelanggan}
-                  </TableCell>
-                  <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm">
-                    {item.alamatPelanggan}
-                  </TableCell>
-                  <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center font-semibold text-sky-700 text-xs md:text-sm">
-                    {formatCurrency(item.totalOmset)}
-                  </TableCell>
-                  <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center font-semibold text-xs md:text-sm">
-                    {formatCurrency(item.labaBerjalan)}
-                  </TableCell>
-                  <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center">
-                    <Badge
-                      variant={
-                        item.status === "LUNAS" ? "default" : "secondary"
-                      }
-                      className="text-white text-xs"
-                    >
-                      {item.status === "LUNAS" ? "Lunas" : "Belum Lunas"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="px-4 md:px-6 py-3 md:py-4 text-center">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button className="inline-flex items-center justify-center rounded-md p-1 hover:bg-muted/40">
-                          <More size="20" color="#000" variant="Outline" />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        side="bottom"
-                        align="end"
-                        className="w-36"
-                      >
-                        <DropdownMenuItem
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={() => handleViewDetail(item.id)}
-                        >
-                          <Eye size="18" />
-                          <span className="text-sm">Detail</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={() => handleEdit(item)}
-                        >
-                          <Edit2 size="18" />
-                          <span className="text-sm">Edit</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="flex items-center gap-2 cursor-pointer text-red-500"
-                          onClick={() => handleDeleteClick(item.id)}
-                        >
-                          <Trash size="18" />
-                          <span className="text-sm">Delete</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
+              barangKeluarList.map((item) => (
+                <BarangKeluarRow
+                  key={item.id}
+                  item={item}
+                  onEdit={handleEdit}
+                  onView={handleViewDetail}
+                  onDelete={handleDeleteClick}
+                />
               ))
             )}
           </TableBody>
         </Table>
       </div>
 
-      {pagination?.total && pagination.total > 0 && (
+      {pagination?.total > 0 && (
         <div className="mt-4 md:mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 pb-20 md:pb-0">
           <p className="text-xs md:text-sm text-gray-600 order-2 sm:order-1">
             Halaman {currentPage} dari {totalPages}
@@ -468,8 +518,8 @@ export default function BarangKeluarTable({
             <Button
               variant="outline"
               size="sm"
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
+              onClick={() => updatePage(currentPage - 1)}
+              disabled={currentPage === 1 || isPending}
               className="gap-1 text-xs md:text-sm"
             >
               <ArrowLeft2 size="16" />
@@ -477,29 +527,22 @@ export default function BarangKeluarTable({
             </Button>
 
             <div className="flex gap-1 overflow-x-auto max-w-[200px] sm:max-w-none">
-              {getPageNumbers().map((page, index) => (
-                <Button
-                  key={index}
-                  variant={page === currentPage ? "default" : "outline"}
-                  size="sm"
-                  onClick={() =>
-                    typeof page === "number" && handlePageClick(page)
-                  }
-                  disabled={page === "..."}
-                  className={`min-w-[32px] md:min-w-[40px] text-xs md:text-sm ${
-                    page === "..." ? "cursor-default hover:bg-transparent" : ""
-                  }`}
-                >
-                  {page}
-                </Button>
+              {pageNumbers.map((page, index) => (
+                <PaginationButton
+                  key={`${page}-${index}`}
+                  page={page}
+                  currentPage={currentPage}
+                  onClick={updatePage}
+                  disabled={isPending}
+                />
               ))}
             </div>
 
             <Button
               variant="outline"
               size="sm"
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
+              onClick={() => updatePage(currentPage + 1)}
+              disabled={currentPage === totalPages || isPending}
               className="gap-1 text-xs md:text-sm"
             >
               <span className="hidden sm:inline">Next</span>
@@ -509,36 +552,49 @@ export default function BarangKeluarTable({
         </div>
       )}
 
-      <BarangKeluarDialog
-        open={openDialog}
-        onOpenChange={setOpenDialog}
-        editData={editData}
-        mode={dialogMode}
-      />
+      {openDialog && (
+        <BarangKeluarDialog
+          open={openDialog}
+          onOpenChange={setOpenDialog}
+          barangOptions={barangOptions}
+          pelangganOptions={pelangganOptions}
+          editData={editData}
+          mode={dialogMode}
+        />
+      )}
 
-      <DetailDialog
-        open={openDetailDialog}
-        onOpenChange={setOpenDetailDialog}
-        data={detailData}
-      />
+      {openDetailDialog && (
+        <DetailDialog
+          open={openDetailDialog}
+          onOpenChange={setOpenDetailDialog}
+          data={detailData}
+        />
+      )}
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle>Hapus Barang Keluar?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-base sm:text-lg">
+              Hapus Barang Keluar?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-xs sm:text-sm">
               Tindakan ini tidak dapat dibatalkan. Data barang keluar akan
               dihapus permanen dan stok barang akan dikembalikan.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Batal</AlertDialogCancel>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel
+              disabled={isPending}
+              className="w-full sm:w-auto text-xs sm:text-sm"
+            >
+              Batal
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
-              disabled={isDeleting}
-              className="bg-red-500 hover:bg-red-600"
+              disabled={isPending}
+              className="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-xs sm:text-sm"
             >
-              {isDeleting ? "Menghapus..." : "Hapus"}
+              {isPending ? "Menghapus..." : "Hapus"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

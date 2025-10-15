@@ -1,12 +1,16 @@
 import { Jabatan } from "@prisma/client";
 import prisma from "../prisma";
-import { cache } from "react";
 import {
   BarangWithAdmin,
   GetBarangParams,
 } from "@/types/interfaces/IDashboard";
 import { DASHBOARD } from "@/lib/constants";
-import { calculatePercentageChange, getMonthDateRange, getPreviousMonthDateRange, getWeekFromDate } from "../helpers/globalHelper";
+import {
+  calculatePercentageChange,
+  getMonthDateRange,
+  getPreviousMonthDateRange,
+  getWeekFromDate,
+} from "../helpers/globalHelper";
 
 const {
   MINGGU,
@@ -23,40 +27,38 @@ function initializeWeeklyData() {
   }, {} as Record<string, { pendapatan: number; pengeluaran: number }>);
 }
 
-export const getBarangList = cache(
-  async ({ jabatan }: GetBarangParams): Promise<BarangWithAdmin[]> => {
-    try {
-      const barangList = await prisma.barang.findMany({
-        where: {
-          admin: {
-            jabatan: jabatan as Jabatan,
+export async function getBarangList({
+  jabatan,
+}: GetBarangParams): Promise<BarangWithAdmin[]> {
+  try {
+    const barangList = await prisma.barang.findMany({
+      where: {
+        admin: { jabatan },
+      },
+      select: {
+        id: true,
+        nama: true,
+        stok: true,
+        harga: true,
+        createdAt: true,
+        admin: {
+          select: {
+            username: true,
+            jabatan: true,
           },
         },
-        select: {
-          id: true,
-          nama: true,
-          stok: true,
-          harga: true,
-          createdAt: true,
-          admin: {
-            select: {
-              username: true,
-              jabatan: true,
-            },
-          },
-        },
-        orderBy: { createdAt: "desc" },
-      });
+      },
+      orderBy: { createdAt: "desc" },
+    });
 
-      return barangList as BarangWithAdmin[];
-    } catch (error) {
-      console.error("Error fetching barang list:", error);
-      throw new Error("Terjadi kesalahan saat mengambil data barang");
-    }
+    return barangList as BarangWithAdmin[];
+  } catch (error) {
+    console.error("Error fetching barang list:", error);
+    throw new Error("Terjadi kesalahan saat mengambil data barang");
   }
-);
+}
 
-export const getDashboardData = cache(async (jabatan: Jabatan) => {
+export async function getDashboardData(jabatan: Jabatan) {
   try {
     const currentDate = new Date();
     const { firstDayOfMonth } = getMonthDateRange(currentDate);
@@ -66,9 +68,7 @@ export const getDashboardData = cache(async (jabatan: Jabatan) => {
     const [barangList, totalOmset, totalOmsetLastMonth] = await Promise.all([
       prisma.barang.findMany({
         where: {
-          admin: {
-            jabatan: jabatan as Jabatan,
-          },
+          admin: { jabatan },
         },
         select: {
           id: true,
@@ -88,9 +88,7 @@ export const getDashboardData = cache(async (jabatan: Jabatan) => {
 
       prisma.barangKeluar.aggregate({
         where: {
-          admin: {
-            jabatan: jabatan as Jabatan,
-          },
+          admin: { jabatan },
           tglKeluar: {
             gte: firstDayOfMonth,
             lte: currentDate,
@@ -103,9 +101,7 @@ export const getDashboardData = cache(async (jabatan: Jabatan) => {
 
       prisma.barangKeluar.aggregate({
         where: {
-          admin: {
-            jabatan: jabatan as Jabatan,
-          },
+          admin: { jabatan },
           tglKeluar: {
             gte: firstDayOfLastMonth,
             lte: lastDayOfLastMonth,
@@ -148,15 +144,13 @@ export const getDashboardData = cache(async (jabatan: Jabatan) => {
     console.error("Error fetching dashboard data:", error);
     throw new Error("Terjadi kesalahan saat mengambil data dashboard");
   }
-});
+}
 
-export const getPelangganAktif = cache(async (jabatan: Jabatan) => {
+export async function getPelangganAktif(jabatan: Jabatan) {
   try {
     const count = await prisma.pelanggan.count({
       where: {
-        admin: {
-          jabatan: jabatan as Jabatan,
-        },
+        admin: { jabatan },
       },
     });
     return count;
@@ -164,9 +158,9 @@ export const getPelangganAktif = cache(async (jabatan: Jabatan) => {
     console.error("Error fetching pelanggan aktif:", error);
     throw new Error("Terjadi kesalahan saat mengambil data pelanggan");
   }
-});
+}
 
-export const getChartStatistik = cache(async (jabatan: Jabatan) => {
+export async function getChartStatistik(jabatan: Jabatan) {
   try {
     const currentDate = new Date();
     const { firstDayOfMonth } = getMonthDateRange(currentDate);
@@ -230,9 +224,9 @@ export const getChartStatistik = cache(async (jabatan: Jabatan) => {
     console.error("Error fetching chart statistik:", error);
     throw new Error("Terjadi kesalahan saat mengambil data statistik");
   }
-});
+}
 
-export const getChartBarang = cache(async (jabatan: Jabatan) => {
+export async function getChartBarang(jabatan: Jabatan) {
   try {
     const currentDate = new Date();
     const { firstDayOfMonth } = getMonthDateRange(currentDate);
@@ -348,9 +342,9 @@ export const getChartBarang = cache(async (jabatan: Jabatan) => {
     console.error("Error fetching chart barang:", error);
     throw new Error("Terjadi kesalahan saat mengambil data chart barang");
   }
-});
+}
 
-export const getTagihanJatuhTempo = cache(async (jabatan: Jabatan) => {
+export async function getTagihanJatuhTempo(jabatan: Jabatan) {
   try {
     const currentDate = new Date();
     const oneMonthLater = new Date(currentDate);
@@ -444,4 +438,4 @@ export const getTagihanJatuhTempo = cache(async (jabatan: Jabatan) => {
     console.error("Error fetching tagihan jatuh tempo:", error);
     throw new Error("Terjadi kesalahan saat mengambil data tagihan");
   }
-});
+}

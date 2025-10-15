@@ -54,8 +54,7 @@ export interface IBarangKeluarListResponse {
 export interface IBarangKeluarFilter {
   page?: number;
   limit?: number;
-  bulan?: number;
-  tahun?: number;
+  filterBulan?: number;
   status?: "BELUM_LUNAS" | "LUNAS";
 }
 
