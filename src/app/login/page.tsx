@@ -42,8 +42,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen white">
-      <div className="bg-white p-8 w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-6 sm:px-10">
+      <div className="bg-white shadow-lg rounded-2xl p-8 sm:p-8 w-full max-w-xs sm:max-w-sm md:max-w-md scale-95 transition-transform">
         {/* Logo */}
         {/* <div className="flex justify-center mb-4">
           <img
@@ -54,10 +54,10 @@ export default function LoginPage() {
         </div> */}
 
         {/* Title */}
-        <h2 className="text-center text-2xl font-semibold text-gray-800 mb-2">
+        <h2 className="text-center text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
           Sign in
         </h2>
-        <p className="text-center text-sm text-gray-500 mb-6">
+        <p className="text-center text-xs sm:text-sm text-gray-500 mb-6">
           Do you already have an account?{" "}
           <a href="/signup" className="text-blue-600 hover:underline">
             Sign up
@@ -65,7 +65,7 @@ export default function LoginPage() {
         </p>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-xs sm:text-sm">
             {error}
           </div>
         )}
@@ -76,8 +76,8 @@ export default function LoginPage() {
             <label
               className={`absolute left-12 transition-all duration-200 pointer-events-none ${
                 username
-                  ? "-top-2 text-xs text-gray-500 bg-white px-1"
-                  : "top-4 text-sm text-gray-400"
+                  ? "-top-2 text-xs sm:text-sm text-gray-500 bg-white px-1"
+                  : "sm:top-4 top-5 text-xs sm:text-sm text-gray-400"
               }`}
             >
               Username
@@ -95,8 +95,8 @@ export default function LoginPage() {
             <label
               className={`absolute left-12 transition-all duration-200 pointer-events-none ${
                 password
-                  ? "-top-2 text-xs text-gray-500 bg-white px-1"
-                  : "top-4 text-sm text-gray-400"
+                  ? "-top-2 text-xs sm:text-sm text-gray-500 bg-white px-1"
+                  : "sm:top-4 top-5 text-xs sm:text-sm text-gray-400"
               }`}
             >
               Password
@@ -122,7 +122,7 @@ export default function LoginPage() {
           </div>
 
           {/* Remember me & Forgot password */}
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center justify-between text-xs sm:text-sm">
             <label className="flex items-center">
               <input
                 type="checkbox"
@@ -143,7 +143,7 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full"
+            className="w-full text-sm sm:text-base py-2 sm:py-3"
             variant="default"
           >
             {isLoading ? "Signing in..." : "Sign in"}
@@ -153,7 +153,7 @@ export default function LoginPage() {
             type="button"
             disabled={isLoading}
             variant="outline"
-            className="w-full text-gray-500 border-gray-300 hover:bg-gray-50"
+            className="w-full text-gray-500 border-gray-300 hover:bg-gray-50 text-sm sm:text-base py-2 sm:py-3"
             onClick={() => (window.location.href = "/dashboard")}
           >
             Login sebagai tamu
