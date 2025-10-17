@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import { DetailData } from "@/types/interfaces/IBarangKeluar";
 
 interface DetailDialogProps {
@@ -26,30 +26,6 @@ interface DetailDialogProps {
   adminName?: string;
   adminRole?: string;
 }
-
-export const formatDate = (date: Date): string => {
-  const months = [
-    "Januari",
-    "Februari",
-    "Maret",
-    "April",
-    "Mei",
-    "Juni",
-    "Juli",
-    "Agustus",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
-  ];
-
-  const d = new Date(date);
-  const day = d.getDate();
-  const month = months[d.getMonth()];
-  const year = d.getFullYear();
-
-  return `${day} ${month} ${year}`;
-};
 
 export default function DetailDialog({
   open,

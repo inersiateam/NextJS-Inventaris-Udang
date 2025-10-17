@@ -46,7 +46,6 @@ const handleDetail = async (id: number) => {
         toast.error("Gagal memuat detail pelanggan");
       }
     } else {
-      // ⬇️ tambahkan pengecekan agar TypeScript paham
       const errMsg = "error" in result ? result.error : "Gagal memuat detail pelanggan";
       toast.error(errMsg);
     }

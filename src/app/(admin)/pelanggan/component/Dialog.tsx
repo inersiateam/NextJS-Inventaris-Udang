@@ -64,7 +64,7 @@ export default function PelangganDialog({
         toast.success(result.success);
         setNama("");
         setAlamat("");
-        onOpenChange(true); // true indicates success
+        onOpenChange(true);
       } else {
         toast.error(result.success || "Terjadi kesalahan");
       }
