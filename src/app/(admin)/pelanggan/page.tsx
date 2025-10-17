@@ -1,9 +1,6 @@
-// app/pelanggan/page.tsx
 import Pelanggan from "./component/Pelanggan";
 import { getPelangganAction } from "./actions/pelangganActions";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 export default async function Page() {
   const result = await getPelangganAction();
@@ -29,3 +26,6 @@ export default async function Page() {
     </div>
   );
 }
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
