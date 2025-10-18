@@ -123,3 +123,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .highlight-blue {
+    background-color: #004dac !important; 
+    transition: background-color 0.5s ease-in-out;
+  }
+
+  @keyframes fadeHighlight {
+    0% {
+      background-color: #bfdbfe;
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+
+  .highlight-blue {
+    animation: fadeHighlight 3s ease forwards;
+  }
+}

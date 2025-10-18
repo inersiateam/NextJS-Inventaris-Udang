@@ -11,7 +11,7 @@ import { PelangganWithAdmin } from "@/types/interfaces/IPelanggan";
 import { deletePelangganAction, getPelangganDetailAction } from "../actions/pelangganActions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
+import useHighlightEffect from '@/hooks/useHighlightEffect';
 interface PelangganProps {
   data: PelangganWithAdmin[];
 }
@@ -87,7 +87,7 @@ const handleDetail = async (id: number) => {
       router.refresh();
     }
   };
-
+useHighlightEffect('pelanggan'); 
   return (
     <>
       <div className="flex justify-end mb-4 mt-6">
@@ -120,7 +120,7 @@ const handleDetail = async (id: number) => {
               </TableRow>
             ) : (
               data.map((item, index) => (
-                <TableRow key={item.id} className="hover:bg-gray-50">
+                <TableRow key={item.id} id={`pelanggan-${item.id}`}  className="hover:bg-gray-50">
                   <TableCell className="whitespace-nowrap px-4">{index + 1}</TableCell>
                   <TableCell className="whitespace-nowrap px-4 font-medium">{item.nama}</TableCell>
                   <TableCell className="px-4 max-w-xs truncate" title={item.alamat}>
