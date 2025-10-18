@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
-import { Quicksand } from "next/font/google";
 import "./globals.css";
 import Providers from "../provider";
 import InventarisDashboard from "@/components/layout/inventaris-dashboard";
 import { Toaster } from "@/components/ui/sonner";
-
-const quicksand = Quicksand({
-  subsets: ["latin"],
-  variable: "--font-quicksand",
-});
 
 export const metadata: Metadata = {
   title: "Inventaris App",

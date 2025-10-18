@@ -8,6 +8,7 @@ import {
   IPengeluaranResponse,
   IPengeluaranCreateResponse,
 } from "@/types/interfaces/IPengeluaran";
+import { logActivity } from "../fileLogger";
 
 export class PengeluaranService {
   async getPengeluaran(
@@ -77,25 +78,6 @@ export class PengeluaranService {
       totalPengeluaran: totalPengeluaranAggregate._sum.totalHarga || 0,
     };
 
-    prisma.logAktivitas
-      .create({
-        data: {
-          adminId: adminId,
-          aksi: "READ",
-          tabelTarget: "pengeluaran",
-          dataBaru: JSON.stringify({
-            count: pengeluaran.length,
-            totalPengeluaran: summary.totalPengeluaran,
-          }),
-          ipAddress: ipAddress,
-          userAgent: userAgent,
-          timestamp: new Date(),
-        },
-      })
-      .catch((error) => {
-        console.error("Failed to log activity:", error);
-      });
-
     return {
       success: true,
       data: pengeluaran as IPengeluaran[],
@@ -144,21 +126,14 @@ export class PengeluaranService {
       },
     });
 
-    prisma.logAktivitas
-      .create({
-        data: {
-          adminId: adminId,
-          aksi: "CREATE",
-          tabelTarget: "pengeluaran",
-          dataBaru: JSON.stringify(pengeluaran),
-          ipAddress: ipAddress,
-          userAgent: userAgent,
-          timestamp: new Date(),
-        },
-      })
-      .catch((error) => {
-        console.error("Failed to log activity:", error);
-      });
+    logActivity({
+      adminId: adminId,
+      aksi: "CREATE",
+      tabelTarget: "pengeluaran",
+      dataBaru: JSON.stringify(pengeluaran),
+      ipAddress: ipAddress,
+      userAgent: userAgent,
+    });
 
     return {
       success: true,
@@ -215,22 +190,15 @@ export class PengeluaranService {
       }),
     ]);
 
-    prisma.logAktivitas
-      .create({
-        data: {
-          adminId: adminId,
-          aksi: "UPDATE",
-          tabelTarget: "pengeluaran",
-          dataLama: JSON.stringify(existingPengeluaran),
-          dataBaru: JSON.stringify(pengeluaran),
-          ipAddress: ipAddress,
-          userAgent: userAgent,
-          timestamp: new Date(),
-        },
-      })
-      .catch((error) => {
-        console.error("Failed to log activity:", error);
-      });
+    logActivity({
+      adminId: adminId,
+      aksi: "UPDATE",
+      tabelTarget: "pengeluaran",
+      dataLama: JSON.stringify(existingPengeluaran),
+      dataBaru: JSON.stringify(pengeluaran),
+      ipAddress: ipAddress,
+      userAgent: userAgent,
+    });
 
     return {
       success: true,
@@ -254,21 +222,14 @@ export class PengeluaranService {
       }),
     ]);
 
-    prisma.logAktivitas
-      .create({
-        data: {
-          adminId: adminId,
-          aksi: "DELETE",
-          tabelTarget: "pengeluaran",
-          dataLama: JSON.stringify(existingPengeluaran),
-          ipAddress: ipAddress,
-          userAgent: userAgent,
-          timestamp: new Date(),
-        },
-      })
-      .catch((error) => {
-        console.error("Failed to log activity:", error);
-      });
+    logActivity({
+      adminId: adminId,
+      aksi: "DELETE",
+      tabelTarget: "pengeluaran",
+      dataLama: JSON.stringify(existingPengeluaran),
+      ipAddress: ipAddress,
+      userAgent: userAgent,
+    });
 
     return {
       success: true,

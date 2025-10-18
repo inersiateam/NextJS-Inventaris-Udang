@@ -444,20 +444,7 @@ export async function createBarangKeluar(params: CreateBarangKeluarParams) {
         },
       });
 
-      const pendapatan = await tx.pendapatan.create({
-        data: {
-          transaksiKeluarId: transaksiKeluar.id,
-          bulan,
-          tahun,
-          owner1,
-          owner2,
-          owner3,
-          cv,
-          tanggal: tglKeluar,
-        },
-      });
-
-      return { barangKeluar, transaksiKeluar, pendapatan };
+      return { barangKeluar, transaksiKeluar };
     });
 
     logActivity({
@@ -633,19 +620,6 @@ export async function updateBarangKeluar(params: UpdateBarangKeluarParams) {
         },
       });
 
-      await tx.pendapatan.updateMany({
-        where: { transaksiKeluarId: transaksi.id },
-        data: {
-          bulan,
-          tahun,
-          owner1,
-          owner2,
-          owner3,
-          cv,
-          tanggal: tglKeluar,
-        },
-      });
-
       return { barangKeluar, transaksiKeluar };
     });
 
@@ -714,14 +688,6 @@ export async function deleteBarangKeluar(params: DeleteBarangKeluarParams) {
           })
         )
       );
-
-      await tx.pendapatan.deleteMany({
-        where: {
-          transaksiKeluar: {
-            barangKeluarId: id,
-          },
-        },
-      });
 
       await tx.transaksiKeluar.deleteMany({
         where: { barangKeluarId: id },
