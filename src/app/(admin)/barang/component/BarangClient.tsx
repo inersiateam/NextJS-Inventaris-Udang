@@ -113,7 +113,6 @@ export default function BarangClient({
   return (
     <>
       <div className="flex justify-end mb-4">
-
         <DialogBarang onSuccess={() => fetchBarang()} />
       </div>
 
