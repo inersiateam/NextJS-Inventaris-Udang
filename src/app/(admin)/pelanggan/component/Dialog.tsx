@@ -61,7 +61,7 @@ export default function PelangganDialog({
         : await createPelangganAction(input);
 
       if (result.success) {
-        toast.success(result.success);
+        toast.success(result.success || "Berhasil Menyimpan Data Pelanggan");
         setNama("");
         setAlamat("");
         onOpenChange(true);
