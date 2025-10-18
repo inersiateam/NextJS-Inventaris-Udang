@@ -212,11 +212,11 @@ export default function LaporanClient({
   }, [chartBarang.length]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-2">
       {/* Header with Filter */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Laporan</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Laporan</h1>
           <p className="text-gray-500 text-sm md:text-base mt-1">
             Laporan keuangan dan analisis performa bisnis
           </p>
