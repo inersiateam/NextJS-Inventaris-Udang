@@ -35,5 +35,14 @@
 >>>>>>> 63989a1 (search)
 =======
 {"timestamp":"2025-10-18T07:09:52.647Z","adminId":2,"aksi":"DELETE","tabelTarget":"pelanggan","dataLama":"{\"id\":13,\"nama\":\"dasdadsa\",\"alamat\":\"daaaaa\"}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
+<<<<<<< HEAD
 >>>>>>> 84dc0b7 (update:Profile)
+<<<<<<< HEAD
 >>>>>>> 56b0676 (update:Profile)
+=======
+=======
+{"timestamp":"2025-10-18T07:44:46.840Z","adminId":2,"aksi":"CREATE","tabelTarget":"barang","dataBaru":"{\"id\":3,\"nama\":\"contoh\",\"harga\":30000}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
+{"timestamp":"2025-10-18T07:44:51.816Z","adminId":2,"aksi":"DELETE","tabelTarget":"barang","dataLama":"{\"id\":3,\"nama\":\"contoh\",\"harga\":30000,\"stok\":0}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
+{"timestamp":"2025-10-18T07:47:57.434Z","adminId":2,"aksi":"CREATE","tabelTarget":"barang_keluar","dataBaru":"{\"id\":9,\"noInvoice\":\"INV/003/18/ABL/10/2025\",\"pelangganId\":5,\"totalOmset\":22500000,\"totalModal\":2475000,\"labaKotor\":20025000}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
+>>>>>>> dc81f24 (Update:Fetch Barang)
+>>>>>>> 89048f2 (Update:Fetch Barang)
