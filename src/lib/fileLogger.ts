@@ -7,8 +7,8 @@ type LogEntry = {
   tabelTarget: string;
   dataLama?: string;
   dataBaru?: string;
-  ipAddress: string;
-  userAgent: string;
+  ipAddress?: string;
+  userAgent?: string;
 };
 
 class FileActivityLogger {

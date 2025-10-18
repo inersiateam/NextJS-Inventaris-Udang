@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { loginSchema } from "./validations/authValidator";
 import { Jabatan } from "@prisma/client";
+import { logActivity } from "./fileLogger";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -25,16 +26,13 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Akun Anda tidak aktif. Hubungi administrator.");
 
         const isPasswordValid = await bcrypt.compare(password, admin.password);
-        if (!isPasswordValid)
-          throw new Error("Username atau password salah");
+        if (!isPasswordValid) throw new Error("Username atau password salah");
 
-        await prisma.logAktivitas.create({
-          data: {
-            adminId: admin.id,
-            aksi: "LOGIN",
-            tabelTarget: "admin",
-            timestamp: new Date(),
-          },
+        logActivity({
+          adminId: admin.id,
+          aksi: "Login",
+          tabelTarget: "admin",
+          dataBaru: JSON.stringify(admin)
         });
 
         return {

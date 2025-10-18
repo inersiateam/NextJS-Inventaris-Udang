@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { registerSchema } from "@/lib/validations/authValidator";
 import { ZodError } from "zod";
+import { logActivity } from "@/lib/fileLogger";
 
 export async function POST(req: NextRequest) {
   try {
@@ -36,18 +37,16 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await prisma.logAktivitas.create({
-      data: {
-        adminId: newAdmin.id,
-        aksi: "REGISTER",
-        tabelTarget: "admin",
-        dataBaru: JSON.stringify(newAdmin),
-        ipAddress:
-          req.headers.get("x-forwarded-for") ||
-          req.headers.get("x-real-ip") ||
-          "unknown",
-        userAgent: req.headers.get("user-agent") || "unknown",
-      },
+    logActivity({
+      adminId: newAdmin.id,
+      aksi: "REGISTER",
+      tabelTarget: "admin",
+      dataBaru: JSON.stringify(newAdmin),
+      ipAddress:
+        req.headers.get("x-forwarded-for") ||
+        req.headers.get("x-real-ip") ||
+        "unknown",
+      userAgent: req.headers.get("user-agent") || "unknown",
     });
 
     return NextResponse.json(
