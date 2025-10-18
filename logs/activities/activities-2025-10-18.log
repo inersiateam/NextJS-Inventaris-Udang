@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 63989a1 (search)
+
 {"timestamp":"2025-10-18T05:06:01.671Z","adminId":2,"aksi":"CREATE","tabelTarget":"pelanggan","dataBaru":"{\"id\":4,\"nama\":\"Inersia\",\"alamat\":\"Surabaya\"}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
 {"timestamp":"2025-10-18T05:06:20.957Z","adminId":2,"aksi":"CREATE","tabelTarget":"pelanggan","dataBaru":"{\"id\":5,\"nama\":\"Tambak Krik\",\"alamat\":\"Kediri\"}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
 {"timestamp":"2025-10-18T05:08:08.946Z","adminId":2,"aksi":"CREATE","tabelTarget":"pelanggan","dataBaru":"{\"id\":6,\"nama\":\"Umblux\",\"alamat\":\"Malang\"}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
@@ -21,28 +18,14 @@
 {"timestamp":"2025-10-18T05:31:33.957Z","adminId":2,"aksi":"CREATE","tabelTarget":"pelanggan","dataBaru":"{\"id\":11,\"nama\":\"ddd\",\"alamat\":\"aaaaa\"}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
 {"timestamp":"2025-10-18T05:31:40.101Z","adminId":2,"aksi":"CREATE","tabelTarget":"pelanggan","dataBaru":"{\"id\":12,\"nama\":\"aaa\",\"alamat\":\"aaaaa\"}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
 {"timestamp":"2025-10-18T05:31:48.722Z","adminId":2,"aksi":"CREATE","tabelTarget":"pelanggan","dataBaru":"{\"id\":13,\"nama\":\"dasdadsa\",\"alamat\":\"daaaaa\"}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 {"timestamp":"2025-10-18T06:54:50.834Z","adminId":1,"aksi":"UPDATE_PROFILE","tabelTarget":"admin","dataLama":"{\"id\":1,\"username\":\"abl\"}","dataBaru":"{\"id\":1,\"username\":\"Abl\"}","ipAddress":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0"}
 {"timestamp":"2025-10-18T06:55:22.915Z","adminId":1,"aksi":"CHANGE_PASSWORD","tabelTarget":"admin","dataBaru":"{\"id\":1,\"username\":\"Abl\",\"message\":\"Password changed successfully\"}","ipAddress":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0"}
->>>>>>> 8c64a5067a6a18b74bd5891cbc4834d0a68448a9
 {"timestamp":"2025-10-18T07:09:52.647Z","adminId":2,"aksi":"DELETE","tabelTarget":"pelanggan","dataLama":"{\"id\":13,\"nama\":\"dasdadsa\",\"alamat\":\"daaaaa\"}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
 {"timestamp":"2025-10-18T07:44:46.840Z","adminId":2,"aksi":"CREATE","tabelTarget":"barang","dataBaru":"{\"id\":3,\"nama\":\"contoh\",\"harga\":30000}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
 {"timestamp":"2025-10-18T07:44:51.816Z","adminId":2,"aksi":"DELETE","tabelTarget":"barang","dataLama":"{\"id\":3,\"nama\":\"contoh\",\"harga\":30000,\"stok\":0}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
 {"timestamp":"2025-10-18T07:47:57.434Z","adminId":2,"aksi":"CREATE","tabelTarget":"barang_keluar","dataBaru":"{\"id\":9,\"noInvoice\":\"INV/003/18/ABL/10/2025\",\"pelangganId\":5,\"totalOmset\":22500000,\"totalModal\":2475000,\"labaKotor\":20025000}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
-=======
->>>>>>> 63989a1 (search)
-=======
 {"timestamp":"2025-10-18T07:09:52.647Z","adminId":2,"aksi":"DELETE","tabelTarget":"pelanggan","dataLama":"{\"id\":13,\"nama\":\"dasdadsa\",\"alamat\":\"daaaaa\"}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
-<<<<<<< HEAD
->>>>>>> 84dc0b7 (update:Profile)
-<<<<<<< HEAD
->>>>>>> 56b0676 (update:Profile)
-=======
-=======
 {"timestamp":"2025-10-18T07:44:46.840Z","adminId":2,"aksi":"CREATE","tabelTarget":"barang","dataBaru":"{\"id\":3,\"nama\":\"contoh\",\"harga\":30000}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
 {"timestamp":"2025-10-18T07:44:51.816Z","adminId":2,"aksi":"DELETE","tabelTarget":"barang","dataLama":"{\"id\":3,\"nama\":\"contoh\",\"harga\":30000,\"stok\":0}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
 {"timestamp":"2025-10-18T07:47:57.434Z","adminId":2,"aksi":"CREATE","tabelTarget":"barang_keluar","dataBaru":"{\"id\":9,\"noInvoice\":\"INV/003/18/ABL/10/2025\",\"pelangganId\":5,\"totalOmset\":22500000,\"totalModal\":2475000,\"labaKotor\":20025000}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
->>>>>>> dc81f24 (Update:Fetch Barang)
->>>>>>> 89048f2 (Update:Fetch Barang)
+
