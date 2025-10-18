@@ -165,46 +165,88 @@ export async function getChartStatistik(jabatan: Jabatan) {
     const currentDate = new Date();
     const { firstDayOfMonth } = getMonthDateRange(currentDate);
 
-    const [pendapatanData, pengeluaranData] = await Promise.all([
-      prisma.barangKeluar.findMany({
-        where: {
+    const barangKeluarData = await prisma.barangKeluarDetail.findMany({
+      where: {
+        barangKeluar: {
           admin: { jabatan },
           tglKeluar: {
             gte: firstDayOfMonth,
             lte: currentDate,
           },
         },
-        select: {
-          tglKeluar: true,
-          totalOmset: true,
+      },
+      include: {
+        barangKeluar: {
+          select: {
+            tglKeluar: true,
+          },
         },
-      }),
+      },
+    });
 
-      prisma.barangMasuk.findMany({
-        where: {
+    const barangKeluarWithModal = await prisma.barangKeluarDetail.findMany({
+      where: {
+        barangKeluar: {
           admin: { jabatan },
-          tglMasuk: {
+          tglKeluar: {
             gte: firstDayOfMonth,
             lte: currentDate,
           },
         },
-        select: {
-          tglMasuk: true,
-          totalHarga: true,
+      },
+      include: {
+        barang: {
+          select: {
+            harga: true,
+          },
         },
-      }),
-    ]);
-
-    const weeklyData = initializeWeeklyData();
-
-    pendapatanData.forEach((item) => {
-      const week = getWeekFromDate(new Date(item.tglKeluar));
-      weeklyData[week].pendapatan += item.totalOmset;
+        barangKeluar: {
+          select: {
+            tglKeluar: true,
+            transaksiKeluar: {
+              select: {
+                totalBiayaKeluar: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    pengeluaranData.forEach((item) => {
-      const week = getWeekFromDate(new Date(item.tglMasuk));
-      weeklyData[week].pengeluaran += item.totalHarga;
+    const weeklyData = initializeWeeklyData();
+    barangKeluarData.forEach((item) => {
+      const week = getWeekFromDate(new Date(item.barangKeluar.tglKeluar));
+      const omset = item.jmlPembelian * item.hargaJual;
+      weeklyData[week].pendapatan += omset;
+    });
+
+    const modalPerTransaksi = new Map<number, number>();
+    barangKeluarWithModal.forEach((item) => {
+      const hpp = item.jmlPembelian * item.barang.harga;
+      const barangKeluarId = item.barangKeluarId;
+
+      if (!modalPerTransaksi.has(barangKeluarId)) {
+        modalPerTransaksi.set(barangKeluarId, 0);
+      }
+
+      modalPerTransaksi.set(
+        barangKeluarId,
+        modalPerTransaksi.get(barangKeluarId)! + hpp
+      );
+    });
+
+    barangKeluarWithModal.forEach((item) => {
+      const week = getWeekFromDate(new Date(item.barangKeluar.tglKeluar));
+      const barangKeluarId = item.barangKeluarId;
+
+      const modalHPP = modalPerTransaksi.get(barangKeluarId) || 0;
+      const biayaKeluar =
+        item.barangKeluar.transaksiKeluar?.[0]?.totalBiayaKeluar || 0;
+
+      if (modalPerTransaksi.has(barangKeluarId)) {
+        weeklyData[week].pengeluaran += modalHPP + biayaKeluar;
+        modalPerTransaksi.delete(barangKeluarId);
+      }
     });
 
     const labels = Object.keys(weeklyData);
