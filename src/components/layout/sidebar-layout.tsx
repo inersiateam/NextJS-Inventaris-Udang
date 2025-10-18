@@ -159,7 +159,7 @@ export default function AppSidebar({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2 }}
                   className={cn(
-                    "text-[10px] font-medium",
+                    "text-[8px] font-medium",
                     active ? "text-primary" : "text-gray-500"
                   )}
                 >

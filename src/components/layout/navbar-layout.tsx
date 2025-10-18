@@ -31,7 +31,7 @@ export default function AppNavbar({
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}
-          className="hidden md:block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"       >
+          className="hidden md:block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition border border-gray"       >
           <Menu className="h-6 w-6 text-gray-700 dark:text-gray-300" />
         </button>
       </div>
