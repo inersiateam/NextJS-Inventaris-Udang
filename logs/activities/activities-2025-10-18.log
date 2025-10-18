@@ -22,3 +22,4 @@
 {"timestamp":"2025-10-18T06:54:50.834Z","adminId":1,"aksi":"UPDATE_PROFILE","tabelTarget":"admin","dataLama":"{\"id\":1,\"username\":\"abl\"}","dataBaru":"{\"id\":1,\"username\":\"Abl\"}","ipAddress":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0"}
 {"timestamp":"2025-10-18T06:55:22.915Z","adminId":1,"aksi":"CHANGE_PASSWORD","tabelTarget":"admin","dataBaru":"{\"id\":1,\"username\":\"Abl\",\"message\":\"Password changed successfully\"}","ipAddress":"::ffff:127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0"}
 >>>>>>> 8c64a5067a6a18b74bd5891cbc4834d0a68448a9
+{"timestamp":"2025-10-18T07:09:52.647Z","adminId":2,"aksi":"DELETE","tabelTarget":"pelanggan","dataLama":"{\"id\":13,\"nama\":\"dasdadsa\",\"alamat\":\"daaaaa\"}","ipAddress":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
