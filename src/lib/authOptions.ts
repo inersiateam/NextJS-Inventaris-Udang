@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
@@ -28,7 +28,6 @@ export const authOptions: NextAuthOptions = {
         if (!isPasswordValid)
           throw new Error("Username atau password salah");
 
-        // log aktivitas
         await prisma.logAktivitas.create({
           data: {
             adminId: admin.id,
