@@ -36,7 +36,6 @@ model Admin {
   pelanggan       Pelanggan[]
   transaksiKeluar TransaksiKeluar[]
   pengeluaran     Pengeluaran[]
-  logAktivitas    LogAktivitas[]
 
   @@map("admin")
 }
@@ -155,7 +154,6 @@ model TransaksiKeluar {
   // Relasi
   barangKeluar BarangKeluar @relation(fields: [barangKeluarId], references: [id], onDelete: Cascade)
   admin        Admin        @relation(fields: [adminId], references: [id], onDelete: Cascade)
-  pendapatan   Pendapatan?
 
   @@index([barangKeluarId])
   @@index([adminId])
@@ -177,44 +175,4 @@ model Pengeluaran {
   @@index([adminId])
   @@index([tanggal])
   @@map("pengeluaran")
-}
-
-model Pendapatan {
-  id                Int      @id @default(autoincrement()) @map("id_pendapat")
-  transaksiKeluarId Int      @unique @map("id_transaksi_keluar_id")
-  bulan             Int
-  tahun             Int
-  totalPengeluaran  Int      @default(0) @map("total_pengeluaran")
-  owner1            Int
-  owner2            Int
-  owner3            Int
-  cv                Int
-  tanggal           DateTime @db.Date
-  createdAt         DateTime @default(now()) @map("created_at")
-
-  // Relasi
-  transaksiKeluar TransaksiKeluar @relation(fields: [transaksiKeluarId], references: [id], onDelete: Cascade)
-
-  @@index([transaksiKeluarId])
-  @@index([bulan, tahun])
-  @@map("pendapatan")
-}
-
-model LogAktivitas {
-  id          Int      @id @default(autoincrement()) @map("id_log")
-  adminId     Int      @map("id_admin")
-  aksi        String
-  tabelTarget String   @map("tabel_target")
-  dataLama    String?  @map("data_lama") @db.Text
-  dataBaru    String?  @map("data_baru") @db.Text
-  ipAddress   String?  @map("ip_address")
-  userAgent   String?  @map("user_agent")
-  timestamp   DateTime @default(now())
-
-  // Relasi
-  admin Admin @relation(fields: [adminId], references: [id], onDelete: Cascade)
-
-  @@index([adminId])
-  @@index([timestamp])
-  @@map("log_aktivitas")
 }
