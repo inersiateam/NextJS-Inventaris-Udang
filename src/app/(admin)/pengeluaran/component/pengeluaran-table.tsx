@@ -270,7 +270,7 @@ export default function PengeluaranTable({
               disabled={currentPage === 1 || isPending}
               className="gap-1 text-xs md:text-sm"
             >
-              <ArrowLeft2 size="16" />
+              <ArrowLeft2 size={24} color="#000" variant="Outline" />
               <span className="hidden sm:inline">Previous</span>
             </Button>
 
@@ -299,7 +299,7 @@ export default function PengeluaranTable({
               className="gap-1 text-xs md:text-sm"
             >
               <span className="hidden sm:inline">Next</span>
-              <ArrowRight2 size="16" />
+              <ArrowRight2 size={24} color="#000" variant="Outline" />
             </Button>
           </div>
         </div>

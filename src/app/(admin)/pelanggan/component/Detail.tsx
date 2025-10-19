@@ -30,17 +30,17 @@ export default function PelangganDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="!max-w-[70vw] w-full bg-white rounded-xl shadow-lg p-6 overflow-y-auto max-h-[90vh]">
+      <DialogContent className="!max-w-[98vw] sm:!max-w-[90vw] md:!max-w-[85vw] lg:!max-w-[75vw] xl:!max-w-[70vw] w-full bg-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 md:p-5 lg:p-6 overflow-y-auto max-h-[95vh] sm:max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle className="text-lg font-bold">
+          <DialogTitle className="text-base sm:text-lg font-bold">
             Detail Pelanggan
           </DialogTitle>
-          <p className="text-sm text-gray-500">
+          <p className="text-xs sm:text-sm text-gray-500">
             Lihat profil dan detail transaksi pelanggan di bawah ini.
           </p>
         </DialogHeader>
 
-        <div className="grid grid-cols-2 mt-4 text-sm gap-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 mt-3 sm:mt-4 text-xs sm:text-sm gap-y-2">
           <div>
             <p>
               Nama Pelanggan:{" "}
@@ -72,10 +72,10 @@ export default function PelangganDetailDialog({
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end">
+        <div className="mt-4 sm:mt-6 flex justify-end">
           <div className="text-right">
-            <p className="text-base font-semibold">Total Pembelian:</p>
-            <p className="text-2xl font-bold text-gray-800">
+            <p className="text-sm sm:text-base font-semibold">Total Pembelian:</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-800">
               Rp.{" "}
               {data.totalPembelian?.toLocaleString("id-ID", {
                 minimumFractionDigits: 0,
@@ -84,8 +84,8 @@ export default function PelangganDetailDialog({
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border mt-4">
-          <Table>
+        <div className="overflow-x-auto rounded-lg border mt-3 sm:mt-4">
+          <Table className="text-xs sm:text-sm">
             <TableHeader>
               <TableRow className="bg-sky-600 text-white">
                 <TableHead className="text-center text-white">
@@ -131,8 +131,12 @@ export default function PelangganDetailDialog({
           </Table>
         </div>
 
-        <div className="flex justify-end mt-6">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <div className="flex justify-end mt-4 sm:mt-6">
+          <Button 
+            variant="outline" 
+            onClick={() => onOpenChange(false)}
+            className="w-full sm:w-auto text-xs sm:text-sm"
+          >
             Keluar
           </Button>
         </div>
