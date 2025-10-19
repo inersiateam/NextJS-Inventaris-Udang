@@ -30,6 +30,7 @@ const BARANG_KELUAR_SELECT = {
       barang: {
         select: {
           nama: true,
+          harga: true,
         },
       },
     },
@@ -123,12 +124,17 @@ export const getBarangKeluarWithPagination = cache(
             jatuhTempo: item.jatuhTempo,
             namaPelanggan: item.pelanggan.nama,
             alamatPelanggan: item.pelanggan.alamat,
-            items: item.details.map((detail) => ({
-              namaBarang: detail.barang.nama,
-              jmlPembelian: detail.jmlPembelian,
-              hargaJual: detail.hargaJual,
-              subtotal: detail.subtotal,
-            })),
+            items: item.details.map((detail) => {
+              const hargaModal = detail.barang.harga || 0;
+              const subtotalModal = hargaModal * detail.jmlPembelian;
+              return {
+                namaBarang: detail.barang.nama,
+                jmlPembelian: detail.jmlPembelian,
+                hargaJual: detail.hargaJual,
+                subtotal: detail.subtotal,
+                subtotalModal: subtotalModal,
+              };
+            }),
             totalOmset: item.totalOmset,
             totalModal: item.totalModal,
             labaKotor: item.labaKotor,
@@ -223,12 +229,17 @@ export const getBarangKeluarById = cache(
         jatuhTempo: barangKeluar.jatuhTempo,
         namaPelanggan: barangKeluar.pelanggan.nama,
         alamatPelanggan: barangKeluar.pelanggan.alamat,
-        items: barangKeluar.details.map((detail) => ({
-          namaBarang: detail.barang.nama,
-          jmlPembelian: detail.jmlPembelian,
-          hargaJual: detail.hargaJual,
-          subtotal: detail.subtotal,
-        })),
+        items: barangKeluar.details.map((detail) => {
+          const hargaModal = detail.barang.harga || 0;
+          const subtotalModal = hargaModal * detail.jmlPembelian;
+          return {
+            namaBarang: detail.barang.nama,
+            jmlPembelian: detail.jmlPembelian,
+            hargaJual: detail.hargaJual,
+            subtotal: detail.subtotal,
+            subtotalModal: subtotalModal,
+          };
+        }),
         totalOmset: barangKeluar.totalOmset,
         totalModal: barangKeluar.totalModal,
         labaKotor: barangKeluar.labaKotor,

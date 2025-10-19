@@ -17,6 +17,7 @@ export interface IBarangKeluarDetail {
   jmlPembelian: number;
   hargaJual: number;
   subtotal: number;
+  subtotalModal: number;
 }
 
 export interface IBarangKeluarResponse {
@@ -63,6 +64,7 @@ export interface DetailItem {
   jmlPembelian: number;
   hargaJual: number;
   subtotal: number;
+  subtotalModal: number;
 }
 
 export interface DetailData {
