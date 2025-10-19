@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Quicksand } from "next/font/google";
 import "./globals.css";
 import Providers from "./provider";
@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   title: "Inventaris App",
   description: "Dashboard Inventaris CV. ABL",
   manifest: "/manifest.json",
+};
+
+export const viewport: Viewport = {
   themeColor: "#0070f3",
 };
 

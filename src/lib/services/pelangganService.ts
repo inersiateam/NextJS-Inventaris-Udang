@@ -2,9 +2,6 @@ import { cache } from "react";
 import prisma from "../prisma";
 import { pelangganSchema } from "../validations/pelangganValidator";
 import {
-  PelangganWithAdmin,
-  PelangganDetail,
-  Top5Pelanggan,
   GetPelangganParams,
   GetPelangganDetailParams,
   CreatePelangganParams,
@@ -18,22 +15,6 @@ import {
 } from "@/types/interfaces/IPelanggan";
 import z from "zod";
 import { logActivity } from "../fileLogger";
-
-const PELANGGAN_SELECT = {
-  id: true,
-  nama: true,
-  alamat: true,
-  adminId: true,
-  createdAt: true,
-  updatedAt: true,
-  admin: {
-    select: {
-      id: true,
-      username: true,
-      jabatan: true,
-    },
-  },
-} as const;
 
 export const getPelangganList = cache(
   async ({ jabatan }: GetPelangganParams): Promise<PelangganListResponse> => {
