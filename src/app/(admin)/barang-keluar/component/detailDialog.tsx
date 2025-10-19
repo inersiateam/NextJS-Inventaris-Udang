@@ -47,7 +47,6 @@ export default function DetailDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Info section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-[2px] sm:gap-y-1 text-[10px] sm:text-[13px]">
             <div>
               No. Invoice:{" "}
@@ -71,7 +70,6 @@ export default function DetailDialog({
             </div>
           </div>
 
-          {/* Table section */}
           <div className="overflow-x-auto rounded mt-1">
             <Table className="w-full text-[9px] sm:text-[13px]">
               <TableHeader>
@@ -111,7 +109,6 @@ export default function DetailDialog({
             </Table>
           </div>
 
-          {/* Summary section */}
           <div className="border-t pt-3 space-y-1 text-[10px] sm:text-[13px]">
             <div className="flex justify-between">
               <span>Total Omset:</span>

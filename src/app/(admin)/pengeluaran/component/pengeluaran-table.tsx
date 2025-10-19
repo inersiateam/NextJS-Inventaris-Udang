@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeft2, ArrowRight2, Filter, Sort } from "iconsax-react";
+import { ArrowLeft2, ArrowRight2, Sort } from "iconsax-react";
 import { useState, useTransition, useMemo, memo } from "react";
 import PengeluaranDialog from "./Dialog";
 import PengeluaranDropdown from "./Pengeluaran-dropdown";

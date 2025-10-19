@@ -136,7 +136,6 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
       </div>
 
       <div className="flex items-center gap-3 md:gap-4">
-        {/* Desktop Search */}
         <div ref={searchRef} className="relative hidden md:block w-64 lg:w-80">
           <form onSubmit={handleSearchSubmit}>
             <input
@@ -197,7 +196,6 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
           )}
         </div>
 
-        {/* Mobile Search Toggle */}
         <button
           onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
           className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -234,7 +232,6 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
         </DropdownMenu>
       </div>
 
-      {/* Mobile Search Overlay */}
       {isMobileSearchOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 md:hidden">
           <div className="bg-white dark:bg-gray-900 p-4">

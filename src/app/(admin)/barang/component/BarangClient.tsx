@@ -8,7 +8,6 @@ import { useEffect, useState } from "react"
 import { getBarangAction, deleteBarangAction } from "../actions/barangActions"
 import { BarangWithRelations } from "@/types/interfaces/IBarang"
 import { toast } from "sonner"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
   AlertDialog,

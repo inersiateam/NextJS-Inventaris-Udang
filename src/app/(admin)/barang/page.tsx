@@ -12,7 +12,6 @@ export default async function BarangPage() {
     redirect("/login")
   }
 
-  // Fetch initial data di server
   const initialData = await getBarangWithPagination({
     jabatan: session.user.jabatan as Jabatan,
     page: 1,
