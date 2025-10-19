@@ -61,12 +61,21 @@ export default function PelangganDialog({
         : await createPelangganAction(input);
 
       if (result.success) {
-        toast.success(result.success || "Berhasil Menyimpan Data Pelanggan");
+        // Perbaikan: Gunakan pesan yang sesuai, bukan result.success
+        const successMessage = isEdit 
+          ? "Pelanggan berhasil diperbarui"
+          : "Pelanggan berhasil ditambahkan";
+        
+        toast.success(successMessage);
         setNama("");
         setAlamat("");
-        onOpenChange(true);
+        onOpenChange(false); // Ubah dari true ke false untuk menutup dialog
       } else {
-        toast.error(result.success || "Terjadi kesalahan");
+        // Perbaikan: Tampilkan error message jika ada
+        const errorMessage = "error" in result 
+          ? result.error 
+          : "Terjadi kesalahan";
+        toast.error(errorMessage);
       }
     } catch (error) {
       toast.error("Terjadi kesalahan saat menyimpan data");
