@@ -84,7 +84,7 @@ export default function PelangganDetailDialog({
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border mt-3 sm:mt-4">
+        <div className="overflow-x-auto rounded-lg mt-3 sm:mt-4">
           <Table className="text-xs sm:text-sm">
             <TableHeader>
               <TableRow className="bg-sky-600 text-white">
