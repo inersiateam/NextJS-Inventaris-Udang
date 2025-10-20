@@ -34,7 +34,6 @@ import {
   Trash,
   ArrowLeft2,
   ArrowRight2,
-  Filter,
   Sort,
 } from "iconsax-react";
 import dynamic from "next/dynamic";

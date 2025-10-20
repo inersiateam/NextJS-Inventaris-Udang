@@ -61,7 +61,6 @@ export default function PelangganDialog({
         : await createPelangganAction(input);
 
       if (result.success) {
-        // Perbaikan: Gunakan pesan yang sesuai, bukan result.success
         const successMessage = isEdit 
           ? "Pelanggan berhasil diperbarui"
           : "Pelanggan berhasil ditambahkan";
@@ -69,9 +68,8 @@ export default function PelangganDialog({
         toast.success(successMessage);
         setNama("");
         setAlamat("");
-        onOpenChange(false); // Ubah dari true ke false untuk menutup dialog
+        onOpenChange(false); 
       } else {
-        // Perbaikan: Tampilkan error message jika ada
         const errorMessage = "error" in result 
           ? result.error 
           : "Terjadi kesalahan";

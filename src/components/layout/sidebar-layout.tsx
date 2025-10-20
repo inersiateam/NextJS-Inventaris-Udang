@@ -26,7 +26,7 @@ export default function AppSidebar({
    const logoSrc =
     jabatan === "ATM"
       ? "/ATM.png"
-      : "/logo.png"; // default ke logo ABL kalau bukan ATM
+      : "/logo.png";
 
   const label =
     jabatan === "ATM"
@@ -42,14 +42,12 @@ export default function AppSidebar({
 
   return (
     <>
-      {/* Sidebar untuk Desktop */}
       <aside
         className={cn(
           "hidden md:flex flex-col bg-white h-full dark:bg-gray-900 shadow-lg transition-all duration-300 rounded-xl shadow-gray-100 border",
           open ? "w-56" : "w-20"
         )}
       >
-        {/* Logo + Brand */}
        <div className="h-16 flex items-center justify-center">
       <div className="flex items-center space-x-2">
         <img src={logoSrc} alt="Logo" className="h-8 w-auto" />
@@ -65,7 +63,6 @@ export default function AppSidebar({
         )}
       </div>
     </div>
-        {/* Menu */}
         <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
           {menuItems.map((item, idx) => {
             const active = pathname === item.href;
@@ -115,7 +112,6 @@ export default function AppSidebar({
         </nav>
       </aside>
 
-      {/* Overlay saat sidebar terbuka di mobile */}
       {open && isMobile && (
         <div
           className="fixed inset-0 bg-black/50 z-30 md:hidden"
@@ -123,7 +119,6 @@ export default function AppSidebar({
         />
       )}
 
-      {/* Bottom Navigation untuk Mobile */}
       {isMobile && (
         <motion.nav
           initial={{ y: 100 }}

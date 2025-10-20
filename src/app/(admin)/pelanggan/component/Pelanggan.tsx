@@ -3,6 +3,16 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Edit2, Eye, More, Trash } from "iconsax-react";
 import PelangganDialog from "./Dialog";
 import { useState } from "react";
@@ -12,6 +22,7 @@ import { deletePelangganAction, getPelangganDetailAction } from "../actions/pela
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import useHighlightEffect from '@/hooks/useHighlightEffect';
+
 interface PelangganProps {
   data: PelangganWithAdmin[];
 }
@@ -20,8 +31,10 @@ export default function Pelanggan({ data }: PelangganProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedPelanggan, setSelectedPelanggan] = useState<PelangganWithAdmin | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-   const [openDetail, setOpenDetail] = useState(false);
+  const [openDetail, setOpenDetail] = useState(false);
   const [detailData, setDetailData] = useState<any>(null);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [pelangganToDelete, setPelangganToDelete] = useState<{ id: number; nama: string } | null>(null);
   const router = useRouter();
 
   const handleEdit = (pelanggan: PelangganWithAdmin) => {
@@ -34,42 +47,49 @@ export default function Pelanggan({ data }: PelangganProps) {
     setOpenDialog(true);
   };
 
-const handleDetail = async (id: number) => {
-  try {
-    const result = await getPelangganDetailAction(id);
+  const handleDetail = async (id: number) => {
+    try {
+      const result = await getPelangganDetailAction(id);
 
-    if (result.success) {
-      if ("data" in result) {
-        setDetailData(result.data);
-        setOpenDetail(true);
+      if (result.success) {
+        if ("data" in result) {
+          setDetailData(result.data);
+          setOpenDetail(true);
+        } else {
+          toast.error("Gagal memuat detail pelanggan");
+        }
       } else {
-        toast.error("Gagal memuat detail pelanggan");
+        const errMsg = "error" in result ? result.error : "Gagal memuat detail pelanggan";
+        toast.error(errMsg);
       }
-    } else {
-      const errMsg = "error" in result ? result.error : "Gagal memuat detail pelanggan";
-      toast.error(errMsg);
+    } catch (error) {
+      console.error("Gagal memuat detail pelanggan:", error);
+      toast.error("Terjadi kesalahan saat memuat detail pelanggan");
     }
-  } catch (error) {
-    console.error("Gagal memuat detail pelanggan:", error);
-    toast.error("Terjadi kesalahan saat memuat detail pelanggan");
-  }
-};
+  };
 
+  const handleDeleteClick = (id: number, nama: string) => {
+    setPelangganToDelete({ id, nama });
+    setShowDeleteAlert(true);
+  };
 
-  const handleDelete = async (id: number, nama: string) => {
-    if (!confirm(`Apakah Anda yakin ingin menghapus pelanggan "${nama}"?`)) {
-      return;
-    }
+  const handleDeleteConfirm = async () => {
+    if (!pelangganToDelete) return;
 
     setIsDeleting(true);
     try {
-      const result = await deletePelangganAction(id);
+      const result = await deletePelangganAction(pelangganToDelete.id);
       
       if (result.success) {
-        toast.success(result.success);
+        toast.success("Pelanggan berhasil dihapus");
+        setShowDeleteAlert(false);
+        setPelangganToDelete(null);
         router.refresh();
       } else {
-        toast.error(result.success || "Gagal menghapus pelanggan");
+        const errorMessage = "error" in result 
+          ? result.error 
+          : "Gagal menghapus pelanggan";
+        toast.error(errorMessage);
       }
     } catch (error) {
       toast.error("Terjadi kesalahan saat menghapus pelanggan");
@@ -86,7 +106,9 @@ const handleDetail = async (id: number) => {
       router.refresh();
     }
   };
-useHighlightEffect('pelanggan'); 
+
+  useHighlightEffect('pelanggan'); 
+
   return (
     <>
       <div className="flex justify-end mb-4 mt-6">
@@ -119,7 +141,7 @@ useHighlightEffect('pelanggan');
               </TableRow>
             ) : (
               data.map((item, index) => (
-                <TableRow key={item.id} id={`pelanggan-${item.id}`}  className="hover:bg-gray-50">
+                <TableRow key={item.id} id={`pelanggan-${item.id}`} className="hover:bg-gray-50">
                   <TableCell className="whitespace-nowrap px-4">{index + 1}</TableCell>
                   <TableCell className="whitespace-nowrap px-4 font-medium">{item.nama}</TableCell>
                   <TableCell className="px-4 max-w-xs truncate" title={item.alamat}>
@@ -146,7 +168,7 @@ useHighlightEffect('pelanggan');
                         <DropdownMenuContent side="bottom" align="end" className="w-40">
                           <DropdownMenuItem 
                             className="flex items-center gap-2 cursor-pointer"
-                             onClick={() => handleDetail(item.id)}
+                            onClick={() => handleDetail(item.id)}
                           >
                             <Eye size="18" color="#374151" variant="Outline" />
                             <span className="text-sm">Detail</span>
@@ -160,7 +182,7 @@ useHighlightEffect('pelanggan');
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             className="flex items-center gap-2 cursor-pointer text-red-600 focus:text-red-600"
-                            onClick={() => handleDelete(item.id, item.nama)}
+                            onClick={() => handleDeleteClick(item.id, item.nama)}
                             disabled={isDeleting}
                           >
                             <Trash size="18" color="#dc2626" variant="Outline" />
@@ -182,11 +204,41 @@ useHighlightEffect('pelanggan');
         onOpenChange={handleDialogClose}
         pelanggan={selectedPelanggan}
       />
+      
       <PelangganDetailDialog
         open={openDetail}
         onOpenChange={setOpenDetail}
         data={detailData}
       />
+
+      <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
+        <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-base sm:text-lg">
+              Hapus Pelanggan?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-xs sm:text-sm">
+              Apakah Anda yakin ingin menghapus pelanggan "{pelangganToDelete?.nama}"?
+              Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel
+              className="w-full sm:w-auto text-xs sm:text-sm"
+              disabled={isDeleting}
+            >
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-xs sm:text-sm"
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Menghapus..." : "Hapus"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

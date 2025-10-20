@@ -90,7 +90,6 @@ function PengeluaranDropdown({ item }: PengeluaranDropdownProps) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Edit Dialog - Only render when needed */}
       {showEdit && (
         <PengeluaranDialog
           open={showEdit}
@@ -99,7 +98,6 @@ function PengeluaranDropdown({ item }: PengeluaranDropdownProps) {
         />
       )}
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={showDelete} onOpenChange={setShowDelete}>
         <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
           <AlertDialogHeader>

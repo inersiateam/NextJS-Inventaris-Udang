@@ -31,9 +31,9 @@ const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
 
     const handleResize = () => {
       if (window.innerWidth < 768) {
-        setSidebarOpen(false); // mobile: tertutup
+        setSidebarOpen(false);
       } else {
-        setSidebarOpen(false); // desktop: hanya icon
+        setSidebarOpen(false);
       }
     };
 
@@ -51,14 +51,12 @@ const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
   return (
     <SidebarProvider defaultOpen={sidebarOpen}>
       <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-950">
-        {/* Sidebar */}
         <AppSidebar
           menuItems={menuItems}
           open={sidebarOpen}
           setOpen={setSidebarOpen}
         />
 
-        {/* Main area */}
         <SidebarInset className="flex flex-1 flex-col min-w-0 w-full transition-all duration-300">
           <AppNavbar
             user={user}
