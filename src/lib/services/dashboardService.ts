@@ -407,6 +407,7 @@ export async function getTagihanJatuhTempo(jabatan: Jabatan) {
           noInvoice: true,
           jatuhTempo: true,
           totalHarga: true,
+          status: true,
           barang: {
             select: {
               nama: true,
