@@ -37,6 +37,7 @@ export default async function Page() {
       initialTopPelangganWater={topPelangganWater}
       initialTopPelangganDifire={topPelangganDifire}
       initialChartBarang={chartBarang}
+      jabatan={jabatan}
     />
   );
 }

@@ -178,7 +178,7 @@ export const getBarangList = cache(async (jabatan: Jabatan) => {
         harga: true,
         stok: true,
       },
-      orderBy: { nama: "asc" },
+      orderBy: { nama: "desc" },
     });
   } catch (error) {
     console.error("Error fetching barang list:", error);
@@ -197,7 +197,7 @@ export const getPelangganList = cache(async (jabatan: Jabatan) => {
         nama: true,
         alamat: true,
       },
-      orderBy: { nama: "asc" },
+      orderBy: { nama: "desc" },
     });
   } catch (error) {
     console.error("Error fetching pelanggan list:", error);
@@ -405,14 +405,6 @@ export async function createBarangKeluar(params: CreateBarangKeluarParams) {
     const totalBiayaKeluar = totalFee + data.ongkir;
     const labaBerjalan = labaKotor - totalBiayaKeluar;
 
-    const bulan = tglKeluar.getMonth() + 1;
-    const tahun = tglKeluar.getFullYear();
-
-    const owner1 = Math.floor(labaBerjalan * 0.3);
-    const owner2 = Math.floor(labaBerjalan * 0.3);
-    const owner3 = Math.floor(labaBerjalan * 0.3);
-    const cv = Math.floor(labaBerjalan * 0.1);
-
     const result = await prisma.$transaction(async (tx) => {
       const barangKeluar = await tx.barangKeluar.create({
         data: {
@@ -569,13 +561,6 @@ export async function updateBarangKeluar(params: UpdateBarangKeluarParams) {
     const totalFee = (30000 + 10000) * totalQuantity;
     const totalBiayaKeluar = totalFee + data.ongkir;
     const labaBerjalan = labaKotor - totalBiayaKeluar;
-
-    const bulan = tglKeluar.getMonth() + 1;
-    const tahun = tglKeluar.getFullYear();
-    const owner1 = Math.floor(labaBerjalan * 0.3);
-    const owner2 = Math.floor(labaBerjalan * 0.3);
-    const owner3 = Math.floor(labaBerjalan * 0.3);
-    const cv = Math.floor(labaBerjalan * 0.1);
 
     const result = await prisma.$transaction(async (tx) => {
       await Promise.all(

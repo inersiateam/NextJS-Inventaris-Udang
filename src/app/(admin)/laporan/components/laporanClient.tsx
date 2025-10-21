@@ -63,6 +63,7 @@ interface LaporanClientProps {
   initialTopPelangganWater: TopPelanggan[];
   initialTopPelangganDifire: TopPelanggan[];
   initialChartBarang: ChartBarangItem[];
+  jabatan: string;
 }
 
 export default function LaporanClient({
@@ -72,6 +73,7 @@ export default function LaporanClient({
   initialTopPelangganWater,
   initialTopPelangganDifire,
   initialChartBarang,
+  jabatan,
 }: LaporanClientProps) {
   const [selectedPeriode, setSelectedPeriode] = useState<number>(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -216,7 +218,9 @@ export default function LaporanClient({
       {/* Header with Filter */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Laporan</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+            Laporan
+          </h1>
           <p className="text-gray-500 text-sm md:text-base mt-1">
             Laporan keuangan dan analisis performa bisnis
           </p>
@@ -247,8 +251,6 @@ export default function LaporanClient({
         </div>
       </div>
 
-      {/* Stats Cards */}
-      {/* Stats Cards - Update menjadi 5 cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         {/* Card 1: Omset */}
         <Card className="shadow-md rounded-xl h-[170px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
@@ -521,26 +523,28 @@ export default function LaporanClient({
             <TableHeader>
               <TableRow>
                 <TableHead
-                  colSpan={5}
+                  colSpan={jabatan === "ATM" ? 4 : 5}
                   className="bg-primary text-white text-center font-semibold text-lg"
                 >
-                  Sharing Provite
+                  Sharing Profit
                 </TableHead>
               </TableRow>
               <TableRow className="bg-primary text-white">
-                <TableHead className="text-white whitespace-nowrap px-4">
+                <TableHead className="text-white text-center whitespace-nowrap px-4">
                   Bulan
                 </TableHead>
                 <TableHead className="text-white whitespace-nowrap px-4">
                   Owner 1
                 </TableHead>
-                <TableHead className="text-white whitespace-nowrap px-4">
+                <TableHead className="text-white text-center whitespace-nowrap px-4">
                   Owner 2
                 </TableHead>
-                <TableHead className="text-white whitespace-nowrap px-4">
-                  Owner 3
-                </TableHead>
-                <TableHead className="text-white whitespace-nowrap px-4">
+                {jabatan === "ABL" && (
+                  <TableHead className="text-white text-center whitespace-nowrap px-4">
+                    Owner 3
+                  </TableHead>
+                )}
+                <TableHead className="text-white text-center whitespace-nowrap px-4">
                   Kas
                 </TableHead>
               </TableRow>
@@ -550,26 +554,31 @@ export default function LaporanClient({
               {pembagianProvit.length > 0 ? (
                 pembagianProvit.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="whitespace-nowrap px-4 font-medium">
+                    <TableCell className="whitespace-nowrap text-center px-4 font-medium">
                       {item.bulan}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap px-4">
+                    <TableCell className="whitespace-nowrap text-center px-4">
                       {formatCurrency(item.owner1)}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap px-4">
+                    <TableCell className="whitespace-nowrap text-center px-4">
                       {formatCurrency(item.owner2)}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap px-4">
-                      {formatCurrency(item.owner3)}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap px-4">
+                    {jabatan === "ABL" && (
+                      <TableCell className="whitespace-nowrap text-center px-4">
+                        {formatCurrency(item.owner3)}
+                      </TableCell>
+                    )}
+                    <TableCell className="whitespace-nowrap text-center px-4">
                       {formatCurrency(item.kas)}
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">
+                  <TableCell
+                    colSpan={jabatan === "ATM" ? 4 : 5}
+                    className="text-center py-8"
+                  >
                     <p className="text-gray-500">Belum ada data pembagian</p>
                   </TableCell>
                 </TableRow>
@@ -580,18 +589,18 @@ export default function LaporanClient({
 
         {/* Top Pelanggan - 1/3 */}
         <Card className="p-4 lg:col-span-1">
-          <h3 className="text-lg font-semibold mb-4">Daftar Top Pelanggan</h3>
+          <h3 className="text-lg font-semibold">Daftar Top Pelanggan</h3>
           <Tabs defaultValue="aqua-water">
             <TabsList className="flex gap-2 mb-4">
               <TabsTrigger
                 value="aqua-water"
-                className="px-4 py-2 rounded-md border border-gray-300 data-[state=active]:bg-primary data-[state=active]:text-white"
+                className="px-2 py-1 rounded-md border border-gray-300 data-[state=active]:bg-primary data-[state=active]:text-white"
               >
                 Aqua Water
               </TabsTrigger>
               <TabsTrigger
                 value="aqua-difire"
-                className="px-4 py-2 rounded-md border border-gray-300 data-[state=active]:bg-primary data-[state=active]:text-white"
+                className="px-2 py-1 rounded-md border border-gray-300 data-[state=active]:bg-primary data-[state=active]:text-white"
               >
                 Aqua Difire
               </TabsTrigger>

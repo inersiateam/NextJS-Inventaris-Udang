@@ -316,7 +316,7 @@ export const getChartLaporanByPeriode = cache(
       const pendapatan: number[] = [];
 
       if (periode === 1) {
-        const { firstDayOfMonth } = getMonthDateRange(currentDate);        
+        const { firstDayOfMonth } = getMonthDateRange(currentDate);
         const barangKeluarData = await prisma.barangKeluarDetail.findMany({
           where: {
             barangKeluar: {
@@ -599,13 +599,23 @@ export const getPembagianProvitByPeriode = cache(
         const totalPengeluaran = pengeluaranData._sum.totalHarga || 0;
         const labaBersih = labaBerjalan - totalPengeluaran;
 
-        dataPerBulan.push({
-          bulan: label,
-          owner1: Math.floor(labaBersih * 0.3),
-          owner2: Math.floor(labaBersih * 0.3),
-          owner3: Math.floor(labaBersih * 0.3),
-          kas: Math.floor(labaBersih * 0.1),
-        });
+        if (jabatan === "ATM") {
+          dataPerBulan.push({
+            bulan: label,
+            owner1: Math.floor(labaBersih * 0.45),
+            owner2: Math.floor(labaBersih * 0.45),
+            owner3: 0,
+            kas: Math.floor(labaBersih * 0.1),
+          });
+        } else {
+          dataPerBulan.push({
+            bulan: label,
+            owner1: Math.floor(labaBersih * 0.3),
+            owner2: Math.floor(labaBersih * 0.3),
+            owner3: Math.floor(labaBersih * 0.3),
+            kas: Math.floor(labaBersih * 0.1),
+          });
+        }
       }
 
       return dataPerBulan;
