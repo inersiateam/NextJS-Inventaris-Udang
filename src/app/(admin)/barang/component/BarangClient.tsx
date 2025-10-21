@@ -19,6 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { formatCurrency } from "@/lib/utils"
 
 interface BarangClientProps {
   initialData?: BarangWithRelations[]
@@ -101,14 +102,6 @@ export default function BarangClient({
     }
   }
 
-  const formatRupiah = (value: number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(value)
-  }
-
   return (
     <>
       <div className="flex justify-end mb-4">
@@ -119,10 +112,10 @@ export default function BarangClient({
         <Table>
           <TableHeader>
             <TableRow className="bg-primary text-white hover:bg-primary">
-              <TableHead className="text-white whitespace-nowrap px-4">Barang</TableHead>
-              <TableHead className="text-white whitespace-nowrap px-4">Harga</TableHead>
-              <TableHead className="text-white whitespace-nowrap px-4">Stok</TableHead>
-              <TableHead className="text-white whitespace-nowrap px-4 text-right">Aksi</TableHead>
+              <TableHead className="text-white text-center whitespace-nowrap px-4">Barang</TableHead>
+              <TableHead className="text-white text-center whitespace-nowrap px-4">Harga</TableHead>
+              <TableHead className="text-white text-center whitespace-nowrap px-4">Stok</TableHead>
+              <TableHead className="text-white text-center whitespace-nowrap px-4">Aksi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -143,10 +136,10 @@ export default function BarangClient({
             ) : (
               barangList.map((barang) => (
                 <TableRow key={barang.id}>
-                  <TableCell className="font-medium">{barang.nama}</TableCell>
-                  <TableCell>{formatRupiah(barang.harga)}</TableCell>
-                  <TableCell>{barang.stok}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="font-medium text-center">{barang.nama}</TableCell>
+                  <TableCell className="text-center">{formatCurrency(barang.harga)}</TableCell>
+                  <TableCell className="text-center">{barang.stok}</TableCell>
+                  <TableCell className="text-center">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button className="inline-flex items-center justify-center rounded-md p-1 hover:bg-muted/40">

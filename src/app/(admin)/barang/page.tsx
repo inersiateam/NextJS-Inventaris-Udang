@@ -19,9 +19,11 @@ export default async function BarangPage() {
   })
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-2">
       <header>
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Barang</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+          Barang
+        </h1>
         <p className="text-gray-500 text-sm md:text-base mt-1">
           Tambahkan item baru ke sistem, pantau stok lebih rapi
         </p>
