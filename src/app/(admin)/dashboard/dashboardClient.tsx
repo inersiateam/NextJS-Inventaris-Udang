@@ -161,7 +161,7 @@ export default function DashboardClient({
           backgroundColor: isEmpty
             ? ["#d1d5db", "#d1d5db"]
             : ["#f43f5e", "#0ea5e9"],
-          hoverOffset: isEmpty ? 0 : 4,
+          hoverOffset: isEmpty ? 0 : 6,
           borderWidth: 0,
         },
       ],
@@ -170,20 +170,24 @@ export default function DashboardClient({
 
   const doughnutOptions = useMemo(
     () => ({
-      responsive: true,
-      maintainAspectRatio: true,
+      responsive: false,
+      maintainAspectRatio: false,
+      cutout: "70%",
+      layout: {
+        padding: 8, 
+      },
       plugins: {
-        legend: {
-          display: false,
-        },
+        legend: { display: false },
         tooltip: {
           enabled: hasData,
+          backgroundColor: "rgba(0,0,0,0.8)",
+          bodyFont: { size: 12 },
+          padding: 10,
         },
       },
-      cutout: "70%",
-      events: hasData
-        ? ["mousemove", "mouseout", "click", "touchstart", "touchmove"]
-        : ([] as any),
+      animation: {
+        duration: 400,
+      },
     }),
     [hasData]
   );
@@ -212,7 +216,6 @@ export default function DashboardClient({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
       <div className="flex flex-col gap-3">
-        {/* Bar Chart */}
         <Card className="shadow-sm h-[350px] sm:h-[400px] w-full hover:shadow-xl transition-shadow">
           <CardHeader className="pb-2">
             <CardTitle className="text-xl font-bold">Statistic</CardTitle>
@@ -222,8 +225,7 @@ export default function DashboardClient({
           </CardContent>
         </Card>
 
-        {/* Doughnut Chart */}
-        <Card className="shadow-sm h-[250px] w-full hover:shadow-xl transition-shadow">
+        <Card className="shadow-sm h-[250px] w-full hover:shadow-xl transition-shadow overflow-visible">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xl font-bold line-clamp-1">
@@ -246,19 +248,21 @@ export default function DashboardClient({
             )}
           </CardHeader>
 
-          <CardContent className="relative flex flex-col items-center justify-center bottom-6">
+          <CardContent className="relative flex flex-col items-center justify-center py-0 overflow-visible">
             {currentProduct ? (
               <>
-                <div className="w-32 h-32">
+                <div className="relative w-32 h-32 flex items-center justify-center overflow-visible">
                   {getDoughnutData && (
                     <Doughnut
                       data={getDoughnutData}
                       options={doughnutOptions}
+                      width={128}
+                      height={128}
                     />
                   )}
                 </div>
 
-                <div className="absolute top-32 left-4 px-2 flex flex-col gap-1 text-xs">
+                <div className="absolute top-20 left-4 px-2 flex flex-col gap-1 text-xs">
                   <div className="flex items-center gap-2">
                     <span
                       className={`w-4 h-4 rounded-sm ${
@@ -296,12 +300,11 @@ export default function DashboardClient({
         </Card>
       </div>
 
-      {/* Tagihan Section */}
       <Card className="shadow-xl pb-20 md:pb-0">
-        <CardTitle className="text-xl px-4 pt-0 font-bold">
+        <CardTitle className="text-xl px-8 pt-0 font-bold">
           Tagihan Jatuh Tempo
         </CardTitle>
-        <CardContent className="px-4 pt-4">
+        <CardContent className="px-8 pt-4">
           <div className="flex gap-2 mb-3 flex-wrap">
             <Button
               size="sm"
