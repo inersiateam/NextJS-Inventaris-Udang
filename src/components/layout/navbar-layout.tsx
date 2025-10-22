@@ -196,14 +196,14 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
           )}
         </div>
 
-        <button
+        <button aria-label="icon"
           onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
           className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
         >
           <Search className="h-5 w-5 text-gray-600 dark:text-gray-300" />
         </button>
 
-        <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+        <button aria-label="notifikasi" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
           <Bell className="h-5 w-5 text-gray-700 dark:text-gray-300" />
         </button>
 
@@ -236,7 +236,7 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
         <div className="fixed inset-0 bg-black/50 z-50 md:hidden">
           <div className="bg-white dark:bg-gray-900 p-4">
             <div className="flex items-center gap-2 mb-4">
-              <button
+              <button aria-label="mobile"
                 onClick={() => setIsMobileSearchOpen(false)}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
               >
@@ -264,6 +264,7 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
               <div className="space-y-2">
                 {searchResults.map((result, index) => (
                   <button
+                  aria-label="search"
                     key={`${result.type}-${result.id}-${index}`}
                     onClick={() => handleResultClick(result)}
                     className="w-full px-4 py-3 text-left bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"

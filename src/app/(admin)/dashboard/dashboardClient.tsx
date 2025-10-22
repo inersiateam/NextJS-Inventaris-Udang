@@ -258,11 +258,11 @@ export default function DashboardClient({
                   )}
                 </div>
 
-                <div className="absolute top-32 left-3 flex flex-col gap-1 text-xs">
+                <div className="absolute top-32 left-4 px-2 flex flex-col gap-1 text-xs">
                   <div className="flex items-center gap-2">
                     <span
                       className={`w-4 h-4 rounded-sm ${
-                        hasData ? "bg-pink-500" : "bg-gray-300"
+                        hasData ? "bg-red-500" : "bg-gray-300"
                       }`}
                     ></span>
                     <span className={hasData ? "" : "text-gray-400"}>
@@ -298,7 +298,7 @@ export default function DashboardClient({
 
       {/* Tagihan Section */}
       <Card className="shadow-xl pb-20 md:pb-0">
-        <CardTitle className="text-xl px-4 pt-6 font-bold">
+        <CardTitle className="text-xl px-4 pt-0 font-bold">
           Tagihan Jatuh Tempo
         </CardTitle>
         <CardContent className="px-4 pt-4">
