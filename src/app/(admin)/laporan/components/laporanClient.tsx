@@ -216,7 +216,9 @@ export default function LaporanClient({
       {/* Header with Filter */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Laporan</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+            Laporan
+          </h1>
           <p className="text-gray-500 text-sm md:text-base mt-1">
             Laporan keuangan dan analisis performa bisnis
           </p>
@@ -247,10 +249,7 @@ export default function LaporanClient({
         </div>
       </div>
 
-      {/* Stats Cards */}
-      {/* Stats Cards - Update menjadi 5 cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        {/* Card 1: Omset */}
         <Card className="shadow-md rounded-xl h-[170px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
@@ -276,7 +275,6 @@ export default function LaporanClient({
           </CardContent>
         </Card>
 
-        {/* Card 2: Modal */}
         <Card className="shadow-md rounded-xl h-[170px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 transition-all duration-300 ease-out">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
@@ -302,7 +300,6 @@ export default function LaporanClient({
           </CardContent>
         </Card>
 
-        {/* Card 3: Laba Berjalan */}
         <Card className="shadow-md rounded-xl h-[170px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 transition-all duration-300 ease-out">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
@@ -328,7 +325,6 @@ export default function LaporanClient({
           </CardContent>
         </Card>
 
-        {/* Card 4: Pengeluaran */}
         <Card className="shadow-md rounded-xl h-[170px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 transition-all duration-300 ease-out">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
@@ -354,7 +350,6 @@ export default function LaporanClient({
           </CardContent>
         </Card>
 
-        {/* Card 5: Laba Bersih */}
         <Card className="shadow-md rounded-xl h-[170px] hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-purple-50 hover:to-violet-50 transition-all duration-300 ease-out">
           <CardContent className="pt-0 pb-4 px-5">
             <div className="flex items-center gap-3">
@@ -381,9 +376,7 @@ export default function LaporanClient({
         </Card>
       </div>
 
-      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Bar Chart - 2/3 */}
         <Card className="shadow-sm w-full hover:shadow-xl lg:col-span-2">
           <CardHeader className="pb-2">
             <CardTitle className="text-xl font-bold">Statistic</CardTitle>
@@ -423,7 +416,6 @@ export default function LaporanClient({
           </CardContent>
         </Card>
 
-        {/* Doughnut Chart - 1/3 */}
         <Card className="shadow-sm w-full hover:shadow-xl flex flex-col justify-between">
           <CardHeader className="pb-0 flex flex-row items-center justify-between mt-0 md:mt-4">
             <div>
@@ -446,21 +438,24 @@ export default function LaporanClient({
             )}
           </CardHeader>
 
-          <CardContent className="flex flex-col items-center justify-center pt-0 pb-2 rounded-b-lg mt-4 relative">
+          <CardContent className="flex flex-col items-center justify-center pt-4 pb-6 rounded-b-lg mt-2 relative overflow-visible">
             {currentProduct ? (
               <>
-                <div className="w-40 h-40 md:w-52 md:h-52 -mt-2">
+                <div className="relative w-40 h-40 md:w-64 md:h-64 overflow-visible">
                   {getDoughnutData && (
                     <Doughnut
                       data={getDoughnutData}
                       options={{
                         responsive: true,
-                        maintainAspectRatio: true,
+                        maintainAspectRatio: false,
                         plugins: {
                           legend: { display: false },
                           tooltip: { enabled: hasData },
                         },
                         cutout: "70%",
+                        layout: {
+                          padding: 10,
+                        },
                         events: hasData
                           ? [
                               "mousemove",
@@ -475,7 +470,7 @@ export default function LaporanClient({
                   )}
                 </div>
 
-                <div className="flex flex-col gap-1 text-xs mt-10 mb-2">
+                <div className="flex flex-col gap-1 text-xs mt-6">
                   <div className="flex items-center gap-2">
                     <span
                       className={`w-4 h-4 rounded-sm ${
@@ -528,19 +523,19 @@ export default function LaporanClient({
                 </TableHead>
               </TableRow>
               <TableRow className="bg-primary text-white">
-                <TableHead className="text-white whitespace-nowrap px-4">
+                <TableHead className="text-white whitespace-nowrap px-4 text-center">
                   Bulan
                 </TableHead>
-                <TableHead className="text-white whitespace-nowrap px-4">
+                <TableHead className="text-white whitespace-nowrap px-4 text-center">
                   Owner 1
                 </TableHead>
-                <TableHead className="text-white whitespace-nowrap px-4">
+                <TableHead className="text-white whitespace-nowrap px-4 text-center">
                   Owner 2
                 </TableHead>
-                <TableHead className="text-white whitespace-nowrap px-4">
+                <TableHead className="text-white whitespace-nowrap px-4 text-center">
                   Owner 3
                 </TableHead>
-                <TableHead className="text-white whitespace-nowrap px-4">
+                <TableHead className="text-white whitespace-nowrap px-4 text-center">
                   Kas
                 </TableHead>
               </TableRow>
@@ -550,19 +545,19 @@ export default function LaporanClient({
               {pembagianProvit.length > 0 ? (
                 pembagianProvit.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="whitespace-nowrap px-4 font-medium">
+                    <TableCell className="whitespace-nowrap px-4 font-medium text-center">
                       {item.bulan}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap px-4">
+                    <TableCell className="whitespace-nowrap px-4 text-center">
                       {formatCurrency(item.owner1)}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap px-4">
+                    <TableCell className="whitespace-nowrap px-4 text-center">
                       {formatCurrency(item.owner2)}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap px-4">
+                    <TableCell className="whitespace-nowrap px-4 text-center">
                       {formatCurrency(item.owner3)}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap px-4">
+                    <TableCell className="whitespace-nowrap px-4 text-center">
                       {formatCurrency(item.kas)}
                     </TableCell>
                   </TableRow>
