@@ -65,7 +65,7 @@ export function ProductCard({ nama, stok }: ProductCardProps) {
           </h2>
         </div>
 
-        <div className="flex items-center justify-between gap-2">
+        <div className="grid grid-cols-2 items-center">
           <Badge
             variant={isLowStock ? "secondary" : "default"}
             className="whitespace-nowrap"
