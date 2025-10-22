@@ -32,8 +32,18 @@ export default async function Page() {
   ]);
 
   const { stats, barangList } = dashboardData;
-  const latestBarang = barangList.slice(0, 2);
+  const latestBarang = barangList.slice(0, 3);
 
+  // Hitung total card: 1 Omset + jumlah barang + 1 Pelanggan
+  const totalCards = 1 + latestBarang.length + 1;
+
+  // Tentukan grid columns berdasarkan jumlah card
+  const getGridCols = () => {
+    if (totalCards <= 3) return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+    if (totalCards === 4) return "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4";
+    if (totalCards === 5) return "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5";
+    return "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"; // untuk 6+ card
+  };
   return (
     <div className="space-y-6 p-2">
       {/* Header */}
@@ -47,12 +57,12 @@ export default async function Page() {
       </header>
 
       {/* Stats Cards Grid */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <section className={`grid ${getGridCols()} gap-3`}>
+        {" "}
         <OmsetCard
           totalOmset={stats.totalOmset}
           percentageChange={stats.percentageChange}
         />
-
         {latestBarang.length > 0 ? (
           <>
             {latestBarang.map((barang) => (
@@ -70,7 +80,6 @@ export default async function Page() {
             <EmptyProductCard />
           </>
         )}
-
         <PelangganCard count={pelangganAktif} />
       </section>
 
