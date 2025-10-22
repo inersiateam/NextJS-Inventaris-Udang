@@ -508,9 +508,7 @@ export default function LaporanClient({
         </Card>
       </div>
 
-      {/* Tables Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Sharing Provit - 2/3 */}
         <Card className="p-4 lg:col-span-2">
           <Table>
             <TableHeader>
@@ -573,7 +571,6 @@ export default function LaporanClient({
           </Table>
         </Card>
 
-        {/* Top Pelanggan - 1/3 */}
         <Card className="p-4 lg:col-span-1">
           <h3 className="text-lg font-semibold mb-4">Daftar Top Pelanggan</h3>
           <Tabs defaultValue="aqua-water">
