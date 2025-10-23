@@ -307,7 +307,7 @@ export default function DashboardClient({
         </Card>
       </div>
 
-      <Card className="shadow-xl pb-20 md:pb-0">
+      <Card className="shadow-xl pb-6 md:pb-0">
         <CardTitle className="text-xl px-8 pt-0 font-bold">
           Tagihan Jatuh Tempo
         </CardTitle>
@@ -336,7 +336,7 @@ export default function DashboardClient({
             </Button>
           </div>
 
-          <div className="space-y-4 max-h-[480px] overflow-y-auto pr-1">
+          <div className="space-y-4 max-h-[596px] overflow-y-auto pr-1">
             {filteredTagihan.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10 text-gray-500">
                 <img
