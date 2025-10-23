@@ -1,8 +1,7 @@
-import { DetailData } from '@/types/interfaces/IBarangKeluar';
-import { formatCurrency, formatDate } from './utils';
+import { DetailData } from "@/types/interfaces/IBarangKeluar";
+import { formatCurrency, formatDate } from "./utils";
 
 const generateInvoicePDF = (data: DetailData) => {
-
   const html = `
 <!DOCTYPE html>
 <html>
@@ -87,7 +86,6 @@ const generateInvoicePDF = (data: DetailData) => {
     
     .company-address {
       font-size: 11px;
-      margin-bottom: 20px;
       line-height: 1.5;
     }
     
@@ -95,14 +93,24 @@ const generateInvoicePDF = (data: DetailData) => {
       border: 2px solid black;
       padding: 8px 12px;
       text-align: center;
-      margin-bottom: 20px;
       font-size: 13px;
+      width: fit-content;
+      display: inline-block;
     }
     
     .due-date-box strong {
       margin-right: 10px;
     }
-    
+
+    /* ✅ GRID ADDRESS + JATUH TEMPO */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      margin-bottom: 20px;
+      gap: 15px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -125,7 +133,6 @@ const generateInvoicePDF = (data: DetailData) => {
     }
     
     td:first-child {
-      text-align: center;
       width: 50px;
     }
     
@@ -141,18 +148,17 @@ const generateInvoicePDF = (data: DetailData) => {
       font-weight: bold;
       font-size: 14px;
       padding: 12px;
+      text-align: center; /* ✅ CENTERED */
     }
-    
+
+    /* ✅ FOOTER GRID 3 KOLOM */
     .footer {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 10px;
       margin-top: 30px;
     }
-    
-    .payment-details {
-      flex: 1;
-    }
-    
+
     .payment-details h3 {
       font-size: 13px;
       margin-bottom: 10px;
@@ -204,14 +210,18 @@ const generateInvoicePDF = (data: DetailData) => {
     </div>
   </div>
   
-  <div class="company-address">
-    <strong>Perumahan Griya Indah Pakis, Sumberejo,<br/>
-    Kab. Banyuwangi, Jawa Timur, 68419</strong>
+  <!-- ✅ GRID WRAPPER START -->
+  <div class="info-grid">
+    <div class="company-address">
+      <strong>Perumahan Griya Indah Pakis, Sumberejo,<br/>
+      Kab. Banyuwangi, Jawa Timur, 68419</strong>
+    </div>
+
+    <div class="due-date-box">
+      <strong>Jatuh Tempo :</strong> ${formatDate(data.jatuhTempo)}
+    </div>
   </div>
-  
-  <div class="due-date-box">
-    <strong>Jatuh Tempo :</strong> ${formatDate(data.jatuhTempo)}
-  </div>
+  <!-- ✅ GRID WRAPPER END -->
   
   <table>
     <thead>
@@ -255,8 +265,7 @@ const generateInvoicePDF = (data: DetailData) => {
       <p>
         <strong>Nama Bank</strong> : Bank BCA<br/>
         <strong>Nomor Rekening</strong> : 1801608235<br/>
-        <strong>Atas Nama</strong> : Jenny Nur Alfian<br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Handayani</strong>
+        <strong>Atas Nama</strong> : Jenny Nur Alfian Handayani
       </p>
     </div>
     
@@ -265,21 +274,27 @@ const generateInvoicePDF = (data: DetailData) => {
       <div class="signature-box"></div>
       <div class="signature-label">( Terima Kasih )</div>
     </div>
+
+    <div class="signature-section">
+      <div><strong>Hormat Kami</strong></div>
+      <div class="signature-box"></div>
+      <div class="signature-label">( CV Aqua Berkah Lestari )</div>
+    </div>
   </div>
 </body>
 </html>
-  `;
+`;
 
-  const blob = new Blob([html], { type: 'text/html' });
+  const blob = new Blob([html], { type: "text/html" });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
-  a.download = `Invoice_${data.noInvoice.replace(/\//g, '_')}.html`;
+  a.download = `Invoice_${data.noInvoice.replace(/\//g, "_")}.html`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  
+
   const printWindow = window.open(url);
   if (printWindow) {
     printWindow.onload = () => {

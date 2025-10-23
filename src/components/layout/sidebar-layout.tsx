@@ -26,7 +26,7 @@ export default function AppSidebar({
    const logoSrc =
     jabatan === "ATM"
       ? "/ATM.png"
-      : "/logo.png";
+      : "/ABL.png";
 
   const label =
     jabatan === "ATM"
