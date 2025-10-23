@@ -82,7 +82,9 @@ export function ProductCard({ nama, stok }: ProductCardProps) {
   );
 }
 
-export function EmptyProductCard() {
+export function EmptyProductCard({ isEmpty }: { isEmpty: boolean }) {
+  if (!isEmpty) return null; // tidak render apa-apa kalau tidak empty
+
   return (
     <Card className="shadow-lg rounded-2xl h-[190px] hover:shadow-2xl hover:-translate-y-1 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
       <CardContent className="flex flex-col justify-center items-center h-full">
@@ -94,6 +96,7 @@ export function EmptyProductCard() {
     </Card>
   );
 }
+
 
 export function PelangganCard({ count }: PelangganCardProps) {
   return (
