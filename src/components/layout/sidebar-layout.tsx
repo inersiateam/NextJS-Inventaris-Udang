@@ -42,27 +42,30 @@ export default function AppSidebar({
 
   return (
     <>
+  
       <aside
         className={cn(
-          "hidden md:flex flex-col bg-white h-full dark:bg-gray-900 shadow-lg transition-all duration-300 rounded-xl shadow-gray-100 border",
+          "hidden md:flex flex-col bg-white dark:bg-gray-900 shadow-lg border rounded-xl shadow-gray-100 transition-all duration-300",
+          "sticky top-0 h-screen",
           open ? "w-56" : "w-20"
         )}
       >
-       <div className="h-16 flex items-center justify-center">
-      <div className="flex items-center space-x-2">
-        <img src={logoSrc} alt="Logo" className="h-8 w-auto" />
-        {open && (
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            className="text-xl font-bold text-primary"
-          >
-            {label}
-          </motion.span>
-        )}
-      </div>
-    </div>
+        <div className="h-16 flex items-center justify-center">
+          <div className="flex items-center space-x-2">
+            <img src={logoSrc} alt="Logo" className="h-12 w-auto" />
+            {open && (
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="text-xl font-bold text-primary"
+              >
+                {label}
+              </motion.span>
+            )}
+          </div>
+        </div>
+
         <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
           {menuItems.map((item, idx) => {
             const active = pathname === item.href;

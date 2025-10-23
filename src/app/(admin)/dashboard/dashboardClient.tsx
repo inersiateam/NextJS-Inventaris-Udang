@@ -119,9 +119,9 @@ export default function DashboardClient({
             usePointStyle: true,
             padding: 50,
             font: {
-            size: 11,
-          },
-          maxWidth: 80, 
+              size: 11,
+            },
+            maxWidth: 80,
           },
           title: {
             display: false,
@@ -269,12 +269,7 @@ export default function DashboardClient({
                   )}
                 </div>
 
-                <div
-                  className={`
-              flex flex-col gap-1 text-xs mt-2 px-4
-              sm:absolute sm:top-20 sm:left-4 sm:mt-0
-            `}
-                >
+                <div className="flex flex-col items-center gap-1 text-xs mt-3">
                   <div className="flex items-center gap-2">
                     <span
                       className={`w-4 h-4 rounded-sm ${
