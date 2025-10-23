@@ -71,6 +71,7 @@ interface BarangKeluarClientProps {
     filterBulan?: number;
     status?: "BELUM_LUNAS" | "LUNAS";
   };
+  jabatan: "ABL" | "ATM";
 }
 
 type FilterPeriod = "all" | "thisMonth" | "3months" | "6months" | "1year";
@@ -245,6 +246,7 @@ export default function BarangKeluarClient({
   pelangganOptions,
   pagination,
   currentFilters,
+  jabatan,
 }: BarangKeluarClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -442,7 +444,8 @@ export default function BarangKeluarClient({
                 className="w-full sm:w-auto gap-2"
                 disabled={isPending}
               >
-<Sort size={24} color="#000" variant="Outline" />                <span>{FILTER_LABELS[currentFilterPeriod]}</span>
+                <Sort size={24} color="#000" variant="Outline" />{" "}
+                <span>{FILTER_LABELS[currentFilterPeriod]}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -566,6 +569,7 @@ export default function BarangKeluarClient({
           open={openDetailDialog}
           onOpenChange={setOpenDetailDialog}
           data={detailData}
+          jabatan={jabatan}
         />
       )}
 

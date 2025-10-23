@@ -1,38 +1,25 @@
 import { DetailData } from "@/types/interfaces/IBarangKeluar";
-import { formatCurrency, formatDate } from "./utils";
 
 const ADMIN_CONFIG = {
   ABL: {
     companyName: "CV Aqua Berkah Lestari",
-    companyShort: "CV AQUA\nBERKAH\nLESTARI",
     logo: "/ABL.png",
     address:
-      "Perumahan Griya Indah Pakis, Sumberejo,\nKab. Banyuwangi, Jawa Timur, 68419",
-    bank: "Bank BCA",
-    accountNumber: "1801608235",
-    accountName: "Jenny Nur Alfian Handayani",
-    primaryColor: "#0066cc",
-    secondaryColor: "#0099ff",
-    accentColor: "#ff6600",
+      "Perumahan Griya Indah Pakis, Blok A No. 19, Sumberejo,\nKab. Banyuwangi, Jawa Timur, 68419",
+    primaryColor: "#16548a",
   },
   ATM: {
     companyName: "CV Anugrah Tirta Makmur",
-    companyShort: "CV ANUGRAH\nTIRTA\nMAKMUR",
     logo: "/ATM.png",
     address:
-      "Perumahan Griya Indah Pakis, Sumberejo,\nKab. Banyuwangi, Jawa Timur, 68419",
-    bank: "Bank BCA",
-    accountNumber: "1801608235",
-    accountName: "Jenny Nur Alfian Handayani",
-    primaryColor: "#0066cc",
-    secondaryColor: "#0099ff",
-    accentColor: "#ff6600",
+      "Perumahan Griya Indah Pakis, Blok A No. 19, Sumberejo,\nKab. Banyuwangi, Jawa Timur, 68419",
+    primaryColor: "#16548a",
   },
 };
 
 type Jabatan = "ABL" | "ATM";
 
-const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
+const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
   const config = ADMIN_CONFIG[jabatan];
 
   const html = `
@@ -41,7 +28,7 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Invoice ${data.noInvoice}</title>
+  <title>Surat Jalan ${data.noInvoice}</title>
   <style>
     @page {
       size: A4;
@@ -75,75 +62,58 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+      margin-bottom: 30px;
     }
     
     .logo-section {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       margin-top: -35px;
     }
     
     .logo {
-      width: 160px;
-      height: 160px;
+      width: 120px;
+      height: 120px;
       object-fit: cover;
+      margin-bottom: 10px;
     }
     
-    .invoice-title {
+    .company-address {
+      font-size: 10px;
+      line-height: 1.5;
+      white-space: pre-line;
+      max-width: 300px;
+    }
+    
+    .title-section {
       text-align: center;
       flex: 1;
       padding: 0 20px;
     }
     
-    .invoice-title h1 {
-      font-size: 32px;
+    .title-section h1 {
+      font-size: 18px;
       font-weight: bold;
       margin-bottom: 5px;
     }
     
-    .invoice-number {
-      font-size: 14px;
+    .doc-number {
+      font-size: 12px;
+      margin-bottom: 10px;
     }
     
-    .header-right {
-      text-align: left;
+    .recipient-info {
+      text-align: right;
       font-size: 11px;
-      line-height: 1.8;
+      line-height: 1.6;
       min-width: 200px;
-    }
-    
-    .company-address {
-      font-size: 11px;
-      line-height: 1.5;
-      white-space: pre-line;
-    }
-    
-    .due-date-box {
-      border: 2px solid black;
-      padding: 8px 12px;
-      text-align: center;
-      font-size: 13px;
-      width: fit-content;
-      display: inline-block;
-    }
-    
-    .due-date-box strong {
-      margin-right: 10px;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: start;
-      margin-bottom: 20px;
-      gap: 15px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
     
     th {
@@ -153,48 +123,45 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
       text-align: center;
       font-weight: bold;
       border: 1px solid ${config.primaryColor};
+      font-size: 11px;
     }
     
     td {
       padding: 8px;
       border: 1px solid #333;
       text-align: center;
+      font-size: 11px;
     }
     
     td:first-child {
-      width: 50px;
+      width: 60px;
     }
     
     td:nth-child(2) {
       text-align: left;
     }
     
-    .total-row {
-      background-color: #f0f0f0;
+    td:last-child {
+      width: 100px;
     }
     
-    .total-row td {
+    .total-row {
       font-weight: bold;
-      font-size: 14px;
-      padding: 12px;
-      text-align: center;
+    }
+
+    .note-section {
+      margin-bottom: 30px;
+      font-size: 11px;
+    }
+
+    .note-section strong {
+      font-style: italic;
     }
 
     .footer {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr;
-      gap: 10px;
-      margin-top: 30px;
-    }
-
-    .payment-details h3 {
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-    
-    .payment-details p {
-      font-size: 11px;
-      line-height: 1.8;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 50px;
     }
     
     .signature-section {
@@ -226,47 +193,34 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
       .header {
         flex-direction: column;
         gap: 15px;
-      }
-
-      .logo-section {
-        margin-top: 0;
-        width: 100%;
+        margin-bottom: 20px;
       }
 
       .logo {
-        width: 120px;
-        height: 120px;
-      }
-
-      .invoice-title {
-        padding: 10px 0;
-      }
-
-      .invoice-title h1 {
-        font-size: 24px;
-      }
-
-      .invoice-number {
-        font-size: 12px;
-      }
-
-      .header-right {
-        width: 100%;
-        font-size: 10px;
-      }
-
-      .info-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
+        width: 60px;
+        height: 60px;
       }
 
       .company-address {
+        font-size: 9px;
+      }
+
+      .title-section {
+        padding: 10px 0;
+      }
+
+      .title-section h1 {
+        font-size: 16px;
+      }
+
+      .doc-number {
         font-size: 10px;
       }
 
-      .due-date-box {
-        font-size: 11px;
-        padding: 6px 10px;
+      .recipient-info {
+        width: 100%;
+        text-align: left;
+        font-size: 10px;
       }
 
       table {
@@ -283,23 +237,14 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
         font-size: 9px;
       }
 
-      .total-row td {
-        font-size: 11px;
-        padding: 8px;
+      .note-section {
+        font-size: 9px;
       }
 
       .footer {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        margin-top: 20px;
-      }
-
-      .payment-details h3 {
-        font-size: 11px;
-      }
-
-      .payment-details p {
-        font-size: 9px;
+        flex-direction: column;
+        gap: 30px;
+        margin-top: 30px;
       }
 
       .signature-box {
@@ -315,16 +260,15 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
     @media screen and (max-width: 480px) {
       body {
         padding: 15px;
-        font-size: 9px;
       }
 
       .logo {
-        width: 100px;
-        height: 100px;
+        width: 50px;
+        height: 50px;
       }
 
-      .invoice-title h1 {
-        font-size: 20px;
+      .title-section h1 {
+        font-size: 14px;
       }
 
       table {
@@ -335,11 +279,6 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
         padding: 4px 2px;
         font-size: 8px;
       }
-
-      .total-row td {
-        font-size: 10px;
-        padding: 6px;
-      }
     }
   </style>
 </head>
@@ -347,27 +286,17 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
   <div class="header">
     <div class="logo-section">
       <img src="${config.logo}" alt="${config.companyName}" class="logo" />
+      <div class="company-address">${config.address}</div>
     </div>
     
-    <div class="invoice-title">
-      <h1>INVOICE</h1>
-      <div class="invoice-number">No. ${data.noInvoice}</div>
+    <div class="title-section">
+      <h1>SURAT JALAN</h1>
+      <div class="doc-number">No. ${data.noSuratJalan}</div>
     </div>
     
-    <div class="header-right">
-      <div>Banyuwangi, ${formatDate(data.tglKeluar)}</div>
-      <div>Kepada,</div>
-      <div><strong>${data.namaPelanggan}</strong></div>
-    </div>
-  </div>
-  
-  <div class="info-grid">
-    <div class="company-address">
-      <strong>${config.address}</strong>
-    </div>
-
-    <div class="due-date-box">
-      <strong>Jatuh Tempo :</strong> ${formatDate(data.jatuhTempo)}
+    <div class="recipient-info">
+      <div>Kepada</div>
+      <div>${data.namaPelanggan}</div>
     </div>
   </div>
   
@@ -377,8 +306,6 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
         <th>NO</th>
         <th>NAMA BARANG</th>
         <th>QTY</th>
-        <th>HARGA</th>
-        <th>JUMLAH</th>
       </tr>
     </thead>
     <tbody>
@@ -389,41 +316,36 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
           <td>${index + 1}</td>
           <td>${item.namaBarang}</td>
           <td>${item.jmlPembelian} ltr</td>
-          <td>${formatCurrency(item.hargaJual)}</td>
-          <td>${formatCurrency(item.subtotal)}</td>
         </tr>
       `
         )
         .join("")}
       ${Array.from(
-        { length: Math.max(0, 15 - data.items.length) },
+        { length: Math.max(0, 8 - data.items.length) },
         (_, i) => `
         <tr>
           <td>&nbsp;</td>
-          <td></td>
-          <td></td>
           <td></td>
           <td></td>
         </tr>
       `
       ).join("")}
       <tr class="total-row">
-        <td colspan="4">TOTAL</td>
-        <td>${formatCurrency(data.totalOmset)}</td>
+        <td colspan="2">TOTAL</td>
+        <td>${data.items.reduce(
+          (sum, item) => sum + item.jmlPembelian,
+          0
+        )} ltr</td>
       </tr>
     </tbody>
   </table>
   
+  <div class="note-section">
+    <strong>Note:</strong><br/>
+    Barang yang sudah dibeli tidak bisa dikembalikan
+  </div>
+
   <div class="footer">
-    <div class="payment-details">
-      <h3>Detail Pembayaran</h3>
-      <p>
-        <strong>Nama Bank</strong> : ${config.bank}<br/>
-        <strong>Nomor Rekening</strong> : ${config.accountNumber}<br/>
-        <strong>Atas Nama</strong> : ${config.accountName}
-      </p>
-    </div>
-    
     <div class="signature-section">
       <div><strong>Penerima Barang</strong></div>
       <div class="signature-box"></div>
@@ -538,4 +460,4 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
   }
 };
 
-export { generateInvoicePDF };
+export { generateSuratJalanPDF };

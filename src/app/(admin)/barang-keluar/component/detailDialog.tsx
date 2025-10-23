@@ -19,25 +19,32 @@ import {
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { DetailData } from "@/types/interfaces/IBarangKeluar";
 import { generateInvoicePDF } from "@/lib/generatorInvoice";
+import { generateSuratJalanPDF } from "@/lib/generatorSuratJalan";
 
 interface DetailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   data: DetailData | null;
-  adminName?: string;
-  adminRole?: string;
+  jabatan: "ABL" | "ATM";
 }
 
 export default function DetailDialog({
   open,
   onOpenChange,
   data,
+  jabatan,
 }: DetailDialogProps) {
   if (!data) return null;
 
   const handleDownloadInvoice = () => {
     if (data) {
-      generateInvoicePDF(data);
+      generateInvoicePDF(data, jabatan);
+    }
+  };
+
+  const handleDownloadSuratJalan = () => {
+    if (data) {
+      generateSuratJalanPDF(data, jabatan);
     }
   };
 
@@ -163,6 +170,13 @@ export default function DetailDialog({
               className="bg-primary hover:bg-sky-700 text-white text-[9px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 h-6 sm:h-8 w-auto sm:w-auto"
             >
               Unduh Invoice
+            </Button>
+            <Button
+              type="button"
+              onClick={handleDownloadSuratJalan}
+              className="bg-green-600 hover:bg-green-700 text-white text-[9px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 h-6 sm:h-8 w-auto sm:w-auto"
+            >
+              Unduh Surat Jalan
             </Button>
             <Button
               type="button"

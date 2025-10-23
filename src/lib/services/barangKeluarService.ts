@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import {
   calculateJatuhTempo,
   generateNoInvoice,
+  generateNoSuratJalan,
   getDateRange,
 } from "@/lib/helpers/globalHelper";
 import {
@@ -17,6 +18,7 @@ import { logActivity } from "../fileLogger";
 const BARANG_KELUAR_SELECT = {
   id: true,
   noInvoice: true,
+  noSuratJalan: true,
   tglKeluar: true,
   jatuhTempo: true,
   totalOmset: true,
@@ -120,6 +122,7 @@ export const getBarangKeluarWithPagination = cache(
           return {
             id: item.id,
             noInvoice: item.noInvoice,
+            noSuratJalan: item.noSuratJalan,
             tglKeluar: item.tglKeluar,
             jatuhTempo: item.jatuhTempo,
             namaPelanggan: item.pelanggan.nama,
@@ -225,6 +228,7 @@ export const getBarangKeluarById = cache(
       return {
         id: barangKeluar.id,
         noInvoice: barangKeluar.noInvoice,
+        noSuratJalan: barangKeluar.noSuratJalan,
         tglKeluar: barangKeluar.tglKeluar,
         jatuhTempo: barangKeluar.jatuhTempo,
         namaPelanggan: barangKeluar.pelanggan.nama,
@@ -270,6 +274,7 @@ export const getBarangKeluarByIdForEdit = cache(
           tglKeluar: true,
           jatuhTempo: true,
           noInvoice: true,
+          noSuratJalan: true,
           totalOmset: true,
           totalModal: true,
           labaKotor: true,
@@ -316,6 +321,7 @@ export const getBarangKeluarByIdForEdit = cache(
         tglKeluar: barangKeluar.tglKeluar,
         jatuhTempo: barangKeluar.jatuhTempo,
         noInvoice: barangKeluar.noInvoice,
+        noSuratJalan: barangKeluar.noSuratJalan,
         namaPelanggan: barangKeluar.pelanggan.nama,
         alamatPelanggan: barangKeluar.pelanggan.alamat,
         ongkir: transaksi?.ongkir || 0,
@@ -377,6 +383,7 @@ export async function createBarangKeluar(params: CreateBarangKeluarParams) {
     const tglKeluar = new Date(data.tglKeluar);
     const jatuhTempo = calculateJatuhTempo(tglKeluar);
     const noInvoice = await generateNoInvoice(tglKeluar, jabatan);
+    const noSuratJalan = await generateNoSuratJalan(tglKeluar, jabatan);
 
     let totalOmset = 0;
     let totalModal = 0;
@@ -411,6 +418,7 @@ export async function createBarangKeluar(params: CreateBarangKeluarParams) {
           pelangganId: data.pelangganId,
           adminId: adminId,
           noInvoice,
+          noSuratJalan,
           totalOmset,
           totalModal,
           labaKotor,
@@ -457,6 +465,7 @@ export async function createBarangKeluar(params: CreateBarangKeluarParams) {
       dataBaru: JSON.stringify({
         id: result.barangKeluar.id,
         noInvoice: result.barangKeluar.noInvoice,
+        noSuratJalan: result.barangKeluar.noSuratJalan,
         pelangganId: data.pelangganId,
         totalOmset: result.barangKeluar.totalOmset,
         totalModal: result.barangKeluar.totalModal,

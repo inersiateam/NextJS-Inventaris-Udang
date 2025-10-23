@@ -70,6 +70,7 @@ async function BarangKeluarContent({ searchParams }: PageProps) {
       pelangganOptions={pelangganOptions}
       pagination={barangKeluarData.pagination}
       currentFilters={{ filterBulan, status }}
+      jabatan={jabatan}
     />
   );
 }
