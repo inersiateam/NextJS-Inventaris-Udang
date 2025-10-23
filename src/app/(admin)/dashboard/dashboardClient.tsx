@@ -117,7 +117,10 @@ export default function DashboardClient({
           position: "bottom" as const,
           labels: {
             usePointStyle: true,
-            padding: 15,
+            padding: 50,
+          },
+          title: {
+            display: false,
           },
         },
       },
@@ -174,7 +177,7 @@ export default function DashboardClient({
       maintainAspectRatio: false,
       cutout: "70%",
       layout: {
-        padding: 8, 
+        padding: 8,
       },
       plugins: {
         legend: { display: false },
@@ -331,8 +334,15 @@ export default function DashboardClient({
 
           <div className="space-y-4 max-h-[480px] overflow-y-auto pr-1">
             {filteredTagihan.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <p>Tidak ada tagihan jatuh tempo</p>
+              <div className="flex flex-col items-center justify-center py-10 text-gray-500">
+                <img
+                  src="/9264885.jpg"
+                  alt="Tidak ada tagihan"
+                  className="w-60 h-60 object-contain mb-4 opacity-80"
+                />
+                <p className="text-sm text-gray-500">
+                  Tidak ada tagihan jatuh tempo
+                </p>
               </div>
             ) : (
               filteredTagihan.map((tagihan) => (

@@ -213,7 +213,6 @@ export default function LaporanClient({
 
   return (
     <div className="space-y-6 p-2">
-      {/* Header with Filter */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
@@ -394,7 +393,7 @@ export default function LaporanClient({
                       position: "bottom",
                       labels: {
                         usePointStyle: true,
-                        padding: 15,
+                        padding: 50,
                       },
                     },
                   },
