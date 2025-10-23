@@ -232,7 +232,7 @@ export default function DashboardClient({
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm h-auto min-h-[250px] w-full hover:shadow-xl transition-shadow overflow-visible">
+        <Card className="shadow-sm h-auto min-h-[250px] w-full hover:shadow-xl transition-shadow overflow-visible px-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xl font-bold line-clamp-1">
@@ -271,7 +271,7 @@ export default function DashboardClient({
 
                 <div
                   className={`
-              flex flex-col gap-1 text-xs mt-4 px-
+              flex flex-col gap-1 text-xs mt-2 px-4
               sm:absolute sm:top-20 sm:left-4 sm:mt-0
             `}
                 >

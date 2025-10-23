@@ -10,8 +10,8 @@ import DashboardClient from "./dashboardClient";
 import {
   OmsetCard,
   ProductCard,
-  EmptyProductCard,
   PelangganCard,
+  EmptyProductCard,
 } from "./components/dashboardComponents";
 
 export default async function Page() {
@@ -46,7 +46,6 @@ export default async function Page() {
   };
   return (
     <div className="space-y-6 p-2">
-      {/* Header */}
       <header>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
           Dashboard
@@ -56,7 +55,6 @@ export default async function Page() {
         </p>
       </header>
 
-      {/* Stats Cards Grid */}
       <section className={`grid ${getGridCols()} gap-3`}>
         {" "}
         <OmsetCard
@@ -75,15 +73,11 @@ export default async function Page() {
             {latestBarang.length === 1 && <EmptyProductCard />}
           </>
         ) : (
-          <>
-            <EmptyProductCard />
-            <EmptyProductCard />
-          </>
+          <></>
         )}
         <PelangganCard count={pelangganAktif} />
       </section>
 
-      {/* Charts and Bills */}
       <DashboardClient
         chartStatistik={chartStatistik}
         chartBarang={chartBarang}
