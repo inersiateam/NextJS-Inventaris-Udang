@@ -228,7 +228,7 @@ export default function DashboardClient({
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm h-[250px] w-full hover:shadow-xl transition-shadow overflow-visible">
+        <Card className="shadow-sm h-auto min-h-[250px] w-full hover:shadow-xl transition-shadow overflow-visible">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xl font-bold line-clamp-1">
@@ -251,10 +251,10 @@ export default function DashboardClient({
             )}
           </CardHeader>
 
-          <CardContent className="relative flex flex-col items-center justify-center py-0 overflow-visible">
+          <CardContent className="relative flex flex-col items-center justify-center py-4 overflow-visible">
             {currentProduct ? (
               <>
-                <div className="relative w-32 h-32 flex items-center justify-center overflow-visible">
+                <div className="relative w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center">
                   {getDoughnutData && (
                     <Doughnut
                       data={getDoughnutData}
@@ -265,7 +265,12 @@ export default function DashboardClient({
                   )}
                 </div>
 
-                <div className="absolute top-20 left-4 px-2 flex flex-col gap-1 text-xs">
+                <div
+                  className={`
+              flex flex-col gap-1 text-xs mt-4 px-
+              sm:absolute sm:top-20 sm:left-4 sm:mt-0
+            `}
+                >
                   <div className="flex items-center gap-2">
                     <span
                       className={`w-4 h-4 rounded-sm ${

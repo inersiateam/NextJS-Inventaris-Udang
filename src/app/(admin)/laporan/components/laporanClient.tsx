@@ -376,44 +376,56 @@ export default function LaporanClient({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="shadow-sm w-full hover:shadow-xl lg:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xl font-bold">Statistic</CardTitle>
-          </CardHeader>
-          <CardContent className="!p-2 sm:!p-4 h-full">
-            <div className="h-[250px] lg:h-[300px]">
-              <Bar
-                data={barData}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: {
-                      display: true,
-                      position: "bottom",
-                      labels: {
-                        usePointStyle: true,
-                        padding: 50,
-                      },
-                    },
-                  },
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      ticks: {
-                        stepSize: 20,
-                        callback: (value) => value + "jt",
-                      },
-                    },
-                    x: {
-                      grid: { display: false },
-                    },
-                  },
-                }}
-              />
-            </div>
-          </CardContent>
-        </Card>
+       <Card className="shadow-sm w-full hover:shadow-xl lg:col-span-2">
+  <CardHeader className="pb-2">
+    <CardTitle className="text-xl font-bold">Statistic</CardTitle>
+  </CardHeader>
+  <CardContent className="!p-2 sm:!p-4 h-full">
+    {/* Tambahkan margin-top kecil agar chart agak turun */}
+    <div className="h-[260px] lg:h-[320px] mt-2">
+      <Bar
+        data={barData}
+        options={{
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: {
+            padding: {
+              top: 20,    // 🔥 jarak antara judul dan chart
+              bottom: 0,  // hilangkan space bawah
+            },
+          },
+          plugins: {
+            legend: {
+              display: true,
+              position: "bottom",
+              align: "center",
+              labels: {
+                usePointStyle: true,
+                padding: 40,
+                font: {
+                  size: 12,
+                },
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 20,
+                callback: (value) => value + "jt",
+              },
+            },
+            x: {
+              grid: { display: false },
+            },
+          },
+        }}
+      />
+    </div>
+  </CardContent>
+</Card>
+
 
         <Card className="shadow-sm w-full hover:shadow-xl flex flex-col justify-between">
           <CardHeader className="pb-0 flex flex-row items-center justify-between mt-0 md:mt-4">
