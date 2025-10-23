@@ -55,7 +55,6 @@ export function ProductCard({ nama, stok }: ProductCardProps) {
 
   return (
     <div className="bg-white shadow-md rounded-2xl h-auto p-3 sm:p-4 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out">
-      {/* Bagian atas */}
       <div className="flex items-center gap-2 sm:gap-3">
         <div className="bg-primary p-2 sm:p-3 rounded-full shrink-0">
           <BoxTick size={28} color="white" variant="Bold" />
@@ -65,7 +64,6 @@ export function ProductCard({ nama, stok }: ProductCardProps) {
         </h2>
       </div>
 
-      {/* Bagian bawah */}
       <div className="grid grid-cols-2 items-end mt-2 sm:mt-0">
         <Badge
           variant={isLowStock ? "secondary" : "default"}
@@ -111,7 +109,7 @@ export function PelangganCard({ count }: PelangganCardProps) {
 }
 
 export function EmptyProductCard({ isEmpty =true}) {
-  if (!isEmpty) return null; // tidak render apa-apa kalau tidak empty
+  if (!isEmpty) return null; 
 
   return (
     <Card className="shadow-lg rounded-2xl h-[190px] hover:shadow-2xl hover:-translate-y-1 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out">
