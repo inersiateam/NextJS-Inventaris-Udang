@@ -118,6 +118,10 @@ export default function DashboardClient({
           labels: {
             usePointStyle: true,
             padding: 50,
+            font: {
+            size: 11,
+          },
+          maxWidth: 80, 
           },
           title: {
             display: false,
