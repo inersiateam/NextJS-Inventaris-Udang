@@ -1,8 +1,8 @@
+import { Card, CardContent } from "@/components/ui/card";
 import { BoxTick, EmptyWallet, User } from "iconsax-react";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { DASHBOARD } from "@/lib/constants";
-import { Card, CardContent } from "@/components/ui/card";
 
 interface OmsetCardProps {
   totalOmset: number;
@@ -22,29 +22,25 @@ export function OmsetCard({ totalOmset, percentageChange }: OmsetCardProps) {
   const isPositive = percentageChange >= 0;
 
   return (
-    <div className="bg-white shadow-md rounded-2xl h-auto md:h-[190px] p-3 sm:p-4 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out">
-      <div className="flex items-center gap-2 sm:gap-3">
-        <div className="bg-green-500 p-2 sm:p-3 rounded-full shrink-0">
-          <EmptyWallet size={28} color="#fff" variant="Bold" />
+    <div className="shadow-md rounded-xl h-[170px] bg-white hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 ease-out p-4 flex flex-col justify-between">
+      <div className="flex items-center gap-3">
+        <div className="bg-green-600 p-3 rounded-full">
+          <EmptyWallet size={24} color="#fff" variant="Bold" />
         </div>
-        <h2 className="text-sm sm:text-base md:text-lg font-bold">
-          Total Omset
-        </h2>
+        <h2 className="text-base font-bold">Omset</h2>
       </div>
 
-      <div className="space-y-1 mt-2 sm:mt-0">
+      <div>
         <p
-          className={`text-xs sm:text-sm font-semibold ${
+          className={`text-sm mt-2 ${
             isPositive ? "text-green-600" : "text-red-600"
           }`}
         >
           {isPositive ? "+" : ""}
-          {percentageChange}%
+          {percentageChange.toFixed(2)}%
         </p>
-        <p className="text-lg sm:text-xl md:text-2xl font-bold leading-tight">
-          {formatCurrency(totalOmset)}
-        </p>
-        <p className="text-[10px] sm:text-xs text-gray-500">per bulan ini</p>
+        <p className="text-xl font-bold mt-1">{formatCurrency(totalOmset)}</p>
+        <p className="text-xs text-gray-500">Oktober 2025</p>
       </div>
     </div>
   );
@@ -54,28 +50,24 @@ export function ProductCard({ nama, stok }: ProductCardProps) {
   const isLowStock = stok < DASHBOARD.BATAS_MINIMUM_STOK;
 
   return (
-    <div className="bg-white shadow-md rounded-2xl h-auto p-3 sm:p-4 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out">
-      <div className="flex items-center gap-2 sm:gap-3">
-        <div className="bg-primary p-2 sm:p-3 rounded-full shrink-0">
-          <BoxTick size={28} color="white" variant="Bold" />
+    <div className="shadow-md rounded-xl h-[170px] bg-white hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 transition-all duration-300 ease-out p-4 flex flex-col justify-between">
+      <div className="flex items-center gap-3">
+        <div className="bg-primary p-3 rounded-full">
+          <BoxTick size={24} color="#fff" variant="Bold" />
         </div>
-        <h2 className="text-sm sm:text-base md:text-lg font-semibold line-clamp-2">
-          {nama}
-        </h2>
+        <h2 className="text-base font-bold">{nama}</h2>
       </div>
 
-      <div className="grid grid-cols-2 items-end mt-2 sm:mt-0">
+      <div className="flex justify-between items-end">
         <Badge
           variant={isLowStock ? "secondary" : "default"}
-          className="whitespace-nowrap text-[10px] sm:text-xs px-2 py-1"
+          className="text-[10px] sm:text-xs px-2 py-1"
         >
           {isLowStock ? "Stok Menipis" : "Stok Terisi"}
         </Badge>
         <div className="text-right">
-          <p className="text-lg sm:text-2xl md:text-3xl font-bold leading-tight">
-            {stok}
-          </p>
-          <p className="text-[10px] sm:text-xs text-gray-500">stok persediaan</p>
+          <p className="text-xl font-bold">{stok}</p>
+          <p className="text-xs text-gray-500">stok persediaan</p>
         </div>
       </div>
     </div>
@@ -84,29 +76,24 @@ export function ProductCard({ nama, stok }: ProductCardProps) {
 
 export function PelangganCard({ count }: PelangganCardProps) {
   return (
-    <div className="bg-white shadow-md rounded-2xl h-auto md:h-[190px] p-3 sm:p-4 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out">
-      <div className="flex items-center gap-2 sm:gap-3">
-        <div className="bg-teal-400 p-2 sm:p-3 rounded-full shrink-0">
-          <User size={28} color="white" variant="Bold" />
+    <div className="shadow-md rounded-xl h-[170px] bg-white hover:shadow-xl hover:-translate-y-2 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 transition-all duration-300 ease-out p-4 flex flex-col justify-between">
+      <div className="flex items-center gap-3">
+        <div className="bg-green-500 p-3 rounded-full">
+          <User size={24} color="#fff" variant="Bold" />
         </div>
-        <h2 className="text-sm sm:text-base md:text-lg font-semibold">
-          Pelanggan Aktif
-        </h2>
+        <h2 className="text-base font-bold">Pelanggan Aktif</h2>
       </div>
 
-      <div className="flex items-end justify-end mt-2 sm:mt-0">
+      <div className="flex justify-end">
         <div className="text-right">
-          <p className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight">
-            {count}
-          </p>
-          <p className="text-[10px] sm:text-xs text-gray-500">
-            total pelanggan
-          </p>
+          <p className="text-xl font-bold">{count}</p>
+          <p className="text-xs text-gray-500">total pelanggan</p>
         </div>
       </div>
     </div>
   );
 }
+
 
 export function EmptyProductCard({ isEmpty =true}) {
   if (!isEmpty) return null; 

@@ -55,29 +55,36 @@ export default async function Page() {
         </p>
       </header>
 
-      <section className={`grid ${getGridCols()} gap-3`}>
-        {" "}
-        <OmsetCard
-          totalOmset={stats.totalOmset}
-          percentageChange={stats.percentageChange}
+      <section
+  className={`grid gap-3 ${
+    latestBarang.length === 2
+      ? "grid-cols-1 lg:grid-cols-4" 
+      : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-5"
+  }`}
+>
+ <OmsetCard
+    totalOmset={stats.totalOmset}
+    percentageChange={stats.percentageChange}
+  />
+
+  {latestBarang.length > 0 && (
+    <>
+      {latestBarang.map((barang) => (
+        <ProductCard
+          key={barang.id}
+          nama={barang.nama}
+          stok={barang.stok}
         />
-        {latestBarang.length > 0 ? (
-          <>
-            {latestBarang.map((barang) => (
-              <ProductCard
-                key={barang.id}
-                nama={barang.nama}
-                stok={barang.stok}
-              />
-            ))}
-            {latestBarang.length === 1 && <EmptyProductCard />}
-          </>
-        ) : (
-          <>
-          </>
-        )}
-        <PelangganCard count={pelangganAktif} />
-      </section>
+      ))}
+
+      {/* Jika hanya 1 produk, tambahkan 1 card kosong */}
+      {latestBarang.length === 1}
+    </>
+  )}
+
+  {/* Pelanggan Card */}
+  <PelangganCard count={pelangganAktif} />
+</section>
 
       <DashboardClient
         chartStatistik={chartStatistik}
