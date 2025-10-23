@@ -193,7 +193,7 @@ export default function DashboardClient({
         },
       },
       animation: {
-        duration: 400,
+        duration: 800,
       },
     }),
     [hasData]
