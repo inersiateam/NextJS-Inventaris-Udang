@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { DetailData } from "@/types/interfaces/IBarangKeluar";
+import { generateInvoicePDF } from "@/lib/generatorInvoice";
 
 interface DetailDialogProps {
   open: boolean;
@@ -33,6 +34,12 @@ export default function DetailDialog({
   data,
 }: DetailDialogProps) {
   if (!data) return null;
+
+  const handleDownloadInvoice = () => {
+    if (data) {
+      generateInvoicePDF(data);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -74,9 +81,15 @@ export default function DetailDialog({
             <Table className="w-full text-[9px] sm:text-[13px]">
               <TableHeader>
                 <TableRow className="bg-sky-600 text-white">
-                  <TableHead className="text-center py-1 sm:py-2 text-white">Barang</TableHead>
-                  <TableHead className="text-center py-1 sm:py-2 text-white">Jumlah</TableHead>
-                  <TableHead className="text-center py-1 sm:py-2 text-white">Harga Jual</TableHead>
+                  <TableHead className="text-center py-1 sm:py-2 text-white">
+                    Barang
+                  </TableHead>
+                  <TableHead className="text-center py-1 sm:py-2 text-white">
+                    Jumlah
+                  </TableHead>
+                  <TableHead className="text-center py-1 sm:py-2 text-white">
+                    Harga Jual
+                  </TableHead>
                   <TableHead className="text-center py-1 sm:py-2 text-white">
                     Subtotal Omset
                   </TableHead>
@@ -146,6 +159,7 @@ export default function DetailDialog({
           <div className="flex flex-col sm:flex-row sm:justify-end justify-start gap-1 sm:gap-2 mt-2">
             <Button
               type="button"
+              onClick={handleDownloadInvoice}
               className="bg-primary hover:bg-sky-700 text-white text-[9px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 h-6 sm:h-8 w-auto sm:w-auto"
             >
               Unduh Invoice
