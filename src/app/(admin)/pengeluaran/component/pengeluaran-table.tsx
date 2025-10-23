@@ -364,15 +364,22 @@ export default function PengeluaranTable({
 
   return (
     <>
-      <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-        <div className="bg-white border border-gray-200 px-4 py-2 rounded-lg">
+      <div className="mb-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="bg-sky-50 border border-sky-200 px-4 py-2 rounded-lg">
           <p className="text-xs text-gray-600">Total Pengeluaran</p>
           <p className="text-lg md:text-xl font-bold text-sky-700">
             {formatCurrency(summary.totalPengeluaran)}
           </p>
         </div>
+      </div>
 
-        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2">
+        <p className="text-sm text-gray-600">
+          Menampilkan {startIndex + 1} - {endIndex} dari {pagination?.total}{" "}
+          data
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -413,11 +420,6 @@ export default function PengeluaranTable({
           </Button>
         </div>
       </div>
-
-      <p className="text-sm text-gray-600 mb-3">
-        Menampilkan {startIndex + 1} - {endIndex} dari {pagination?.total || 0}{" "}
-        data
-      </p>
 
       <div className="w-full overflow-x-auto rounded-lg">
         <Table>
