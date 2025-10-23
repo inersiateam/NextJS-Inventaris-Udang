@@ -10,8 +10,8 @@ import DashboardClient from "./dashboardClient";
 import {
   OmsetCard,
   ProductCard,
-  EmptyProductCard,
   PelangganCard,
+  EmptyProductCard,
 } from "./components/dashboardComponents";
 
 export default async function Page() {
@@ -76,8 +76,6 @@ export default async function Page() {
           </>
         ) : (
           <>
-            <EmptyProductCard />
-            <EmptyProductCard />
           </>
         )}
         <PelangganCard count={pelangganAktif} />
