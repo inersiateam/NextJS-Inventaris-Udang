@@ -134,6 +134,7 @@ export default function DialogBarang({
               <Label htmlFor="harga">Harga:</Label>
               <Input
                 id="harga"
+                type="number"
                 value={harga}
                 onChange={(e) => setHarga(e.target.value)}
                 placeholder="Masukkan harga"
