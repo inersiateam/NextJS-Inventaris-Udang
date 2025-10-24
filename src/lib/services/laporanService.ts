@@ -11,6 +11,23 @@ import {
 import { getMonthDateRange, getWeekFromDate } from "../helpers/globalHelper";
 import { DASHBOARD } from "../constants";
 
+export const getBarangTabsForLaporan = cache(
+  async (jabatan: Jabatan): Promise<Array<{ id: number; nama: string }>> => {
+    try {
+      const barangList = await prisma.barang.findMany({
+        where: { admin: { jabatan } },
+        select: { id: true, nama: true },
+        orderBy: { nama: "asc" },
+      });
+
+      return barangList;
+    } catch (error) {
+      console.error("Error fetching barang tabs:", error);
+      return [];
+    }
+  }
+);
+
 function getDateRangeByPeriode(periode: number) {
   const currentDate = new Date();
 
@@ -629,7 +646,7 @@ export const getPembagianProvitByPeriode = cache(
 export const getTopPelangganByPeriode = cache(
   async (
     jabatan: Jabatan,
-    barangNama: string = "all",
+    barangId: number | null = null,
     periode: number = 1
   ): Promise<TopPelanggan[]> => {
     try {
@@ -640,15 +657,10 @@ export const getTopPelangganByPeriode = cache(
         tglKeluar: { gte: startDate, lte: endDate },
       };
 
-      if (barangNama !== "all") {
+      if (barangId !== null) {
         whereCondition.details = {
           some: {
-            barang: {
-              nama: {
-                contains: barangNama,
-                mode: "insensitive",
-              },
-            },
+            barangId: barangId,
           },
         };
       }
@@ -706,12 +718,7 @@ export const getTopPelangganByPeriode = cache(
       const topPelanggan = Array.from(pelangganMap.values())
         .map((p) => ({
           ...p,
-          barangNama:
-            barangNama === "all"
-              ? "Semua Produk"
-              : barangNama.includes("difire")
-              ? "Aqua Difire"
-              : "Aqua Water",
+          barangNama: "N/A",
         }))
         .sort((a, b) => b.totalTransaksi - a.totalTransaksi)
         .slice(0, 4);

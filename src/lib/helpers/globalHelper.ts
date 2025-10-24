@@ -134,3 +134,10 @@ export function getDateRange(filterBulan: number) {
 
   return { startDate, endDate };
 }
+
+export function createSlug(nama: string): string {
+  return nama
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "");
+}

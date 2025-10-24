@@ -37,6 +37,7 @@ import {
   PembagianProvit,
   TopPelanggan,
   ChartBarangItem,
+  BarangTab,
 } from "@/types/interfaces/ILaporan";
 import {
   getLaporanStatsAction,
@@ -60,9 +61,9 @@ interface LaporanClientProps {
   initialStats: LaporanStats;
   initialChartLaporan: ChartLaporanData;
   initialPembagianProvit: PembagianProvit[];
-  initialTopPelangganWater: TopPelanggan[];
-  initialTopPelangganDifire: TopPelanggan[];
+  initialTopPelangganByBarang: Record<number, TopPelanggan[]>;
   initialChartBarang: ChartBarangItem[];
+  initialBarangTabs: BarangTab[];
   jabatan: string;
 }
 
@@ -70,9 +71,9 @@ export default function LaporanClient({
   initialStats,
   initialChartLaporan,
   initialPembagianProvit,
-  initialTopPelangganWater,
-  initialTopPelangganDifire,
+  initialTopPelangganByBarang,
   initialChartBarang,
+  initialBarangTabs,
   jabatan,
 }: LaporanClientProps) {
   const [selectedPeriode, setSelectedPeriode] = useState<number>(1);
@@ -81,73 +82,70 @@ export default function LaporanClient({
   const [chartLaporan, setChartLaporan] = useState(initialChartLaporan);
   const [chartBarang, setChartBarang] = useState(initialChartBarang);
   const [selectedProductIndex, setSelectedProductIndex] = useState(0);
+  const [barangTabs] = useState(initialBarangTabs);
+  const [topPelangganByBarang, setTopPelangganByBarang] = useState(
+    initialTopPelangganByBarang
+  );
 
   const [pembagianProvit, setPembagianProvit] = useState(
     initialPembagianProvit
   );
-  const [topPelangganWater, setTopPelangganWater] = useState(
-    initialTopPelangganWater
+
+  const handlePeriodeChange = useCallback(
+    async (newPeriode: number) => {
+      setIsLoading(true);
+      setSelectedPeriode(newPeriode);
+
+      try {
+        const [
+          statsResult,
+          chartResult,
+          pembagianResult,
+          chartBarangResult,
+          ...topPelangganResults
+        ] = await Promise.all([
+          getLaporanStatsAction(newPeriode),
+          getChartLaporanAction(newPeriode),
+          getPembagianProvitAction(newPeriode),
+          getChartBarangLaporanAction(newPeriode),
+          ...barangTabs.map((barang) =>
+            getTopPelangganAction(barang.id, newPeriode)
+          ),
+        ]);
+
+        if (statsResult.success && statsResult.data) {
+          setStats(statsResult.data);
+        }
+
+        if (chartResult.success && chartResult.data) {
+          setChartLaporan(chartResult.data);
+        }
+
+        if (pembagianResult.success && pembagianResult.data) {
+          setPembagianProvit(pembagianResult.data);
+        }
+
+        if (chartBarangResult.success && chartBarangResult.data) {
+          setChartBarang(chartBarangResult.data);
+          setSelectedProductIndex(0);
+        }
+
+        const newTopPelanggan: Record<number, TopPelanggan[]> = {};
+        barangTabs.forEach((barang, index) => {
+          const result = topPelangganResults[index];
+          if (result.success && result.data) {
+            newTopPelanggan[barang.id] = result.data;
+          }
+        });
+        setTopPelangganByBarang(newTopPelanggan);
+      } catch (error) {
+        console.error("Error updating data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [barangTabs]
   );
-  const [topPelangganDifire, setTopPelangganDifire] = useState(
-    initialTopPelangganDifire
-  );
-
-  const currentDate = new Date();
-  const periode = `${currentDate.toLocaleDateString("id-ID", {
-    month: "long",
-  })} ${currentDate.getFullYear()}`;
-
-  const handlePeriodeChange = useCallback(async (newPeriode: number) => {
-    setIsLoading(true);
-    setSelectedPeriode(newPeriode);
-
-    try {
-      const [
-        statsResult,
-        chartResult,
-        pembagianResult,
-        chartBarangResult,
-        topWaterResult,
-        topDifireResult,
-      ] = await Promise.all([
-        getLaporanStatsAction(newPeriode),
-        getChartLaporanAction(newPeriode),
-        getPembagianProvitAction(newPeriode),
-        getChartBarangLaporanAction(newPeriode),
-        getTopPelangganAction("water", newPeriode),
-        getTopPelangganAction("difire", newPeriode),
-      ]);
-
-      if (statsResult.success && statsResult.data) {
-        setStats(statsResult.data);
-      }
-
-      if (chartResult.success && chartResult.data) {
-        setChartLaporan(chartResult.data);
-      }
-
-      if (pembagianResult.success && pembagianResult.data) {
-        setPembagianProvit(pembagianResult.data);
-      }
-
-      if (chartBarangResult.success && chartBarangResult.data) {
-        setChartBarang(chartBarangResult.data);
-        setSelectedProductIndex(0);
-      }
-
-      if (topWaterResult.success && topWaterResult.data) {
-        setTopPelangganWater(topWaterResult.data);
-      }
-
-      if (topDifireResult.success && topDifireResult.data) {
-        setTopPelangganDifire(topDifireResult.data);
-      }
-    } catch (error) {
-      console.error("Error updating data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   const getPeriodeLabel = (periode: number) => {
     if (periode === 1) return "Bulan Ini";
@@ -378,56 +376,54 @@ export default function LaporanClient({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-       <Card className="shadow-sm w-full hover:shadow-xl lg:col-span-2">
-  <CardHeader className="pb-2">
-    <CardTitle className="text-xl font-bold">Statistic</CardTitle>
-  </CardHeader>
-  <CardContent className="!p-2 sm:!p-4 h-full">
-    {/* Tambahkan margin-top kecil agar chart agak turun */}
-    <div className="h-[260px] lg:h-[320px] mt-2">
-      <Bar
-        data={barData}
-        options={{
-          responsive: true,
-          maintainAspectRatio: false,
-          layout: {
-            padding: {
-              top: 20,    // 🔥 jarak antara judul dan chart
-              bottom: 0,  // hilangkan space bawah
-            },
-          },
-          plugins: {
-            legend: {
-              display: true,
-              position: "bottom",
-              align: "center",
-              labels: {
-                usePointStyle: true,
-                padding: 40,
-                font: {
-                  size: 12,
-                },
-              },
-            },
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                stepSize: 20,
-                callback: (value) => value + "jt",
-              },
-            },
-            x: {
-              grid: { display: false },
-            },
-          },
-        }}
-      />
-    </div>
-  </CardContent>
-</Card>
-
+        <Card className="shadow-sm w-full hover:shadow-xl lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xl font-bold">Statistic</CardTitle>
+          </CardHeader>
+          <CardContent className="!p-2 sm:!p-4 h-full">
+            <div className="h-[260px] lg:h-[320px] mt-2">
+              <Bar
+                data={barData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  layout: {
+                    padding: {
+                      top: 20,
+                      bottom: 0,
+                    },
+                  },
+                  plugins: {
+                    legend: {
+                      display: true,
+                      position: "bottom",
+                      align: "center",
+                      labels: {
+                        usePointStyle: true,
+                        padding: 40,
+                        font: {
+                          size: 12,
+                        },
+                      },
+                    },
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        stepSize: 20,
+                        callback: (value) => value + "jt",
+                      },
+                    },
+                    x: {
+                      grid: { display: false },
+                    },
+                  },
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
         <Card className="shadow-sm w-full hover:shadow-xl flex flex-col justify-between">
           <CardHeader className="pb-0 flex flex-row items-center justify-between mt-0 md:mt-4">
@@ -588,91 +584,66 @@ export default function LaporanClient({
         </Card>
 
         <Card className="p-4 lg:col-span-1">
-          <h3 className="text-lg font-semibold">Daftar Top Pelanggan</h3>
-          <Tabs defaultValue="aqua-water">
-            <TabsList className="flex gap-2 mb-4">
-              <TabsTrigger
-                value="aqua-water"
-                className="px-2 py-1 rounded-md border border-gray-300 data-[state=active]:bg-primary data-[state=active]:text-white"
-              >
-                Aqua Water
-              </TabsTrigger>
-              <TabsTrigger
-                value="aqua-difire"
-                className="px-2 py-1 rounded-md border border-gray-300 data-[state=active]:bg-primary data-[state=active]:text-white"
-              >
-                Aqua Difire
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="aqua-water" className="space-y-3">
-              {topPelangganWater.length > 0 ? (
-                topPelangganWater.map((pelanggan, i) => (
-                  <div
-                    key={i}
-                    className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all"
+          <h3 className="text-lg font-semibold mb-4">Daftar Top Pelanggan</h3>
+          {barangTabs.length > 0 ? (
+            <Tabs defaultValue={barangTabs[0]?.id.toString()}>
+              <TabsList className="flex gap-2 mb-4 flex-wrap">
+                {barangTabs.map((barang) => (
+                  <TabsTrigger
+                    key={barang.id}
+                    value={barang.id.toString()}
+                    className="px-2 py-1 rounded-md border border-gray-300 data-[state=active]:bg-primary data-[state=active]:text-white"
                   >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="text-base font-bold">
-                          {pelanggan.nama}
-                        </h4>
-                        <p className="text-sm text-gray-600">
-                          {pelanggan.alamat}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-gray-600">
-                          Total Transaksi :
-                        </p>
-                        <p className="text-red-500 font-bold text-lg">
-                          {pelanggan.totalTransaksi}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">Belum ada data pelanggan</p>
-                </div>
-              )}
-            </TabsContent>
+                    {barang.nama}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
 
-            <TabsContent value="aqua-difire" className="space-y-3">
-              {topPelangganDifire.length > 0 ? (
-                topPelangganDifire.map((pelanggan, i) => (
-                  <div
-                    key={i}
-                    className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="text-base font-bold">
-                          {pelanggan.nama}
-                        </h4>
-                        <p className="text-sm text-gray-600">
-                          {pelanggan.alamat}
-                        </p>
+              {barangTabs.map((barang) => (
+                <TabsContent
+                  key={barang.id}
+                  value={barang.id.toString()}
+                  className="space-y-3"
+                >
+                  {topPelangganByBarang[barang.id]?.length > 0 ? (
+                    topPelangganByBarang[barang.id].map((pelanggan, i) => (
+                      <div
+                        key={i}
+                        className="cursor-pointer bg-white rounded-lg p-3 border border-gray-200 shadow-md hover:shadow-lg transition-all"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-base font-bold">
+                              {pelanggan.nama}
+                            </h4>
+                            <p className="text-sm text-gray-600">
+                              {pelanggan.alamat}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-gray-600">
+                              Total Transaksi :
+                            </p>
+                            <p className="text-red-500 font-bold text-lg">
+                              {pelanggan.totalTransaksi}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-xs text-gray-600">
-                          Total Transaksi :
-                        </p>
-                        <p className="text-red-500 font-bold text-lg">
-                          {pelanggan.totalTransaksi}
-                        </p>
-                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">Belum ada data pelanggan</p>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">Belum ada data pelanggan</p>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+                  )}
+                </TabsContent>
+              ))}
+            </Tabs>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Belum ada data barang</p>
+            </div>
+          )}
         </Card>
       </div>
     </div>
