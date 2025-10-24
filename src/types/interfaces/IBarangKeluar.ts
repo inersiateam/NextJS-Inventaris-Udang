@@ -23,6 +23,7 @@ export interface IBarangKeluarDetail {
 export interface IBarangKeluarResponse {
   id: number;
   noInvoice: string;
+  noSuratJalan: string;
   tglKeluar: Date;
   jatuhTempo: Date;
   namaPelanggan: string;
@@ -69,6 +70,7 @@ export interface DetailItem {
 
 export interface DetailData {
   noInvoice: string;
+  noSuratJalan: string;
   tglKeluar: Date;
   jatuhTempo: Date;
   namaPelanggan: string;

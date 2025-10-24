@@ -38,7 +38,6 @@ export async function generateNoInvoice(
 ): Promise<string> {
   const year = tglKeluar.getFullYear();
   const month = String(tglKeluar.getMonth() + 1).padStart(2, "0");
-  const day = String(tglKeluar.getDate()).padStart(2, "0");
   const startOfMonth = new Date(year, tglKeluar.getMonth(), 1);
   const endOfMonth = new Date(year, tglKeluar.getMonth() + 1, 0, 23, 59, 59);
 
@@ -51,9 +50,32 @@ export async function generateNoInvoice(
     },
   });
 
-  const nomorUrut = String(count + 1).padStart(3, "0");
+  const counter = String(count + 1).padStart(3, "0");
 
-  return `INV/${nomorUrut}/${day}/${jabatan}/${month}/${year}`;
+  return `INV/${jabatan}/${month}/${year}/${counter}`;
+}
+
+export async function generateNoSuratJalan(
+  tglKeluar: Date,
+  jabatan: string
+): Promise<string> {
+  const year = tglKeluar.getFullYear();
+  const month = String(tglKeluar.getMonth() + 1).padStart(2, "0");
+  const startOfMonth = new Date(year, tglKeluar.getMonth(), 1);
+  const endOfMonth = new Date(year, tglKeluar.getMonth() + 1, 0, 23, 59, 59);
+
+  const count = await prisma.barangKeluar.count({
+    where: {
+      tglKeluar: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+    },
+  });
+
+  const counter = String(count + 1).padStart(3, "0");
+
+  return `SJ/${jabatan}/${month}/${year}/${counter}`;
 }
 
 export function calculateJatuhTempo(tglMasuk: Date): Date {
@@ -102,7 +124,6 @@ export const calculateTotalModal = (
   return hargaBarang * jumlah + ongkir;
 };
 
-
 export function getDateRange(filterBulan: number) {
   const now = new Date();
   const startDate = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
@@ -112,4 +133,11 @@ export function getDateRange(filterBulan: number) {
   endDate.setHours(23, 59, 59, 999);
 
   return { startDate, endDate };
+}
+
+export function createSlug(nama: string): string {
+  return nama
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "");
 }

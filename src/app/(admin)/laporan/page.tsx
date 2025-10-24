@@ -5,6 +5,7 @@ import {
   getPembagianProvitByPeriode,
   getTopPelangganByPeriode,
   getChartBarangLaporanByPeriode,
+  getBarangTabsForLaporan,
 } from "@/lib/services/laporanService";
 import LaporanClient from "./components/laporanClient";
 
@@ -13,30 +14,40 @@ export const dynamic = "force-dynamic";
 
 export default async function Page() {
   const jabatan = await getJabatan();
+
+  const barangTabs = await getBarangTabsForLaporan(jabatan);
+  const topPelangganPromises = barangTabs.map((barang) =>
+    getTopPelangganByPeriode(jabatan, barang.id, 1)
+  );
+
   const [
     laporanStats,
     chartLaporan,
     pembagianProvit,
-    topPelangganWater,
-    topPelangganDifire,
     chartBarang,
+    ...topPelangganResults
   ] = await Promise.all([
     getLaporanStatsByPeriode(jabatan, 1),
     getChartLaporanByPeriode(jabatan, 1),
     getPembagianProvitByPeriode(jabatan, 1),
-    getTopPelangganByPeriode(jabatan, "water", 1),
-    getTopPelangganByPeriode(jabatan, "difire", 1),
     getChartBarangLaporanByPeriode(jabatan, 1),
+    ...topPelangganPromises,
   ]);
+
+  const topPelangganByBarang: Record<string, any[]> = {};
+  barangTabs.forEach((barang, index) => {
+    topPelangganByBarang[barang.id] = topPelangganResults[index];
+  });
 
   return (
     <LaporanClient
       initialStats={laporanStats}
       initialChartLaporan={chartLaporan}
       initialPembagianProvit={pembagianProvit}
-      initialTopPelangganWater={topPelangganWater}
-      initialTopPelangganDifire={topPelangganDifire}
+      initialTopPelangganByBarang={topPelangganByBarang}
       initialChartBarang={chartBarang}
+      initialBarangTabs={barangTabs}
+      jabatan={jabatan}
     />
   );
 }

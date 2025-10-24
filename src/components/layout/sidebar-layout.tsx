@@ -23,8 +23,15 @@ export default function AppSidebar({
   const [isMobile, setIsMobile] = useState(false);
   const { data: session } = useSession();
   const jabatan = session?.user?.jabatan;
-  const logoSrc = jabatan === "ATM" ? "/ATM.png" : "/logo.png";
-  const label = jabatan === "ATM" ? "CV. ATM" : "CV. ABL";
+   const logoSrc =
+    jabatan === "ATM"
+      ? "/ATM.png"
+      : "/ABL.png";
+
+  const label =
+    jabatan === "ATM"
+      ? "CV. ATM"
+      : "CV. ABL";
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);

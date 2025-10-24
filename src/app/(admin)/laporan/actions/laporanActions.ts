@@ -8,6 +8,7 @@ import {
   getPembagianProvitByPeriode,
   getTopPelangganByPeriode,
   getChartBarangLaporanByPeriode,
+  getBarangTabsForLaporan,
 } from "@/lib/services/laporanService";
 import { Jabatan } from "@prisma/client";
 import {
@@ -16,6 +17,7 @@ import {
   PembagianProvitResponse,
   TopPelangganResponse,
   ChartBarangResponse,
+  BarangTabsResponse,
 } from "@/types/interfaces/ILaporan";
 
 export async function getLaporanStatsAction(
@@ -121,7 +123,7 @@ export async function getPembagianProvitAction(
 }
 
 export async function getTopPelangganAction(
-  barangNama: string = "all",
+  barangId: number | null = null,
   periode: number = 1
 ): Promise<TopPelangganResponse> {
   try {
@@ -136,7 +138,7 @@ export async function getTopPelangganAction(
 
     const topPelanggan = await getTopPelangganByPeriode(
       session.user.jabatan as Jabatan,
-      barangNama,
+      barangId,
       periode
     );
 
@@ -186,6 +188,37 @@ export async function getChartBarangLaporanAction(
         error instanceof Error
           ? error.message
           : "Terjadi kesalahan saat mengambil data chart barang",
+    };
+  }
+}
+
+export async function getBarangTabsAction(): Promise<BarangTabsResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user) {
+      return {
+        success: false,
+        error: "Unauthorized - Silakan login terlebih dahulu",
+      };
+    }
+
+    const barangTabs = await getBarangTabsForLaporan(
+      session.user.jabatan as Jabatan
+    );
+
+    return {
+      success: true,
+      data: barangTabs,
+    };
+  } catch (error) {
+    console.error("Error in getBarangTabsAction:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan saat mengambil data barang tabs",
     };
   }
 }

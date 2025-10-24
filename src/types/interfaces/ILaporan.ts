@@ -43,6 +43,11 @@ export interface PembagianProvit {
   kas: number;
 }
 
+export interface BarangTab {
+  id: number;
+  nama: string;
+}
+
 export interface GetLaporanParams {
   jabatan: Jabatan;
   bulan?: number;
@@ -56,7 +61,7 @@ export interface GetChartLaporanParams {
 
 export interface GetTopPelangganParams {
   jabatan: Jabatan;
-  barangNama?: string;
+  barangId?: number | null;
 }
 
 export interface GetPembagianProvitParams {
@@ -92,6 +97,12 @@ export interface TopPelangganResponse {
 export interface PembagianProvitResponse {
   success: boolean;
   data?: PembagianProvit[];
+  error?: string;
+}
+
+export interface BarangTabsResponse {
+  success: boolean;
+  data?: BarangTab[];
   error?: string;
 }
 

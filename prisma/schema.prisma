@@ -84,16 +84,17 @@ model BarangMasuk {
 }
 
 model BarangKeluar {
-  id          Int      @id @default(autoincrement()) @map("id_barang_keluar")
-  pelangganId Int      @map("id_pelanggan_id")
-  adminId     Int      @map("id_admin_id")
-  noInvoice   String   @map("no_invoice")
-  totalOmset  Int      @map("total_omset")
-  totalModal  Int      @map("total_modal")
-  labaKotor   Int      @map("total_laba_kotor")
-  tglKeluar   DateTime @map("tgl_keluar") @db.Date
-  jatuhTempo  DateTime @map("jatuh_tempo") @db.Date
-  createdAt   DateTime @default(now()) @map("created_at")
+  id           Int      @id @default(autoincrement()) @map("id_barang_keluar")
+  pelangganId  Int      @map("id_pelanggan_id")
+  adminId      Int      @map("id_admin_id")
+  noInvoice    String   @map("no_invoice")
+  noSuratJalan String   @map("no_surat_jalan")
+  totalOmset   Int      @map("total_omset")
+  totalModal   Int      @map("total_modal")
+  labaKotor    Int      @map("total_laba_kotor")
+  tglKeluar    DateTime @map("tgl_keluar") @db.Date
+  jatuhTempo   DateTime @map("jatuh_tempo") @db.Date
+  createdAt    DateTime @default(now()) @map("created_at")
 
   // Relasi
   pelanggan       Pelanggan            @relation(fields: [pelangganId], references: [id], onDelete: Cascade)

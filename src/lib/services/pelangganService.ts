@@ -58,7 +58,6 @@ export const getPelangganList = cache(
               barangKeluarId: {
                 in: barangKeluarIds,
               },
-              status: "LUNAS",
               admin: {
                 jabatan,
               },
@@ -135,7 +134,6 @@ export const getTop5Pelanggan = cache(
               barangKeluarId: {
                 in: barangKeluarIds,
               },
-              status: "LUNAS",
               admin: {
                 jabatan,
               },
@@ -232,7 +230,6 @@ export const getPelangganDetail = cache(
         throw new Error("Pelanggan tidak ditemukan");
       }
 
-      // Agregasi pembelian per barang (hanya dari transaksi lunas)
       const barangMap = new Map<
         number,
         {
@@ -243,7 +240,7 @@ export const getPelangganDetail = cache(
       >();
 
       pelanggan.barangKeluar
-        .filter((bk) => bk.transaksiKeluar?.[0]?.status === "LUNAS")
+        .filter((bk) => bk.transaksiKeluar?.[0]?.status === "LUNAS" || "BELUM_LUNAS")
         .forEach((bk) => {
           bk.details.forEach((detail) => {
             const existing = barangMap.get(detail.barangId);
@@ -261,8 +258,6 @@ export const getPelangganDetail = cache(
         });
 
       const daftarBarang = Array.from(barangMap.values());
-
-      // Hitung total pembelian keseluruhan (dari semua transaksi, tidak hanya lunas)
       const totalPembelian = pelanggan.barangKeluar.reduce((sum, bk) => {
         const detailSum = bk.details.reduce(
           (detailSum, detail) => detailSum + detail.subtotal,
@@ -271,7 +266,6 @@ export const getPelangganDetail = cache(
         return sum + detailSum;
       }, 0);
 
-      // Hitung jumlah transaksi per status
       const jumlahTransaksiLunas = pelanggan.barangKeluar.filter(
         (bk) => bk.transaksiKeluar?.[0].status === "LUNAS"
       ).length;
@@ -464,7 +458,6 @@ export async function updatePelanggan(
         barangKeluarId: {
           in: barangKeluarIds,
         },
-        status: "LUNAS",
         admin: {
           jabatan: adminWithJabatan.jabatan,
         },
