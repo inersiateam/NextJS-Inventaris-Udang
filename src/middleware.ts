@@ -74,41 +74,41 @@ export async function middleware(request: NextRequest) {
     request.headers.get("x-forwarded-for") ||
     "unknown";
 
-  if (pathname === "/api/auth/callback/credentials" || pathname === "/login") {
-    const loginLimit = rateLimit(`login:${ip}`, 5, 5 * 60 * 1000);
+  // if (pathname === "/api/auth/callback/credentials" || pathname === "/login") {
+  //   const loginLimit = rateLimit(`login:${ip}`, 5, 5 * 60 * 1000);
 
-    if (!loginLimit.allowed) {
-      const response = NextResponse.json(
-        { error: "Terlalu banyak percobaan login. Coba lagi nanti." },
-        { status: 429 }
-      );
-      response.headers.set("X-RateLimit-Limit", "5");
-      response.headers.set("X-RateLimit-Remaining", "0");
-      response.headers.set(
-        "X-RateLimit-Reset",
-        loginLimit.resetTime.toString()
-      );
-      return setSecurityHeaders(response);
-    }
-  }
+  //   if (!loginLimit.allowed) {
+  //     const response = NextResponse.json(
+  //       { error: "Terlalu banyak percobaan login. Coba lagi nanti." },
+  //       { status: 429 }
+  //     );
+  //     response.headers.set("X-RateLimit-Limit", "5");
+  //     response.headers.set("X-RateLimit-Remaining", "0");
+  //     response.headers.set(
+  //       "X-RateLimit-Reset",
+  //       loginLimit.resetTime.toString()
+  //     );
+  //     return setSecurityHeaders(response);
+  //   }
+  // }
 
-  if (pathname.startsWith("/api") && !pathname.startsWith("/api/auth")) {
-    const apiLimit = rateLimit(`api:${ip}`, 100, 60 * 1000);
+  // if (pathname.startsWith("/api") && !pathname.startsWith("/api/auth")) {
+  //   const apiLimit = rateLimit(`api:${ip}`, 100, 60 * 1000);
 
-    if (!apiLimit.allowed) {
-      const response = NextResponse.json(
-        { error: "Rate limit exceeded" },
-        { status: 429 }
-      );
-      response.headers.set("X-RateLimit-Limit", "100");
-      response.headers.set("X-RateLimit-Remaining", "0");
-      response.headers.set("X-RateLimit-Reset", apiLimit.resetTime.toString());
-      return setSecurityHeaders(response);
-    }
+  //   if (!apiLimit.allowed) {
+  //     const response = NextResponse.json(
+  //       { error: "Rate limit exceeded" },
+  //       { status: 429 }
+  //     );
+  //     response.headers.set("X-RateLimit-Limit", "100");
+  //     response.headers.set("X-RateLimit-Remaining", "0");
+  //     response.headers.set("X-RateLimit-Reset", apiLimit.resetTime.toString());
+  //     return setSecurityHeaders(response);
+  //   }
 
-    const headers = new Headers(request.headers);
-    headers.set("X-RateLimit-Remaining", apiLimit.remaining.toString());
-  }
+  //   const headers = new Headers(request.headers);
+  //   headers.set("X-RateLimit-Remaining", apiLimit.remaining.toString());
+  // }
 
   const token = await getToken({
     req: request,
