@@ -203,9 +203,9 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
           <Search className="h-5 w-5 text-gray-600 dark:text-gray-300" />
         </button>
 
-        <button aria-label="notifikasi" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+        {/* <button aria-label="notifikasi" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
           <Bell className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-        </button>
+        </button> */}
 
         <div className="hidden md:block h-6 border-l border-gray-300 dark:border-gray-600"></div>
 
