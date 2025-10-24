@@ -40,7 +40,7 @@ export default async function Page() {
     if (totalCards <= 3) return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
     if (totalCards === 4) return "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4";
     if (totalCards === 5) return "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5";
-    return "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"; 
+    return "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6";
   };
   return (
     <div className="space-y-6 p-2">
@@ -54,35 +54,35 @@ export default async function Page() {
       </header>
 
       <section
- className={`grid gap-3 ${
-  latestBarang.length === 1
-    ? "grid-cols-1 lg:grid-cols-3"
-    : latestBarang.length === 2
-    ? "grid-cols-1 lg:grid-cols-4"
-    : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-5"
-}`}
->
- <OmsetCard
-    totalOmset={stats.totalOmset}
-    percentageChange={stats.percentageChange}
-  />
-
-  {latestBarang.length > 0 && (
-    <>
-      {latestBarang.map((barang) => (
-        <ProductCard
-          key={barang.id}
-          nama={barang.nama}
-          stok={barang.stok}
+        className={`grid gap-3 ${
+          latestBarang.length === 1
+            ? "grid-cols-1 lg:grid-cols-3"
+            : latestBarang.length === 2
+            ? "grid-cols-1 lg:grid-cols-4"
+            : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-5"
+        }`}
+      >
+        <OmsetCard
+          totalOmset={stats.totalOmset}
+          percentageChange={stats.percentageChange}
         />
-      ))}
 
-      {latestBarang.length === 1}
-    </>
-  )}
+        {latestBarang.length > 0 && (
+          <>
+            {latestBarang.map((barang) => (
+              <ProductCard
+                key={barang.id}
+                nama={barang.nama}
+                stok={barang.stok}
+              />
+            ))}
 
-  <PelangganCard count={pelangganAktif} />
-</section>
+            {latestBarang.length === 1}
+          </>
+        )}
+
+        <PelangganCard count={pelangganAktif} />
+      </section>
 
       <DashboardClient
         chartStatistik={chartStatistik}

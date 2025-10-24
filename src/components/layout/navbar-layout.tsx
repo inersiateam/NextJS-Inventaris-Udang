@@ -187,16 +187,20 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
             </div>
           )}
 
-          {showResults && searchQuery.length >= 2 && searchResults.length === 0 && !isSearching && (
-            <div className="absolute top-full mt-2 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 z-50">
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                Tidak ada hasil ditemukan
-              </p>
-            </div>
-          )}
+          {showResults &&
+            searchQuery.length >= 2 &&
+            searchResults.length === 0 &&
+            !isSearching && (
+              <div className="absolute top-full mt-2 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 z-50">
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                  Tidak ada hasil ditemukan
+                </p>
+              </div>
+            )}
         </div>
 
-        <button aria-label="icon"
+        <button
+          aria-label="icon"
           onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
           className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
         >
@@ -236,7 +240,8 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
         <div className="fixed inset-0 bg-black/50 z-50 md:hidden">
           <div className="bg-white dark:bg-gray-900 p-4">
             <div className="flex items-center gap-2 mb-4">
-              <button aria-label="mobile"
+              <button
+                aria-label="mobile"
                 onClick={() => setIsMobileSearchOpen(false)}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
               >
@@ -264,7 +269,7 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
               <div className="space-y-2">
                 {searchResults.map((result, index) => (
                   <button
-                  aria-label="search"
+                    aria-label="search"
                     key={`${result.type}-${result.id}-${index}`}
                     onClick={() => handleResultClick(result)}
                     className="w-full px-4 py-3 text-left bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
@@ -296,11 +301,13 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
               </div>
             )}
 
-            {searchQuery.length >= 2 && searchResults.length === 0 && !isSearching && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-                Tidak ada hasil ditemukan
-              </p>
-            )}
+            {searchQuery.length >= 2 &&
+              searchResults.length === 0 &&
+              !isSearching && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                  Tidak ada hasil ditemukan
+                </p>
+              )}
           </div>
         </div>
       )}
