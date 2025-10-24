@@ -7,6 +7,7 @@ const ADMIN_CONFIG = {
     address:
       "Perumahan Griya Indah Pakis, Blok A No. 19, Sumberejo,\nKab. Banyuwangi, Jawa Timur, 68419",
     primaryColor: "#16548a",
+    signatureName: "Affan NR",
   },
   ATM: {
     companyName: "CV Anugrah Tirta Makmur",
@@ -14,6 +15,7 @@ const ADMIN_CONFIG = {
     address:
       "Perumahan Griya Indah Pakis, Blok A No. 19, Sumberejo,\nKab. Banyuwangi, Jawa Timur, 68419",
     primaryColor: "#16548a",
+    signatureName: "Affan NR",
   },
 };
 
@@ -43,6 +45,12 @@ const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
       
       @page {
         size: A4;
+      }
+      
+      th {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
       }
     }
     
@@ -147,6 +155,11 @@ const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
     
     .total-row {
       font-weight: bold;
+    }
+
+    .total-row td {
+      font-weight: bold;
+      text-align: center;
     }
 
     .note-section {
@@ -315,7 +328,7 @@ const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
         <tr>
           <td>${index + 1}</td>
           <td>${item.namaBarang}</td>
-          <td>${item.jmlPembelian} ltr</td>
+          <td>${item.jmlPembelian}</td>
         </tr>
       `
         )
@@ -332,10 +345,7 @@ const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
       ).join("")}
       <tr class="total-row">
         <td colspan="2">TOTAL</td>
-        <td>${data.items.reduce(
-          (sum, item) => sum + item.jmlPembelian,
-          0
-        )} ltr</td>
+        <td>${data.items.reduce((sum, item) => sum + item.jmlPembelian, 0)}</td>
       </tr>
     </tbody>
   </table>
@@ -355,7 +365,7 @@ const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
     <div class="signature-section">
       <div><strong>Hormat Kami</strong></div>
       <div class="signature-box"></div>
-      <div class="signature-label">( ${config.companyName} )</div>
+      <div class="signature-label">( ${config.signatureName} )</div>
     </div>
   </div>
 

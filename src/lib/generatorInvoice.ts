@@ -14,6 +14,7 @@ const ADMIN_CONFIG = {
     primaryColor: "#0066cc",
     secondaryColor: "#0099ff",
     accentColor: "#ff6600",
+    signatureName: "Affan NR",
   },
   ATM: {
     companyName: "CV Anugrah Tirta Makmur",
@@ -27,6 +28,7 @@ const ADMIN_CONFIG = {
     primaryColor: "#0066cc",
     secondaryColor: "#0099ff",
     accentColor: "#ff6600",
+    signatureName: "Affan NR",
   },
 };
 
@@ -56,6 +58,12 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
       
       @page {
         size: A4;
+      }
+      
+      th {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
       }
     }
     
@@ -433,7 +441,7 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
     <div class="signature-section">
       <div><strong>Hormat Kami</strong></div>
       <div class="signature-box"></div>
-      <div class="signature-label">( ${config.companyName} )</div>
+      <div class="signature-label">( ${config.signatureName} )</div>
     </div>
   </div>
 
