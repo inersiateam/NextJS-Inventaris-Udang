@@ -426,7 +426,7 @@ export default function LaporanClient({
         </Card>
 
         <Card className="shadow-sm w-full hover:shadow-xl flex flex-col justify-between">
-          <CardHeader className="pb-0 flex flex-row items-center justify-between mt-0 md:mt-4">
+          <CardHeader className="flex flex-row items-center justify-between -mt-2 md:-mt-1">
             <div>
               <CardTitle className="text-xl font-bold line-clamp-1">
                 {currentProduct ? currentProduct.nama : "Tidak ada data"}
@@ -447,7 +447,7 @@ export default function LaporanClient({
             )}
           </CardHeader>
 
-          <CardContent className="flex flex-col items-center justify-center pt-4 pb-6 rounded-b-lg mt-2 relative overflow-visible">
+          <CardContent className="flex flex-col items-center justify-center pb-2 rounded-b-lg relative overflow-visible">
             {currentProduct ? (
               <>
                 <div className="relative w-40 h-40 md:w-64 md:h-64 overflow-visible">
@@ -584,10 +584,10 @@ export default function LaporanClient({
         </Card>
 
         <Card className="p-4 lg:col-span-1">
-          <h3 className="text-lg font-semibold mb-4">Daftar Top Pelanggan</h3>
+          <h3 className="text-lg font-semibold mb-0">Daftar Top Pelanggan</h3>
           {barangTabs.length > 0 ? (
             <Tabs defaultValue={barangTabs[0]?.id.toString()}>
-              <TabsList className="flex gap-2 mb-4 flex-wrap">
+              <TabsList className="flex gap-2 mb-0 flex-wrap">
                 {barangTabs.map((barang) => (
                   <TabsTrigger
                     key={barang.id}
