@@ -363,6 +363,7 @@ export default function LaporanClient({
                   ? "text-green-600"
                   : "text-red-600"
               }`}
+              //
             >
               {stats.percentageChange.labaBersih >= 0 ? "+" : ""}
               {stats.percentageChange.labaBersih.toFixed(2)}%
