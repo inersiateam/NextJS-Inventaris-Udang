@@ -23,7 +23,6 @@ export default function RootLayout({
 
   return (
         <Providers>
-          {/* Client component boleh dipanggil di sini */}
           <InventarisDashboard user={user}>{children}</InventarisDashboard>
           <Toaster
             richColors
