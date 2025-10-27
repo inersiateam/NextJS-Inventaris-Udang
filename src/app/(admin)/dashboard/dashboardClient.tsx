@@ -107,43 +107,6 @@ export default function DashboardClient({
     [chartStatistik]
   );
 
-  const barOptions = useMemo(
-    () => ({
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: true,
-          position: "bottom" as const,
-          labels: {
-            usePointStyle: true,
-            padding: 50,
-            font: {
-              size: 11,
-            },
-            maxWidth: 80,
-          },
-          title: {
-            display: false,
-          },
-        },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            stepSize: 20,
-            callback: (value: any) => value + "jt",
-          },
-        },
-        x: {
-          grid: { display: false },
-        },
-      },
-    }),
-    []
-  );
-
   const currentProduct = useMemo(
     () => chartBarang[selectedProductIndex],
     [chartBarang, selectedProductIndex]
@@ -223,14 +186,55 @@ export default function DashboardClient({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
       <div className="flex flex-col gap-3">
-        <Card className="shadow-sm h-[350px] sm:h-[400px] w-full hover:shadow-xl transition-shadow">
+          <Card className="shadow-sm w-full hover:shadow-xl lg:col-span-2">
           <CardHeader className="pb-2">
             <CardTitle className="text-xl font-bold">Statistic</CardTitle>
           </CardHeader>
-          <CardContent className="!p-2 sm:!p-4">
-            <Bar data={barData} options={barOptions} height={250} />
+          <CardContent className="!p-2 sm:!p-4 h-full">
+            <div className="h-[260px] lg:h-[320px] mt-2">
+              <Bar
+                data={barData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  layout: {
+                    padding: {
+                      top: 20,
+                      bottom: 0,
+                    },
+                  },
+                  plugins: {
+                    legend: {
+                      display: true,
+                      position: "bottom",
+                      align: "center",
+                      labels: {
+                        usePointStyle: true,
+                        padding: 40,
+                        font: {
+                          size: 12,
+                        },
+                      },
+                    },
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        stepSize: 20,
+                        callback: (value) => value + "jt",
+                      },
+                    },
+                    x: {
+                      grid: { display: false },
+                    },
+                  },
+                }}
+              />
+            </div>
           </CardContent>
         </Card>
+
 
         <Card className="shadow-sm h-auto min-h-[250px] w-full hover:shadow-xl transition-shadow overflow-visible px-2">
           <CardHeader className="flex flex-row items-center justify-between">
