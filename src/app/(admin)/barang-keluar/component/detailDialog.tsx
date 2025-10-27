@@ -50,7 +50,7 @@ export default function DetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] sm:max-w-3xl rounded-xl p-3 sm:p-6 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[98vw] sm:max-w-4xl rounded-xl p-3 sm:p-6 max-h-[90vh] overflow-y-auto">
         <DialogHeader className="pb-2 sm:pb-3">
           <DialogTitle className="text-sm sm:text-lg font-semibold text-gray-900">
             Detail Barang Keluar

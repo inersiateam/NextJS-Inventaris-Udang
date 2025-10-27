@@ -311,7 +311,7 @@ export default function DashboardClient({
         <CardTitle className="text-xl px-8 pt-0 font-bold">
           Tagihan Jatuh Tempo
         </CardTitle>
-        <CardContent className="px-8 pt-4">
+        <CardContent className="px-8 pt-0">
           <div className="flex gap-2 mb-3 flex-wrap">
             <Button
               size="sm"
