@@ -355,7 +355,7 @@ function BarangKeluarDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] sm:max-w-3xl rounded-2xl p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
+<DialogContent className="max-w-[95vw] sm:max-w-3xl rounded-2xl p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg font-semibold text-gray-900">
             {mode === "edit" ? "Edit Barang Keluar" : "Tambah Barang Keluar"}
@@ -367,7 +367,7 @@ function BarangKeluarDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4 overflow-y-auto max-h-[70vh]">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
               <label className="text-xs sm:text-sm font-medium text-gray-700">

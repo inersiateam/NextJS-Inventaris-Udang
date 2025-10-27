@@ -553,7 +553,7 @@ export default function LaporanClient({
               {pembagianProvit.length > 0 ? (
                 pembagianProvit.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="whitespace-nowrap px-4 font-medium text-center">
+                    <TableCell className="whitespace-nowrap px-4 font-medium text-start">
                       {item.bulan}
                     </TableCell>
                     <TableCell className="whitespace-nowrap px-4 text-center">
