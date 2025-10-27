@@ -365,7 +365,7 @@ export default function PengeluaranTable({
   return (
     <>
       <div className="mb-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-        <div className="bg-sky-50 border border-sky-200 px-4 py-2 rounded-lg">
+        <div className="bg-white border border-sky-100 px-4 py-2 rounded-lg">
           <p className="text-xs text-gray-600">Total Pengeluaran</p>
           <p className="text-lg md:text-xl font-bold text-sky-700">
             {formatCurrency(summary.totalPengeluaran)}

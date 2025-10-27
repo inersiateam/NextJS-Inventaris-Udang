@@ -1,4 +1,5 @@
 import { DetailData } from "@/types/interfaces/IBarangKeluar";
+import { formatDate } from "./utils";
 
 const ADMIN_CONFIG = {
   ABL: {
@@ -98,6 +99,7 @@ const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
       text-align: center;
       flex: 1;
       padding: 0 20px;
+      margin-left: -80px;
     }
     
     .title-section h1 {
@@ -112,9 +114,9 @@ const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
     }
     
     .recipient-info {
-      text-align: right;
+      text-align: left;
       font-size: 11px;
-      line-height: 1.6;
+      line-height: 1.8;
       min-width: 200px;
     }
 
@@ -130,7 +132,7 @@ const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
       padding: 10px;
       text-align: center;
       font-weight: bold;
-      border: 1px solid ${config.primaryColor};
+      border: 1px solid #333;
       font-size: 11px;
     }
     
@@ -308,8 +310,9 @@ const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
     </div>
     
     <div class="recipient-info">
-      <div>Kepada</div>
-      <div>${data.namaPelanggan}</div>
+      <div>Banyuwangi, ${formatDate(data.tglKeluar)}</div>
+      <div>Kepada,</div>
+      <div><strong>${data.namaPelanggan}</strong></div>
     </div>
   </div>
   

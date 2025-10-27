@@ -143,7 +143,7 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
     .info-grid {
       display: grid;
       grid-template-columns: 1fr auto;
-      align-items: start;
+      align-items: end;
       margin-bottom: 20px;
       gap: 15px;
     }
@@ -159,8 +159,8 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
       color: white;
       padding: 10px;
       text-align: center;
-      font-weight: bold;
-      border: 1px solid ${config.primaryColor};
+      font-weight: bolder;
+      border: 1px solid #333;
     }
     
     td {
@@ -396,7 +396,7 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
         <tr>
           <td>${index + 1}</td>
           <td>${item.namaBarang}</td>
-          <td>${item.jmlPembelian} ltr</td>
+          <td>${item.jmlPembelian} </td>
           <td>${formatCurrency(item.hargaJual)}</td>
           <td>${formatCurrency(item.subtotal)}</td>
         </tr>

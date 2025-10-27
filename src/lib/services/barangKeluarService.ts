@@ -109,7 +109,7 @@ export const getBarangKeluarWithPagination = cache(
           where,
           skip,
           take: limit,
-          orderBy: { tglKeluar: "desc" },
+          orderBy: { noInvoice: "desc" },
           select: BARANG_KELUAR_SELECT,
         }),
         prisma.barangKeluar.count({ where }),
