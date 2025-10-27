@@ -355,7 +355,7 @@ function BarangKeluarDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-<DialogContent className="max-w-[95vw] sm:max-w-3xl rounded-2xl p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
+<DialogContent className="max-w-[95vw] sm:max-w-3xl rounded-2xl p-4 sm:p-6 max-h-[90vh] overflow-auto">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg font-semibold text-gray-900">
             {mode === "edit" ? "Edit Barang Keluar" : "Tambah Barang Keluar"}

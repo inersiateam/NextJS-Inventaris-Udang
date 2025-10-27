@@ -540,9 +540,11 @@ export default function LaporanClient({
                 <TableHead className="text-white whitespace-nowrap px-4 text-center">
                   Owner 2
                 </TableHead>
-                <TableHead className="text-white whitespace-nowrap px-4 text-center">
-                  Owner 3
-                </TableHead>
+                {jabatan !== "ATM" && (
+                  <TableHead className="text-white whitespace-nowrap px-4 text-center">
+                    Owner 3
+                  </TableHead>
+                )}
                 <TableHead className="text-white whitespace-nowrap px-4 text-center">
                   Kas
                 </TableHead>
@@ -562,9 +564,11 @@ export default function LaporanClient({
                     <TableCell className="whitespace-nowrap px-4 text-center">
                       {formatCurrency(item.owner2)}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap px-4 text-center">
-                      {formatCurrency(item.owner3)}
-                    </TableCell>
+                    {jabatan !== "ATM" && (
+                      <TableCell className="whitespace-nowrap px-4 text-center">
+                        {formatCurrency(item.owner3)}
+                      </TableCell>
+                    )}
                     <TableCell className="whitespace-nowrap px-4 text-center">
                       {formatCurrency(item.kas)}
                     </TableCell>
