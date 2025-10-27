@@ -74,24 +74,16 @@ export async function middleware(request: NextRequest) {
     request.headers.get("x-forwarded-for") ||
     "unknown";
 
-  // DEBUG: Log untuk melihat pathname yang diakses
-  console.log("🔍 Middleware - Pathname:", pathname);
-
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  // PENTING: Definisikan public routes dengan lebih jelas
   const isPublicRoute = 
     pathname === "/login" || 
     pathname === "/" || 
     pathname === "/guest-selection" ||
     pathname.startsWith("/dashboard-guest");
-
-  // DEBUG: Log untuk cek apakah route dianggap public
-  console.log("✅ Is Public Route:", isPublicRoute);
-  console.log("🔐 Has Token:", !!token);
 
   const isAdminRoute =
     pathname.startsWith("/(admin)") ||
@@ -106,10 +98,6 @@ export async function middleware(request: NextRequest) {
   const isProtectedApiRoute =
     pathname.startsWith("/api") && !pathname.startsWith("/api/auth");
 
-  // DEBUG: Log untuk cek route type
-  console.log("👤 Is Admin Route:", isAdminRoute);
-
-  // Jika tidak ada token dan mengakses route yang dilindungi
   if (!token && (isAdminRoute || isProtectedApiRoute)) {
     console.log("🚫 Redirecting to login - No token for protected route");
     if (isProtectedApiRoute) {
@@ -124,21 +112,18 @@ export async function middleware(request: NextRequest) {
     return setSecurityHeaders(response);
   }
 
-  // Jika sudah login dan akses halaman login
   if (token && pathname === "/login") {
     const dashboardUrl = new URL("/dashboard", request.url);
     const response = NextResponse.redirect(dashboardUrl);
     return setSecurityHeaders(response);
   }
 
-  // Jika sudah login dan akses root
   if (token && pathname === "/") {
     const dashboardUrl = new URL("/dashboard", request.url);
     const response = NextResponse.redirect(dashboardUrl);
     return setSecurityHeaders(response);
   }
 
-  // Cek status aktif untuk user yang login (HANYA untuk non-public routes)
   if (token && !isPublicRoute) {
     if (token.isActive === false) {
       const loginUrl = new URL("/login?error=inactive", request.url);
@@ -146,8 +131,6 @@ export async function middleware(request: NextRequest) {
       return setSecurityHeaders(response);
     }
   }
-
-  console.log("✅ Allowing access to:", pathname);
 
   const response = NextResponse.next();
   if (token?.jabatan) {
