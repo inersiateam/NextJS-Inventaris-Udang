@@ -121,7 +121,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Remember me & Forgot password */}
           <div className="flex items-center justify-between text-xs sm:text-sm">
             <label className="flex items-center">
               <input
@@ -154,7 +153,7 @@ export default function LoginPage() {
             disabled={isLoading}
             variant="outline"
             className="w-full text-gray-500 border-gray-300 hover:bg-gray-50 text-sm sm:text-base py-2 sm:py-3"
-            onClick={() => (window.location.href = "/dashboard")}
+            onClick={() => router.push("/guest-selection")}
           >
             Login sebagai tamu
           </Button>

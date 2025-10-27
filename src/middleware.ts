@@ -74,52 +74,28 @@ export async function middleware(request: NextRequest) {
     request.headers.get("x-forwarded-for") ||
     "unknown";
 
-  // if (pathname === "/api/auth/callback/credentials" || pathname === "/login") {
-  //   const loginLimit = rateLimit(`login:${ip}`, 5, 5 * 60 * 1000);
-
-  //   if (!loginLimit.allowed) {
-  //     const response = NextResponse.json(
-  //       { error: "Terlalu banyak percobaan login. Coba lagi nanti." },
-  //       { status: 429 }
-  //     );
-  //     response.headers.set("X-RateLimit-Limit", "5");
-  //     response.headers.set("X-RateLimit-Remaining", "0");
-  //     response.headers.set(
-  //       "X-RateLimit-Reset",
-  //       loginLimit.resetTime.toString()
-  //     );
-  //     return setSecurityHeaders(response);
-  //   }
-  // }
-
-  // if (pathname.startsWith("/api") && !pathname.startsWith("/api/auth")) {
-  //   const apiLimit = rateLimit(`api:${ip}`, 100, 60 * 1000);
-
-  //   if (!apiLimit.allowed) {
-  //     const response = NextResponse.json(
-  //       { error: "Rate limit exceeded" },
-  //       { status: 429 }
-  //     );
-  //     response.headers.set("X-RateLimit-Limit", "100");
-  //     response.headers.set("X-RateLimit-Remaining", "0");
-  //     response.headers.set("X-RateLimit-Reset", apiLimit.resetTime.toString());
-  //     return setSecurityHeaders(response);
-  //   }
-
-  //   const headers = new Headers(request.headers);
-  //   headers.set("X-RateLimit-Remaining", apiLimit.remaining.toString());
-  // }
+  // DEBUG: Log untuk melihat pathname yang diakses
+  console.log("🔍 Middleware - Pathname:", pathname);
 
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const isPublicRoute = pathname === "/login" || pathname === "/";
+  // PENTING: Definisikan public routes dengan lebih jelas
+  const isPublicRoute = 
+    pathname === "/login" || 
+    pathname === "/" || 
+    pathname === "/guest-selection" ||
+    pathname.startsWith("/dashboard-guest");
+
+  // DEBUG: Log untuk cek apakah route dianggap public
+  console.log("✅ Is Public Route:", isPublicRoute);
+  console.log("🔐 Has Token:", !!token);
 
   const isAdminRoute =
     pathname.startsWith("/(admin)") ||
-    pathname.startsWith("/dashboard") ||
+    (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard-guest")) ||
     pathname.startsWith("/barang-masuk") ||
     pathname.startsWith("/barang-keluar") ||
     pathname.startsWith("/pelanggan") ||
@@ -130,7 +106,12 @@ export async function middleware(request: NextRequest) {
   const isProtectedApiRoute =
     pathname.startsWith("/api") && !pathname.startsWith("/api/auth");
 
+  // DEBUG: Log untuk cek route type
+  console.log("👤 Is Admin Route:", isAdminRoute);
+
+  // Jika tidak ada token dan mengakses route yang dilindungi
   if (!token && (isAdminRoute || isProtectedApiRoute)) {
+    console.log("🚫 Redirecting to login - No token for protected route");
     if (isProtectedApiRoute) {
       const response = NextResponse.json(
         { error: "Unauthorized" },
@@ -143,18 +124,21 @@ export async function middleware(request: NextRequest) {
     return setSecurityHeaders(response);
   }
 
+  // Jika sudah login dan akses halaman login
   if (token && pathname === "/login") {
     const dashboardUrl = new URL("/dashboard", request.url);
     const response = NextResponse.redirect(dashboardUrl);
     return setSecurityHeaders(response);
   }
 
+  // Jika sudah login dan akses root
   if (token && pathname === "/") {
     const dashboardUrl = new URL("/dashboard", request.url);
     const response = NextResponse.redirect(dashboardUrl);
     return setSecurityHeaders(response);
   }
 
+  // Cek status aktif untuk user yang login (HANYA untuk non-public routes)
   if (token && !isPublicRoute) {
     if (token.isActive === false) {
       const loginUrl = new URL("/login?error=inactive", request.url);
@@ -162,6 +146,8 @@ export async function middleware(request: NextRequest) {
       return setSecurityHeaders(response);
     }
   }
+
+  console.log("✅ Allowing access to:", pathname);
 
   const response = NextResponse.next();
   if (token?.jabatan) {
