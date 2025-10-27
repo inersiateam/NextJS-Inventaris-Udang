@@ -281,7 +281,7 @@ export default function DashboardClient({
                       }`}
                     ></span>
                     <span className={hasData ? "" : "text-gray-400"}>
-                      Barang terjual
+                      Barang Keluar
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -291,7 +291,7 @@ export default function DashboardClient({
                       }`}
                     ></span>
                     <span className={hasData ? "" : "text-gray-400"}>
-                      Barang masuk
+                      Barang Masuk
                     </span>
                   </div>
                 </div>
