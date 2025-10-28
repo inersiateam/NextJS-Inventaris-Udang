@@ -64,7 +64,7 @@ export default function GuestSelectionPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
         </DialogTrigger>
-        <DialogContent className="">
+        <DialogContent>
           <DialogTitle>Invalid Code</DialogTitle>
           <DialogDescription>
             Kode tidak valid! <br />Masukkan kode tamu yang valid untuk melanjutkan.
