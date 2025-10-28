@@ -11,7 +11,7 @@ export default function GuestNavbar({ guestType }: GuestNavbarProps) {
   const router = useRouter();
 
   const handleLogout = () => {
-    router.push("/guest-selection");
+    router.push("/login");
   };
   const logoSrc = guestType === "atm" ? "/ATM.png" : "/ABL.png";
   return (
