@@ -13,9 +13,9 @@ export default function GuestSelectionPage() {
 
   const handleSubmit = () => {
     if (inputValue === "2503") {
-      router.push("/dashboard-guest?type=abl");
+      router.push("/laporan-guest?type=abl");
     } else if (inputValue === "0125") {
-      router.push("/dashboard-guest?type=atm");
+      router.push("/laporan-guest?type=atm");
     } else {
       alert("Kode tidak valid! Masukkan 'abl' atau 'atm'");
     }

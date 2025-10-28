@@ -27,22 +27,12 @@ export default function GuestNavbar({ guestType }: GuestNavbarProps) {
             </div>
             <div>
               <h1 className="text-lg font-bold text-gray-900">
-                Dashboard Tamu {guestType === "abl" ? "ABL" : "ATM"}
+               Selamat Datang Tamu {guestType === "abl" ? "ABL" : "ATM"}
               </h1>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            {/* <div
-              className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                guestType === "abl"
-                  ? "bg-blue-100 text-blue-700"
-                  : "bg-green-100 text-green-700"
-              }`}
-            >
-              Tamu {guestType.toUpperCase()}
-            </div> */}
-
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"

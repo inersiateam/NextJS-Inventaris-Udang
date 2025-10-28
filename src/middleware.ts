@@ -83,20 +83,22 @@ export async function middleware(request: NextRequest) {
     pathname === "/login" || 
     pathname === "/" || 
     pathname === "/guest-selection" ||
-    pathname.startsWith("/dashboard-guest");
+    pathname.startsWith("/laporan-guest");
 
   const isAdminRoute =
     pathname.startsWith("/(admin)") ||
-    (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard-guest")) ||
+    pathname.startsWith("/dashboard") ||
     pathname.startsWith("/barang-masuk") ||
     pathname.startsWith("/barang-keluar") ||
     pathname.startsWith("/pelanggan") ||
     pathname.startsWith("/pengeluaran") ||
-    pathname.startsWith("/laporan") ||
+    (pathname.startsWith("/laporan") && !pathname.startsWith("/laporan-guest")) ||
     pathname.startsWith("/profile");
 
   const isProtectedApiRoute =
-    pathname.startsWith("/api") && !pathname.startsWith("/api/auth");
+    pathname.startsWith("/api") && 
+    !pathname.startsWith("/api/auth") &&
+    !pathname.startsWith("/api/guest");
 
   if (!token && (isAdminRoute || isProtectedApiRoute)) {
     console.log("🚫 Redirecting to login - No token for protected route");
