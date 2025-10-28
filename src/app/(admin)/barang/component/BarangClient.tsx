@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Edit2, More, Trash } from "iconsax-react"
 import DialogBarang from "./Dialog"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { getBarangAction, deleteBarangAction } from "../actions/barangActions"
 import { BarangWithRelations } from "@/types/interfaces/IBarang"
 import { toast } from "sonner"
@@ -22,7 +22,7 @@ import {
 import { formatCurrency } from "@/lib/utils"
 
 interface BarangClientProps {
-  initialData?: BarangWithRelations[]
+  initialData?: BarangWithRelations[] 
   initialPage?: number
   initialTotalPages?: number
 }
@@ -68,12 +68,6 @@ export default function BarangClient({
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    if (page !== initialPage) {
-      fetchBarang()
-    }
-  }, [page])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
