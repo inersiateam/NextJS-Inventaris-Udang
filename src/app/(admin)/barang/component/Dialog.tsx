@@ -151,6 +151,7 @@ export default function DialogBarang({
                 placeholder="Masukkan nama barang"
                 disabled={loading}
                 required
+                className="focus-visible:ring-1 focus-visible:ring-blue-500"
               />
             </div>
             <div className="grid grid-cols-[1fr_auto] gap-3">
@@ -166,6 +167,7 @@ export default function DialogBarang({
                   min="0"
                   step="1"
                   required
+                className="focus-visible:ring-1 focus-visible:ring-blue-500"
                 />
               </div>
               <div className="grid gap-2 w-[120px]">
@@ -187,7 +189,6 @@ export default function DialogBarang({
               </div>
             </div>
           </div>
-
           <DialogFooter>
             <Button
               type="submit"

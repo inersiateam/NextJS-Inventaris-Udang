@@ -59,7 +59,6 @@ const InventarisDashboard: React.FC<InventarisDashboardProps> = ({
 
         <SidebarInset className="flex flex-1 flex-col min-w-0 w-full transition-all duration-300">
           <AppNavbar
-            user={user}
             onProfileClick={handleProfileClick}
             onLogout={handleLogout}
             onMenuClick={toggleSidebar}
