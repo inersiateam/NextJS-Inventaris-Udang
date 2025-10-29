@@ -32,6 +32,8 @@ import {
 } from "@/app/(admin)/barang-keluar/actions/barangKeluarActions";
 import { toast } from "sonner";
 import { IBarangKeluarItem } from "@/types/interfaces/IBarangKeluar";
+import { barangKeluarSchema } from "@/lib/validations/barangKeluarValidator";
+import { z } from "zod";
 
 interface BarangKeluarDialogProps {
   open: boolean;
@@ -66,6 +68,7 @@ const FormInput = memo(
     type = "text",
     placeholder = "",
     className = "",
+    error = "",
   }: any) => (
     <div className="flex flex-col gap-1">
       <label className="text-xs sm:text-sm font-medium text-gray-700">
@@ -76,11 +79,13 @@ const FormInput = memo(
         name={name}
         value={value}
         onChange={onChange}
-        required={required}
         disabled={disabled}
         placeholder={placeholder}
-        className={`rounded-md bg-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 ${className}`}
+        className={`rounded-md bg-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 ${
+          error ? "border border-red-500" : ""
+        } ${className}`}
       />
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>
   )
 );
@@ -95,6 +100,7 @@ const BarangItemRow = memo(
     onItemChange,
     onRemove,
     canRemove,
+    errors,
   }: {
     item: IBarangKeluarItem;
     index: number;
@@ -107,6 +113,11 @@ const BarangItemRow = memo(
     ) => void;
     onRemove: (index: number) => void;
     canRemove: boolean;
+    errors?: {
+      barangId?: string;
+      jmlPembelian?: string;
+      hargaJual?: string;
+    };
   }) => {
     const handleBarangChange = useCallback(
       (value: string) => {
@@ -145,12 +156,15 @@ const BarangItemRow = memo(
               Barang: <span className="text-red-500">*</span>
             </label>
             <Select
-              value={item.barangId.toString()}
+              value={item.barangId > 0 ? item.barangId.toString() : ""}
               onValueChange={handleBarangChange}
-              required
               disabled={isPending}
             >
-              <SelectTrigger className="bg-white text-sm focus:ring-2 focus:ring-sky-500">
+              <SelectTrigger
+                className={`bg-white text-sm focus:ring-1 focus:ring-sky-500 ${
+                  errors?.barangId ? "border border-red-500" : ""
+                }`}
+              >
                 <SelectValue placeholder="Pilih Barang" />
               </SelectTrigger>
               <SelectContent>
@@ -161,6 +175,9 @@ const BarangItemRow = memo(
                 ))}
               </SelectContent>
             </Select>
+            {errors?.barangId && (
+              <p className="text-xs text-red-500 mt-1">{errors.barangId}</p>
+            )}
           </div>
 
           <div className="sm:col-span-2 flex flex-col gap-1">
@@ -171,12 +188,16 @@ const BarangItemRow = memo(
               type="number"
               value={item.jmlPembelian || ""}
               onChange={handleJmlChange}
-              required
               min="1"
               placeholder="0"
               disabled={isPending}
-              className="rounded-md bg-white px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className={`rounded-md bg-white px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                errors?.jmlPembelian ? "border border-red-500" : ""
+              }`}
             />
+            {errors?.jmlPembelian && (
+              <p className="text-xs text-red-500 mt-1">{errors.jmlPembelian}</p>
+            )}
           </div>
 
           <div className="sm:col-span-3 flex flex-col gap-1">
@@ -187,12 +208,16 @@ const BarangItemRow = memo(
               type="number"
               value={item.hargaJual || ""}
               onChange={handleHargaChange}
-              required
               min="0"
               placeholder="0"
               disabled={isPending}
-              className="rounded-md bg-white px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className={`rounded-md bg-white px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                errors?.hargaJual ? "border border-red-500" : ""
+              }`}
             />
+            {errors?.hargaJual && (
+              <p className="text-xs text-red-500 mt-1">{errors.hargaJual}</p>
+            )}
           </div>
 
           <div className="sm:col-span-2 flex flex-col gap-1">
@@ -232,6 +257,7 @@ function BarangKeluarDialog({
   const [isPending, startTransition] = useTransition();
   const [form, setForm] = useState(getInitialFormState);
   const [items, setItems] = useState<IBarangKeluarItem[]>(getInitialItemsState);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const totalOmset = useMemo(() => {
     const total = items.reduce((sum, item) => {
@@ -245,6 +271,7 @@ function BarangKeluarDialog({
     if (!open) {
       setForm(getInitialFormState());
       setItems(getInitialItemsState());
+      setErrors({});
       return;
     }
 
@@ -273,10 +300,13 @@ function BarangKeluarDialog({
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    // Clear error saat user mengetik
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   }, []);
 
   const handlePelangganChange = useCallback((value: string) => {
     setForm((prev) => ({ ...prev, pelangganId: value }));
+    setErrors((prev) => ({ ...prev, pelangganId: "" }));
   }, []);
 
   const handleStatusChange = useCallback((value: string) => {
@@ -284,6 +314,7 @@ function BarangKeluarDialog({
       ...prev,
       status: value as "BELUM_LUNAS" | "LUNAS",
     }));
+    setErrors((prev) => ({ ...prev, status: "" }));
   }, []);
 
   const handleItemChange = useCallback(
@@ -297,6 +328,11 @@ function BarangKeluarDialog({
         };
         return newItems;
       });
+      // Clear error untuk item ini
+      setErrors((prev) => ({
+        ...prev,
+        [`items.${index}.${field}`]: "",
+      }));
     },
     []
   );
@@ -320,21 +356,50 @@ function BarangKeluarDialog({
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
+      setErrors({});
 
-      const payload: any = {
-        pelangganId: parseInt(form.pelangganId),
+      const formData = {
+        pelangganId: parseInt(form.pelangganId) || 0,
         tglKeluar: form.tglKeluar,
+        noPo: jabatan === "ATM" && form.noPo ? form.noPo : undefined,
         ongkir: parseFloat(form.ongkir) || 0,
         status: form.status,
-        items: items.filter(
-          (item) =>
-            item.barangId > 0 && item.jmlPembelian > 0 && item.hargaJual > 0
-        ),
+        items: items.map((item) => ({
+          barangId: item.barangId,
+          jmlPembelian: item.jmlPembelian,
+          hargaJual: item.hargaJual,
+        })),
       };
 
-      
-      if (jabatan === "ATM" && form.noPo) {
-        payload.noPo = form.noPo;
+      const validation = barangKeluarSchema.safeParse(formData);
+
+      if (!validation.success) {
+        const newErrors: Record<string, string> = {};
+        
+        validation.error.issues.forEach((err) => {
+          const path = err.path.join(".");
+          newErrors[path] = err.message;
+        });
+
+        setErrors(newErrors);
+
+        const firstError = validation.error.issues[0];
+        if (firstError) {
+          toast.error(firstError.message);
+        }
+
+        return;
+      }
+      const payload: any = {
+        pelangganId: validation.data.pelangganId,
+        tglKeluar: validation.data.tglKeluar,
+        ongkir: validation.data.ongkir,
+        status: validation.data.status,
+        items: validation.data.items,
+      };
+
+      if (jabatan === "ATM" && validation.data.noPo) {
+        payload.noPo = validation.data.noPo;
       }
 
       startTransition(async () => {
@@ -364,7 +429,7 @@ function BarangKeluarDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] sm:max-w-3xl rounded-2xl p-4 sm:p-6 max-h-[90vh] overflow-auto">
+      <DialogContent className="max-w-[95vw] sm:max-w-3xl rounded-2xl p-4 sm:p-6 max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg font-semibold text-gray-900">
             {mode === "edit" ? "Edit Barang Keluar" : "Tambah Barang Keluar"}
@@ -378,9 +443,9 @@ function BarangKeluarDialog({
 
         <form
           onSubmit={handleSubmit}
-          className="mt-4 space-y-4 overflow-y-auto max-h-[70vh]"
+          className="mt-4 space-y-4 overflow-y-auto flex-1"
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
               <label className="text-xs sm:text-sm font-medium text-gray-700">
                 Pelanggan: <span className="text-red-500">*</span>
@@ -388,10 +453,13 @@ function BarangKeluarDialog({
               <Select
                 value={form.pelangganId}
                 onValueChange={handlePelangganChange}
-                required
                 disabled={isPending}
               >
-                <SelectTrigger className="bg-gray-100 text-sm focus:ring-2 focus:ring-sky-500">
+                <SelectTrigger
+                  className={`bg-gray-100 text-sm focus:ring-1 focus:ring-sky-500 ${
+                    errors.pelangganId ? "border border-red-500" : ""
+                  }`}
+                >
                   <SelectValue placeholder="Pilih Pelanggan" />
                 </SelectTrigger>
                 <SelectContent>
@@ -406,6 +474,9 @@ function BarangKeluarDialog({
                   ))}
                 </SelectContent>
               </Select>
+              {errors.pelangganId && (
+                <p className="text-xs text-red-500 mt-1">{errors.pelangganId}</p>
+              )}
             </div>
 
             <FormInput
@@ -414,8 +485,8 @@ function BarangKeluarDialog({
               name="tglKeluar"
               value={form.tglKeluar}
               onChange={handleChange}
-              required
               disabled={isPending}
+              error={errors.tglKeluar}
             />
 
             {jabatan === "ATM" && (
@@ -439,6 +510,7 @@ function BarangKeluarDialog({
               placeholder="0"
               disabled={isPending}
               className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              error={errors.ongkir}
             />
 
             <div className="flex flex-col gap-1">
@@ -448,10 +520,13 @@ function BarangKeluarDialog({
               <Select
                 value={form.status}
                 onValueChange={handleStatusChange}
-                required
                 disabled={isPending}
               >
-                <SelectTrigger className="bg-gray-100 text-sm focus:ring-2 focus:ring-sky-500">
+                <SelectTrigger
+                  className={`bg-gray-100 text-sm focus:ring-1 focus:ring-sky-500 ${
+                    errors.status ? "border border-red-500" : ""
+                  }`}
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -459,6 +534,9 @@ function BarangKeluarDialog({
                   <SelectItem value="LUNAS">Lunas</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.status && (
+                <p className="text-xs text-red-500 mt-1">{errors.status}</p>
+              )}
             </div>
           </div>
 
@@ -479,6 +557,10 @@ function BarangKeluarDialog({
               </Button>
             </div>
 
+            {errors.items && (
+              <p className="text-xs text-red-500 mb-2">{errors.items}</p>
+            )}
+
             <div className="space-y-3">
               {items.map((item, index) => (
                 <BarangItemRow
@@ -490,6 +572,11 @@ function BarangKeluarDialog({
                   onItemChange={handleItemChange}
                   onRemove={removeItem}
                   canRemove={items.length > 1}
+                  errors={{
+                    barangId: errors[`items.${index}.barangId`],
+                    jmlPembelian: errors[`items.${index}.jmlPembelian`],
+                    hargaJual: errors[`items.${index}.hargaJual`],
+                  }}
                 />
               ))}
             </div>
@@ -502,7 +589,7 @@ function BarangKeluarDialog({
             </span>
           </div>
 
-          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-4 border-t">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-4 border-t sticky bottom-0 bg-white">
             <Button
               type="button"
               variant="outline"
