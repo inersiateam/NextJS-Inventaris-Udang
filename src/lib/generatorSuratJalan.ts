@@ -22,7 +22,7 @@ const ADMIN_CONFIG = {
 
 type Jabatan = "ABL" | "ATM";
 
-const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
+const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan) => {
   const config = ADMIN_CONFIG[jabatan];
 
   const html = `
@@ -331,7 +331,7 @@ const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
         <tr>
           <td>${index + 1}</td>
           <td>${item.namaBarang}</td>
-          <td>${item.jmlPembelian}</td>
+          <td>${item.jmlPembelian} ${item.satuan}</td>
         </tr>
       `
         )
