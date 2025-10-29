@@ -34,6 +34,7 @@ import {
   updateBarangMasukAction,
 } from "@/app/(admin)/barang-masuk/actions/barangMasukActions";
 import { toast } from "sonner";
+import { barangMasukSchema } from "@/lib/validations/barangMasukValidator";
 
 interface BarangMasukDialogProps {
   open: boolean;
@@ -65,6 +66,7 @@ const FormInput = memo(
     type = "text",
     placeholder = "",
     className = "",
+    error = "",
   }: any) => (
     <div className="flex flex-col gap-1">
       <label className="text-xs sm:text-sm font-medium text-gray-700">
@@ -78,8 +80,11 @@ const FormInput = memo(
         required={required}
         disabled={disabled}
         placeholder={placeholder}
-        className={`rounded-md bg-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 ${className}`}
+        className={`rounded-md bg-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 ${
+          error ? "border border-red-500" : ""
+        } ${className}`}
       />
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>
   )
 );
@@ -94,6 +99,7 @@ const FormTextarea = memo(
     disabled = false,
     rows = 3,
     placeholder = "",
+    error = "",
   }: any) => (
     <div className="col-span-1 sm:col-span-2 flex flex-col gap-1">
       <label className="text-xs sm:text-sm font-medium text-gray-700">
@@ -106,8 +112,11 @@ const FormTextarea = memo(
         rows={rows}
         disabled={disabled}
         placeholder={placeholder}
-        className="rounded-md bg-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
+        className={`rounded-md bg-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none ${
+          error ? "border border-red-500" : ""
+        }`}
       />
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>
   )
 );
@@ -126,6 +135,7 @@ function BarangMasukDialog({
   const [selectedBarang, setSelectedBarang] = useState<BarangOption | null>(
     null
   );
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const jatuhTempo = useMemo(() => {
     if (!form.tglMasuk) return "";
@@ -146,6 +156,7 @@ function BarangMasukDialog({
     if (!open) {
       setForm(getInitialFormState());
       setSelectedBarang(null);
+      setErrors({});
       return;
     }
 
@@ -170,6 +181,7 @@ function BarangMasukDialog({
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target;
       setForm((prev) => ({ ...prev, [name]: value }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     },
     []
   );
@@ -179,28 +191,53 @@ function BarangMasukDialog({
       const barang = barangOptions.find((b) => b.id.toString() === value);
       setSelectedBarang(barang || null);
       setForm((prev) => ({ ...prev, barangId: value }));
+      setErrors((prev) => ({ ...prev, barangId: "" }));
     },
     [barangOptions]
   );
 
   const handleStatusChange = useCallback((value: string) => {
     setForm((prev) => ({ ...prev, status: value as "BELUM_LUNAS" | "LUNAS" }));
+    setErrors((prev) => ({ ...prev, status: "" }));
   }, []);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
+      setErrors({});
 
-      const payload = {
-        barangId: parseInt(form.barangId),
+      const formData = {
+        barangId: parseInt(form.barangId) || 0,
         noInvoice: form.noInvoice,
         noSuratJalan: form.noSuratJalan,
         tglMasuk: form.tglMasuk,
-        stokMasuk: parseInt(form.stokMasuk),
+        stokMasuk: parseInt(form.stokMasuk) || 0,
         ongkir: parseInt(form.ongkir) || 0,
         status: form.status,
         keterangan: form.keterangan || undefined,
       };
+
+      const validation = barangMasukSchema.safeParse(formData);
+
+      if (!validation.success) {
+        const newErrors: Record<string, string> = {};
+
+        validation.error.issues.forEach((err) => {
+          const path = err.path.join(".");
+          newErrors[path] = err.message;
+        });
+
+        setErrors(newErrors);
+
+        const firstError = validation.error.issues[0];
+        if (firstError) {
+          toast.error(firstError.message);
+        }
+
+        return;
+      }
+
+      const payload = validation.data;
 
       startTransition(async () => {
         try {
@@ -251,6 +288,7 @@ function BarangMasukDialog({
               onChange={handleChange}
               required
               disabled={isPending}
+              error={errors.tglMasuk}
             />
 
             <FormInput
@@ -269,6 +307,7 @@ function BarangMasukDialog({
               required
               disabled={isPending}
               placeholder="Contoh: INV/001/01/2025"
+              error={errors.noInvoice}
             />
 
             <FormInput
@@ -279,6 +318,7 @@ function BarangMasukDialog({
               required
               disabled={isPending}
               placeholder="Contoh: SJ/001/01/2025"
+              error={errors.noSuratJalan}
             />
 
             <div className="flex flex-col gap-1">
@@ -291,7 +331,11 @@ function BarangMasukDialog({
                 required
                 disabled={isPending}
               >
-                <SelectTrigger className="bg-gray-100 text-sm focus:ring-2 focus:ring-sky-500">
+                <SelectTrigger
+                  className={`bg-gray-100 text-sm focus:ring-2 focus:ring-sky-500 ${
+                    errors.barangId ? "border border-red-500" : ""
+                  }`}
+                >
                   <SelectValue placeholder="Pilih barang" />
                 </SelectTrigger>
                 <SelectContent>
@@ -303,6 +347,9 @@ function BarangMasukDialog({
                   ))}
                 </SelectContent>
               </Select>
+              {errors.barangId && (
+                <p className="text-xs text-red-500 mt-1">{errors.barangId}</p>
+              )}
             </div>
 
             <FormInput
@@ -315,6 +362,7 @@ function BarangMasukDialog({
               disabled={isPending}
               placeholder="0"
               className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              error={errors.stokMasuk}
             />
 
             <FormInput
@@ -326,6 +374,7 @@ function BarangMasukDialog({
               disabled={isPending}
               placeholder="0"
               className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              error={errors.ongkir}
             />
 
             <div className="flex flex-col gap-1">
@@ -338,7 +387,11 @@ function BarangMasukDialog({
                 required
                 disabled={isPending}
               >
-                <SelectTrigger className="bg-gray-100 text-sm focus:ring-2 focus:ring-sky-500">
+                <SelectTrigger
+                  className={`bg-gray-100 text-sm focus:ring-2 focus:ring-sky-500 ${
+                    errors.status ? "border border-red-500" : ""
+                  }`}
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -346,6 +399,9 @@ function BarangMasukDialog({
                   <SelectItem value="LUNAS">Lunas</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.status && (
+                <p className="text-xs text-red-500 mt-1">{errors.status}</p>
+              )}
             </div>
 
             <FormTextarea
@@ -355,6 +411,7 @@ function BarangMasukDialog({
               onChange={handleChange}
               disabled={isPending}
               placeholder="Keterangan tambahan (opsional)"
+              error={errors.keterangan}
             />
           </div>
 
