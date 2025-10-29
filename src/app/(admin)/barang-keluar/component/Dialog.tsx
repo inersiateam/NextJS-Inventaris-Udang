@@ -40,6 +40,7 @@ interface BarangKeluarDialogProps {
   pelangganOptions: PelangganOption[];
   editData?: any | null;
   mode?: "create" | "edit";
+  jabatan: "ABL" | "ATM";
 }
 
 const getInitialFormState = () => ({
@@ -47,6 +48,7 @@ const getInitialFormState = () => ({
   tglKeluar: new Date().toISOString().split("T")[0],
   ongkir: "",
   status: "BELUM_LUNAS" as "BELUM_LUNAS" | "LUNAS",
+  noPo: "",
 });
 
 const getInitialItemsState = (): IBarangKeluarItem[] => [
@@ -154,7 +156,7 @@ const BarangItemRow = memo(
               <SelectContent>
                 {barangList.map((barang) => (
                   <SelectItem key={barang.id} value={barang.id.toString()}>
-                    {barang.nama} (Stok: {barang.stok})
+                    {barang.nama} ({barang.satuan}) - Stok: {barang.stok}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -224,6 +226,7 @@ function BarangKeluarDialog({
   pelangganOptions,
   editData = null,
   mode = "create",
+  jabatan,
 }: BarangKeluarDialogProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -253,6 +256,7 @@ function BarangKeluarDialog({
           : "",
         ongkir: editData.ongkir?.toString() || "",
         status: editData.status || "BELUM_LUNAS",
+        noPo: editData.noPo || "",
       });
       if (editData.items && editData.items.length > 0) {
         setItems(
@@ -317,7 +321,7 @@ function BarangKeluarDialog({
     async (e: React.FormEvent) => {
       e.preventDefault();
 
-      const payload = {
+      const payload: any = {
         pelangganId: parseInt(form.pelangganId),
         tglKeluar: form.tglKeluar,
         ongkir: parseFloat(form.ongkir) || 0,
@@ -327,6 +331,11 @@ function BarangKeluarDialog({
             item.barangId > 0 && item.jmlPembelian > 0 && item.hargaJual > 0
         ),
       };
+
+      
+      if (jabatan === "ATM" && form.noPo) {
+        payload.noPo = form.noPo;
+      }
 
       startTransition(async () => {
         try {
@@ -350,12 +359,12 @@ function BarangKeluarDialog({
         }
       });
     },
-    [form, items, mode, editData, onOpenChange, router]
+    [form, items, mode, editData, jabatan, onOpenChange, router]
   );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-<DialogContent className="max-w-[95vw] sm:max-w-3xl rounded-2xl p-4 sm:p-6 max-h-[90vh] overflow-auto">
+      <DialogContent className="max-w-[95vw] sm:max-w-3xl rounded-2xl p-4 sm:p-6 max-h-[90vh] overflow-auto">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg font-semibold text-gray-900">
             {mode === "edit" ? "Edit Barang Keluar" : "Tambah Barang Keluar"}
@@ -367,7 +376,10 @@ function BarangKeluarDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4 overflow-y-auto max-h-[70vh]">
+        <form
+          onSubmit={handleSubmit}
+          className="mt-4 space-y-4 overflow-y-auto max-h-[70vh]"
+        >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
               <label className="text-xs sm:text-sm font-medium text-gray-700">
@@ -405,6 +417,18 @@ function BarangKeluarDialog({
               required
               disabled={isPending}
             />
+
+            {jabatan === "ATM" && (
+              <FormInput
+                label="No. PO (Opsional)"
+                type="text"
+                name="noPo"
+                value={form.noPo}
+                onChange={handleChange}
+                disabled={isPending}
+                placeholder="Masukkan nomor PO"
+              />
+            )}
 
             <FormInput
               label="Ongkir"

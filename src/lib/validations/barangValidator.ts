@@ -9,6 +9,9 @@ export const barangSchema = z.object({
     .number()
     .int("Harga harus berupa bilangan bulat")
     .positive("Harga harus lebih dari 0"),
+  satuan: z.enum(["KG", "LITER"], {
+    message: "Satuan harus KG atau LITER",
+  }),
 });
 
 export type BarangInput = z.infer<typeof barangSchema>;

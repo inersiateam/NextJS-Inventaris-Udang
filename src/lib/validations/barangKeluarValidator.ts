@@ -19,6 +19,7 @@ export const barangKeluarSchema = z.object({
     .array(barangKeluarItemSchema)
     .min(1, "Minimal harus ada 1 item barang"),
   status: z.enum(["LUNAS", "BELUM_LUNAS"]).optional().default("BELUM_LUNAS"),
+  noPo: z.string().optional(),
 });
 
 export type BarangKeluarInput = z.infer<typeof barangKeluarSchema>;

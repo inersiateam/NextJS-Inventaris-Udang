@@ -34,7 +34,8 @@ export async function getRequestHeaders() {
 
 export async function generateNoInvoice(
   tglKeluar: Date,
-  jabatan: string
+  jabatan: string,
+  noPo?: string
 ): Promise<string> {
   const year = tglKeluar.getFullYear();
   const month = String(tglKeluar.getMonth() + 1).padStart(2, "0");
@@ -47,10 +48,17 @@ export async function generateNoInvoice(
         gte: startOfMonth,
         lte: endOfMonth,
       },
+      admin: {
+        jabatan: jabatan as Jabatan,
+      },
     },
   });
 
   const counter = String(count + 1).padStart(3, "0");
+
+  if (jabatan === "ATM" && noPo || jabatan === "ATM") {
+    return `${counter}`;
+  }
 
   return `INV/${jabatan}/${month}/${year}/${counter}`;
 }
@@ -69,6 +77,9 @@ export async function generateNoSuratJalan(
       tglKeluar: {
         gte: startOfMonth,
         lte: endOfMonth,
+      },
+      admin: {
+        jabatan: jabatan as Jabatan,
       },
     },
   });
@@ -133,11 +144,4 @@ export function getDateRange(filterBulan: number) {
   endDate.setHours(23, 59, 59, 999);
 
   return { startDate, endDate };
-}
-
-export function createSlug(nama: string): string {
-  return nama
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^\w-]+/g, "");
 }

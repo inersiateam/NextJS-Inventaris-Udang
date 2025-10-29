@@ -561,6 +561,7 @@ export default function BarangKeluarClient({
           pelangganOptions={pelangganOptions}
           editData={editData}
           mode={dialogMode}
+          jabatan={jabatan}
         />
       )}
 

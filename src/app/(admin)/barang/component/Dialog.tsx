@@ -12,6 +12,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useState } from "react";
 import {
   createBarangAction,
@@ -19,6 +26,7 @@ import {
 } from "../actions/barangActions";
 import { toast } from "sonner";
 import { BarangWithRelations } from "@/types/interfaces/IBarang";
+import { Satuan } from "@prisma/client";
 
 interface DialogBarangProps {
   mode?: "create" | "edit";
@@ -36,10 +44,16 @@ export default function DialogBarang({
   const [open, setOpen] = useState(false);
   const [nama, setNama] = useState(barang?.nama || "");
   const [harga, setHarga] = useState(barang?.harga?.toString() || "");
+  const [satuan, setSatuan] = useState<Satuan>(barang?.satuan || "KG");
   const [loading, setLoading] = useState(false);
+
+  // Debug log
+  console.log("Current satuan value:", satuan);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log("Submitting with satuan:", satuan, "type:", typeof satuan);
 
     if (!nama.trim()) {
       toast.error("Nama barang harus diisi");
@@ -51,6 +65,11 @@ export default function DialogBarang({
       return;
     }
 
+    if (!satuan) {
+      toast.error("Satuan harus dipilih");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -59,13 +78,15 @@ export default function DialogBarang({
       if (mode === "create") {
         result = await createBarangAction({
           nama: nama.trim(),
-          harga: parseFloat(harga),
+          harga: parseInt(harga),
+          satuan: satuan,
         });
       } else if (barang) {
         result = await updateBarangAction({
           id: barang.id,
           nama: nama.trim(),
-          harga: parseFloat(harga),
+          harga: parseInt(harga),
+          satuan: satuan,
         });
       }
 
@@ -74,6 +95,7 @@ export default function DialogBarang({
         setOpen(false);
         setNama("");
         setHarga("");
+        setSatuan("KG");
         onSuccess?.();
       } else {
         toast.error(result?.error || "Terjadi kesalahan");
@@ -92,6 +114,7 @@ export default function DialogBarang({
       if (!newOpen && mode === "create") {
         setNama("");
         setHarga("");
+        setSatuan("KG");
       }
     }
   };
@@ -130,19 +153,38 @@ export default function DialogBarang({
                 required
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="harga">Harga:</Label>
-              <Input
-                id="harga"
-                type="number"
-                value={harga}
-                onChange={(e) => setHarga(e.target.value)}
-                placeholder="Masukkan harga"
-                disabled={loading}
-                min="0"
-                step="0.01"
-                required
-              />
+            <div className="grid grid-cols-[1fr_auto] gap-3">
+              <div className="grid gap-2">
+                <Label htmlFor="harga">Harga:</Label>
+                <Input
+                  id="harga"
+                  type="number"
+                  value={harga}
+                  onChange={(e) => setHarga(e.target.value)}
+                  placeholder="Masukkan harga"
+                  disabled={loading}
+                  min="0"
+                  step="1"
+                  required
+                />
+              </div>
+              <div className="grid gap-2 w-[120px]">
+                <Label htmlFor="satuan">Satuan:</Label>
+                <Select
+                  value={satuan}
+                  onValueChange={(value) => setSatuan(value as Satuan)}
+                  disabled={loading}
+                  required
+                >
+                  <SelectTrigger id="satuan">
+                    <SelectValue placeholder="Pilih satuan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="KG">KG</SelectItem>
+                    <SelectItem value="LITER">LITER</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 

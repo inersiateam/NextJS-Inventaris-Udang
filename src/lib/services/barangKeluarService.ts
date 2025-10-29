@@ -7,10 +7,12 @@ import {
   getDateRange,
 } from "@/lib/helpers/globalHelper";
 import {
-  IBarangKeluarInput,
   IBarangKeluarResponse,
   IBarangKeluarFilter,
   IBarangKeluarListResponse,
+  CreateBarangKeluarParams,
+  UpdateBarangKeluarParams,
+  DeleteBarangKeluarParams,
 } from "@/types/interfaces/IBarangKeluar";
 import { Jabatan } from "@prisma/client";
 import { logActivity } from "../fileLogger";
@@ -19,6 +21,7 @@ const BARANG_KELUAR_SELECT = {
   id: true,
   noInvoice: true,
   noSuratJalan: true,
+  noPo: true,
   tglKeluar: true,
   jatuhTempo: true,
   totalOmset: true,
@@ -33,6 +36,7 @@ const BARANG_KELUAR_SELECT = {
         select: {
           nama: true,
           harga: true,
+          satuan: true,
         },
       },
     },
@@ -53,31 +57,6 @@ const BARANG_KELUAR_SELECT = {
     },
   },
 } as const;
-
-interface CreateBarangKeluarParams {
-  adminId: number;
-  jabatan: Jabatan;
-  data: IBarangKeluarInput;
-  ipAddress?: string;
-  userAgent?: string;
-}
-
-interface UpdateBarangKeluarParams {
-  id: number;
-  adminId: number;
-  jabatan: Jabatan;
-  data: IBarangKeluarInput;
-  ipAddress?: string;
-  userAgent?: string;
-}
-
-interface DeleteBarangKeluarParams {
-  id: number;
-  jabatan: Jabatan;
-  adminId: number;
-  ipAddress?: string;
-  userAgent?: string;
-}
 
 export const getBarangKeluarWithPagination = cache(
   async (
@@ -136,6 +115,7 @@ export const getBarangKeluarWithPagination = cache(
                 hargaJual: detail.hargaJual,
                 subtotal: detail.subtotal,
                 subtotalModal: subtotalModal,
+                satuan: detail.barang.satuan,
               };
             }),
             totalOmset: item.totalOmset,
@@ -180,6 +160,7 @@ export const getBarangList = cache(async (jabatan: Jabatan) => {
         nama: true,
         harga: true,
         stok: true,
+        satuan: true,
       },
       orderBy: { nama: "desc" },
     });
@@ -228,6 +209,7 @@ export const getBarangKeluarById = cache(
       return {
         id: barangKeluar.id,
         noInvoice: barangKeluar.noInvoice,
+        noPo: barangKeluar.noPo,
         noSuratJalan: barangKeluar.noSuratJalan,
         tglKeluar: barangKeluar.tglKeluar,
         jatuhTempo: barangKeluar.jatuhTempo,
@@ -242,6 +224,7 @@ export const getBarangKeluarById = cache(
             hargaJual: detail.hargaJual,
             subtotal: detail.subtotal,
             subtotalModal: subtotalModal,
+            satuan: detail.barang.satuan,
           };
         }),
         totalOmset: barangKeluar.totalOmset,
@@ -275,6 +258,7 @@ export const getBarangKeluarByIdForEdit = cache(
           jatuhTempo: true,
           noInvoice: true,
           noSuratJalan: true,
+          noPo: true,
           totalOmset: true,
           totalModal: true,
           labaKotor: true,
@@ -322,6 +306,7 @@ export const getBarangKeluarByIdForEdit = cache(
         jatuhTempo: barangKeluar.jatuhTempo,
         noInvoice: barangKeluar.noInvoice,
         noSuratJalan: barangKeluar.noSuratJalan,
+        noPo: barangKeluar.noPo,
         namaPelanggan: barangKeluar.pelanggan.nama,
         alamatPelanggan: barangKeluar.pelanggan.alamat,
         ongkir: transaksi?.ongkir || 0,
@@ -355,7 +340,7 @@ export async function createBarangKeluar(params: CreateBarangKeluarParams) {
     const [barangs, pelanggan] = await Promise.all([
       prisma.barang.findMany({
         where: { id: { in: barangIds } },
-        select: { id: true, nama: true, harga: true, stok: true },
+        select: { id: true, nama: true, harga: true, stok: true, satuan: true },
       }),
       prisma.pelanggan.findUnique({
         where: { id: data.pelangganId },
@@ -382,7 +367,7 @@ export async function createBarangKeluar(params: CreateBarangKeluarParams) {
 
     const tglKeluar = new Date(data.tglKeluar);
     const jatuhTempo = calculateJatuhTempo(tglKeluar);
-    const noInvoice = await generateNoInvoice(tglKeluar, jabatan);
+    const noInvoice = await generateNoInvoice(tglKeluar, jabatan, data.noPo);
     const noSuratJalan = await generateNoSuratJalan(tglKeluar, jabatan);
 
     let totalOmset = 0;
@@ -419,6 +404,7 @@ export async function createBarangKeluar(params: CreateBarangKeluarParams) {
           adminId: adminId,
           noInvoice,
           noSuratJalan,
+          noPo: data.noPo || null,
           totalOmset,
           totalModal,
           labaKotor,
@@ -466,6 +452,7 @@ export async function createBarangKeluar(params: CreateBarangKeluarParams) {
         id: result.barangKeluar.id,
         noInvoice: result.barangKeluar.noInvoice,
         noSuratJalan: result.barangKeluar.noSuratJalan,
+        noPo: result.barangKeluar.noPo,
         pelangganId: data.pelangganId,
         totalOmset: result.barangKeluar.totalOmset,
         totalModal: result.barangKeluar.totalModal,
@@ -504,7 +491,7 @@ export async function updateBarangKeluar(params: UpdateBarangKeluarParams) {
       }),
       prisma.barang.findMany({
         where: { id: { in: barangIds } },
-        select: { id: true, nama: true, harga: true, stok: true },
+        select: { id: true, nama: true, harga: true, stok: true, satuan: true },
       }),
       prisma.pelanggan.findUnique({
         where: { id: data.pelangganId },
@@ -589,6 +576,7 @@ export async function updateBarangKeluar(params: UpdateBarangKeluarParams) {
         where: { id },
         data: {
           pelangganId: data.pelangganId,
+          noPo: data.noPo || null,
           totalOmset,
           totalModal,
           labaKotor,
@@ -639,6 +627,7 @@ export async function updateBarangKeluar(params: UpdateBarangKeluarParams) {
       }),
       dataBaru: JSON.stringify({
         id: result.barangKeluar.id,
+        noPo: result.barangKeluar.noPo,
         totalOmset: result.barangKeluar.totalOmset,
         totalModal: result.barangKeluar.totalModal,
         labaKotor: result.barangKeluar.labaKotor,

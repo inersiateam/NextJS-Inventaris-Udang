@@ -21,20 +21,20 @@ const ADMIN_CONFIG = {
     companyShort: "CV ANUGRAH\nTIRTA\nMAKMUR",
     logo: "/ATM.png",
     address:
-      "Perumahan Griya Indah Pakis, Sumberejo,\nKab. Banyuwangi, Jawa Timur, 68419",
+      "Jl. Tunggul Ametung Desa Sembulung, Kec. Cluring, \nKabupaten Banyuwangi, Jawa Timur, 68482",
     bank: "Bank BCA",
-    accountNumber: "1801608235",
-    accountName: "Jenny Nur Alfian Handayani",
+    accountNumber: "8980497918",
+    accountName: "Vivi Nur Handayani",
     primaryColor: "#0066cc",
     secondaryColor: "#0099ff",
     accentColor: "#ff6600",
-    signatureName: "Affan NR",
+    signatureName: "Pandu",
   },
 };
 
 type Jabatan = "ABL" | "ATM";
 
-const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
+const generateInvoicePDF = (data: DetailData, jabatan: Jabatan) => {
   const config = ADMIN_CONFIG[jabatan];
 
   const html = `
@@ -360,6 +360,7 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
     <div class="invoice-title">
       <h1>INVOICE</h1>
       <div class="invoice-number">No. ${data.noInvoice}</div>
+      <div class="invoice-number">No. ${data.noPo}</div>
     </div>
     
     <div class="header-right">
@@ -396,7 +397,7 @@ const generateInvoicePDF = (data: DetailData, jabatan: Jabatan = "ABL") => {
         <tr>
           <td>${index + 1}</td>
           <td>${item.namaBarang}</td>
-          <td>${item.jmlPembelian} </td>
+          <td>${item.jmlPembelian} ${item.satuan}</td>
           <td>${formatCurrency(item.hargaJual)}</td>
           <td>${formatCurrency(item.subtotal)}</td>
         </tr>

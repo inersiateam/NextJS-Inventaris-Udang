@@ -1,3 +1,5 @@
+import { Jabatan } from "@prisma/client";
+
 export interface IBarangKeluarItem {
   barangId: number;
   jmlPembelian: number;
@@ -10,6 +12,7 @@ export interface IBarangKeluarInput {
   ongkir: number;
   items: IBarangKeluarItem[];
   status?: "LUNAS" | "BELUM_LUNAS";
+  noPo?: string;
 }
 
 export interface IBarangKeluarDetail {
@@ -66,10 +69,12 @@ export interface DetailItem {
   hargaJual: number;
   subtotal: number;
   subtotalModal: number;
+  satuan: "KG" | "LITER";
 }
 
 export interface DetailData {
   noInvoice: string;
+  noPo?: string;
   noSuratJalan: string;
   tglKeluar: Date;
   jatuhTempo: Date;
@@ -84,4 +89,30 @@ export interface DetailData {
   totalBiayaKeluar: number;
   labaBerjalan: number;
   status: string;
+  satuan: "KG" | "LITER";
+}
+
+export interface CreateBarangKeluarParams {
+  adminId: number;
+  jabatan: Jabatan;
+  data: IBarangKeluarInput;
+  ipAddress?: string;
+  userAgent?: string;
+}
+
+export interface UpdateBarangKeluarParams {
+  id: number;
+  adminId: number;
+  jabatan: Jabatan;
+  data: IBarangKeluarInput;
+  ipAddress?: string;
+  userAgent?: string;
+}
+
+export interface DeleteBarangKeluarParams {
+  id: number;
+  jabatan: Jabatan;
+  adminId: number;
+  ipAddress?: string;
+  userAgent?: string;
 }

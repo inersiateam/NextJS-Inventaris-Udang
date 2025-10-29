@@ -297,7 +297,8 @@ function BarangMasukDialog({
                 <SelectContent>
                   {barangOptions.map((barang) => (
                     <SelectItem key={barang.id} value={barang.id.toString()}>
-                      {barang.nama} - {formatCurrency(barang.harga)}
+                      {barang.nama} ({barang.satuan}) -{" "}
+                      {formatCurrency(barang.harga)}
                     </SelectItem>
                   ))}
                 </SelectContent>

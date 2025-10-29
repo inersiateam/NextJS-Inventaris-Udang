@@ -20,6 +20,11 @@ enum StatusTransaksi {
   BELUM_LUNAS
 }
 
+enum Satuan {
+  KG
+  LITER
+}
+
 model Admin {
   id        Int      @id @default(autoincrement())
   username  String   @unique
@@ -45,6 +50,7 @@ model Barang {
   nama      String   @map("nama_barang")
   harga     Int      @map("harga_modal")
   stok      Int
+  satuan    Satuan
   adminId   Int      @map("id_admin")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -84,17 +90,18 @@ model BarangMasuk {
 }
 
 model BarangKeluar {
-  id           Int      @id @default(autoincrement()) @map("id_barang_keluar")
-  pelangganId  Int      @map("id_pelanggan_id")
-  adminId      Int      @map("id_admin_id")
-  noInvoice    String   @map("no_invoice")
-  noSuratJalan String   @map("no_surat_jalan")
-  totalOmset   Int      @map("total_omset")
-  totalModal   Int      @map("total_modal")
-  labaKotor    Int      @map("total_laba_kotor")
-  tglKeluar    DateTime @map("tgl_keluar") @db.Date
-  jatuhTempo   DateTime @map("jatuh_tempo") @db.Date
-  createdAt    DateTime @default(now()) @map("created_at")
+  id           Int       @id @default(autoincrement()) @map("id_barang_keluar")
+  pelangganId  Int       @map("id_pelanggan_id")
+  adminId      Int       @map("id_admin_id")
+  noInvoice    String    @map("no_invoice")
+  noSuratJalan String    @map("no_surat_jalan")
+  noPo         String?   @map("no_po")
+  totalOmset   Int       @map("total_omset")
+  totalModal   Int       @map("total_modal")
+  labaKotor    Int       @map("total_laba_kotor")
+  tglKeluar    DateTime  @map("tgl_keluar") @db.Date
+  jatuhTempo   DateTime  @map("jatuh_tempo") @db.Date
+  createdAt    DateTime  @default(now()) @map("created_at")
 
   // Relasi
   pelanggan       Pelanggan            @relation(fields: [pelangganId], references: [id], onDelete: Cascade)
@@ -105,6 +112,7 @@ model BarangKeluar {
   @@index([pelangganId])
   @@index([adminId])
   @@index([tglKeluar])
+  @@index([noPo])
   @@map("barang_keluar")
 }
 
@@ -118,7 +126,7 @@ model BarangKeluarDetail {
   createdAt      DateTime @default(now()) @map("created_at")
 
   barangKeluar BarangKeluar @relation(fields: [barangKeluarId], references: [id], onDelete: Cascade)
-  barang       Barang       @relation(fields: [barangId], references: [id], onDelete: Restrict) // ✅ Restrict agar barang tidak bisa dihapus jika masih ada transaksi
+  barang       Barang       @relation(fields: [barangId], references: [id], onDelete: Restrict)
 
   @@index([barangKeluarId])
   @@index([barangId])
