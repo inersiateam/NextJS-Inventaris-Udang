@@ -1,8 +1,9 @@
-import { Jabatan } from "@prisma/client";
+import { Jabatan, Satuan } from "@prisma/client";
 
 export interface CreateBarangInput {
   nama: string;
   harga: number;
+  satuan: Satuan;
 }
 
 export interface UpdateBarangInput extends CreateBarangInput {
@@ -40,6 +41,7 @@ export interface BarangWithRelations {
   nama: string;
   harga: number;
   stok: number;
+  satuan: Satuan;
   createdAt: Date;
   updatedAt: Date;
   admin: {

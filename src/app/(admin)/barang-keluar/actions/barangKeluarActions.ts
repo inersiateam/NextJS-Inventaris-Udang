@@ -73,6 +73,7 @@ export async function getBarangListAction() {
         nama: true,
         harga: true,
         stok: true,
+        satuan: true,
       },
       orderBy: {
         nama: "asc",

@@ -106,6 +106,7 @@ export const getBarangOptions = cache(
           nama: true,
           harga: true,
           stok: true,
+          satuan: true,
         },
         orderBy: { nama: "asc" },
       });

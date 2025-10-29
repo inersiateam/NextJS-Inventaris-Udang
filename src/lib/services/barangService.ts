@@ -20,6 +20,7 @@ const BARANG_SELECT = {
   nama: true,
   harga: true,
   stok: true,
+  satuan: true,
   createdAt: true,
   updatedAt: true,
   admin: {
@@ -88,6 +89,7 @@ export const getAllBarang = cache(async (jabatan: Jabatan) => {
         nama: true,
         harga: true,
         stok: true,
+        satuan: true,
       },
       orderBy: { nama: "asc" },
     });
@@ -106,6 +108,7 @@ export async function createBarang(
     const validatedData = barangSchema.parse({
       nama: params.nama,
       harga: params.harga,
+      satuan: params.satuan,
     });
 
     const existingBarang = await prisma.barang.findFirst({
@@ -127,6 +130,7 @@ export async function createBarang(
       data: {
         nama: validatedData.nama,
         harga: validatedData.harga,
+        satuan: validatedData.satuan,
         stok: 0,
         adminId: params.adminId,
       },
@@ -141,6 +145,7 @@ export async function createBarang(
         id: barang.id,
         nama: barang.nama,
         harga: barang.harga,
+        satuan: barang.satuan,
       }),
       ipAddress: params.ipAddress || "unknown",
       userAgent: params.userAgent || "unknown",
@@ -167,6 +172,7 @@ export async function updateBarang(
     const validatedData = barangSchema.parse({
       nama: params.nama,
       harga: params.harga,
+      satuan: params.satuan,
     });
 
     const existingBarang = await prisma.barang.findUnique({
@@ -175,6 +181,7 @@ export async function updateBarang(
         id: true,
         nama: true,
         harga: true,
+        satuan: true,
         stok: true,
         adminId: true,
       },
@@ -205,6 +212,7 @@ export async function updateBarang(
       data: {
         nama: validatedData.nama,
         harga: validatedData.harga,
+        satuan: validatedData.satuan,
       },
       select: BARANG_SELECT,
     });
@@ -217,11 +225,13 @@ export async function updateBarang(
         id: existingBarang.id,
         nama: existingBarang.nama,
         harga: existingBarang.harga,
+        satuan: existingBarang.satuan,
       }),
       dataBaru: JSON.stringify({
         id: updatedBarang.id,
         nama: updatedBarang.nama,
         harga: updatedBarang.harga,
+        satuan: updatedBarang.satuan,
       }),
       ipAddress: params.ipAddress || "unknown",
       userAgent: params.userAgent || "unknown",
@@ -251,6 +261,7 @@ export async function deleteBarang(
         id: true,
         nama: true,
         harga: true,
+        satuan: true,
         stok: true,
         _count: {
           select: {
@@ -286,6 +297,7 @@ export async function deleteBarang(
         id: existingBarang.id,
         nama: existingBarang.nama,
         harga: existingBarang.harga,
+        satuan: existingBarang.satuan,
         stok: existingBarang.stok,
       }),
       ipAddress: params.ipAddress || "unknown",

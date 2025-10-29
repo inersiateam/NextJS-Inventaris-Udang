@@ -66,6 +66,7 @@ export async function createBarangAction(input: CreateBarangInput) {
     const result = await createBarang({
       nama: input.nama,
       harga: input.harga,
+      satuan: input.satuan,
       adminId: parseInt(session.user.id),
       ipAddress,
       userAgent,
@@ -104,6 +105,7 @@ export async function updateBarangAction(input: UpdateBarangInput) {
       id: input.id,
       nama: input.nama,
       harga: input.harga,
+      satuan: input.satuan,
       adminId: parseInt(session.user.id),
       ipAddress,
       userAgent,
