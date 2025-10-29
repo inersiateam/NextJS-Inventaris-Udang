@@ -370,6 +370,8 @@ export async function createBarangKeluar(params: CreateBarangKeluarParams) {
     if (!pelanggan) {
       throw new Error("Pelanggan tidak ditemukan");
     }
+    
+    
 
     for (const item of data.items) {
       const barang = barangs.find((b) => b.id === item.barangId);

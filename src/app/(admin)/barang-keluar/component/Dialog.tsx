@@ -368,7 +368,7 @@ function BarangKeluarDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4 overflow-y-auto max-h-[70vh]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-2">
             <div className="flex flex-col gap-1">
               <label className="text-xs sm:text-sm font-medium text-gray-700">
                 Pelanggan: <span className="text-red-500">*</span>
