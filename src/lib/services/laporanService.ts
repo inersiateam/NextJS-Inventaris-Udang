@@ -167,6 +167,17 @@ export const getLaporanStatsByPeriode = cache(
         0
       );
 
+      const totalBarangMasuk = await prisma.barangMasuk.aggregate({
+        where: {
+          tglMasuk: { gte: startDate, lte: endDate },
+          admin: { jabatan },
+        },
+        _sum: {
+          totalHarga: true,
+        },
+      });
+
+      const modal = totalBarangMasuk._sum.totalHarga || 0;
       const totalBiayaKeluar = await prisma.transaksiKeluar.aggregate({
         where: {
           barangKeluar: {
@@ -179,8 +190,9 @@ export const getLaporanStatsByPeriode = cache(
         },
       });
 
-      const modal = totalHPP + (totalBiayaKeluar._sum.totalBiayaKeluar || 0);
-      const labaBerjalan = omset - modal;
+      const totalYangDikeluarkan =
+        totalHPP + (totalBiayaKeluar._sum.totalBiayaKeluar || 0);
+      const labaBerjalan = omset - totalYangDikeluarkan;
 
       const pengeluaranOperasional = await prisma.pengeluaran.aggregate({
         where: {
@@ -334,6 +346,7 @@ export const getChartLaporanByPeriode = cache(
 
       if (periode === 1) {
         const { firstDayOfMonth } = getMonthDateRange(currentDate);
+        
         const barangKeluarData = await prisma.barangKeluarDetail.findMany({
           where: {
             barangKeluar: {
@@ -353,39 +366,24 @@ export const getChartLaporanByPeriode = cache(
           },
         });
 
-        const barangKeluarWithModal = await prisma.barangKeluarDetail.findMany({
+        const barangMasukData = await prisma.barangMasuk.findMany({
           where: {
-            barangKeluar: {
-              admin: { jabatan },
-              tglKeluar: {
-                gte: firstDayOfMonth,
-                lte: currentDate,
-              },
+            admin: { jabatan },
+            tglMasuk: {
+              gte: firstDayOfMonth,
+              lte: currentDate,
             },
           },
-          include: {
-            barang: {
-              select: {
-                harga: true,
-              },
-            },
-            barangKeluar: {
-              select: {
-                tglKeluar: true,
-                transaksiKeluar: {
-                  select: {
-                    totalBiayaKeluar: true,
-                  },
-                },
-              },
-            },
+          select: {
+            tglMasuk: true,
+            totalHarga: true,
           },
         });
 
         const weeklyData = DASHBOARD.MINGGU.reduce((acc, week) => {
-          acc[week] = { pendapatan: 0, pengeluaran: 0 };
+          acc[week] = { pendapatan: 0, modal: 0 };
           return acc;
-        }, {} as Record<string, { pendapatan: number; pengeluaran: number }>);
+        }, {} as Record<string, { pendapatan: number; modal: number }>);
 
         barangKeluarData.forEach((item) => {
           const week = getWeekFromDate(new Date(item.barangKeluar.tglKeluar));
@@ -393,39 +391,15 @@ export const getChartLaporanByPeriode = cache(
           weeklyData[week].pendapatan += omset;
         });
 
-        const modalPerTransaksi = new Map<number, number>();
-        barangKeluarWithModal.forEach((item) => {
-          const hpp = item.jmlPembelian * item.barang.harga;
-          const barangKeluarId = item.barangKeluarId;
-
-          if (!modalPerTransaksi.has(barangKeluarId)) {
-            modalPerTransaksi.set(barangKeluarId, 0);
-          }
-
-          modalPerTransaksi.set(
-            barangKeluarId,
-            modalPerTransaksi.get(barangKeluarId)! + hpp
-          );
-        });
-
-        barangKeluarWithModal.forEach((item) => {
-          const week = getWeekFromDate(new Date(item.barangKeluar.tglKeluar));
-          const barangKeluarId = item.barangKeluarId;
-
-          const modalHPP = modalPerTransaksi.get(barangKeluarId) || 0;
-          const biayaKeluar =
-            item.barangKeluar.transaksiKeluar?.[0]?.totalBiayaKeluar || 0;
-
-          if (modalPerTransaksi.has(barangKeluarId)) {
-            weeklyData[week].pengeluaran += modalHPP + biayaKeluar;
-            modalPerTransaksi.delete(barangKeluarId);
-          }
+        barangMasukData.forEach((item) => {
+          const week = getWeekFromDate(new Date(item.tglMasuk));
+          weeklyData[week].modal += item.totalHarga;
         });
 
         Object.keys(weeklyData).forEach((week) => {
           labels.push(week);
           pendapatan.push(Math.round(weeklyData[week].pendapatan / 1000000));
-          pengeluaran.push(Math.round(weeklyData[week].pengeluaran / 1000000));
+          pengeluaran.push(Math.round(weeklyData[week].modal / 1000000));
         });
       } else {
         for (let i = periode - 1; i >= 0; i--) {
@@ -465,42 +439,17 @@ export const getChartLaporanByPeriode = cache(
             (sum, detail) => sum + detail.jmlPembelian * detail.hargaJual,
             0
           );
-
-          const barangKeluarWithHPP = await prisma.barangKeluarDetail.findMany({
+          const totalBarangMasuk = await prisma.barangMasuk.aggregate({
             where: {
-              barangKeluar: {
-                tglKeluar: { gte: startDate, lte: endDate },
-                admin: { jabatan },
-              },
-            },
-            include: {
-              barang: {
-                select: {
-                  harga: true,
-                },
-              },
-            },
-          });
-
-          const totalHPP = barangKeluarWithHPP.reduce(
-            (sum, detail) => sum + detail.jmlPembelian * detail.barang.harga,
-            0
-          );
-
-          const totalBiayaKeluar = await prisma.transaksiKeluar.aggregate({
-            where: {
-              barangKeluar: {
-                tglKeluar: { gte: startDate, lte: endDate },
-                admin: { jabatan },
-              },
+              tglMasuk: { gte: startDate, lte: endDate },
+              admin: { jabatan },
             },
             _sum: {
-              totalBiayaKeluar: true,
+              totalHarga: true,
             },
           });
 
-          const totalModal =
-            totalHPP + (totalBiayaKeluar._sum.totalBiayaKeluar || 0);
+          const totalModal = totalBarangMasuk._sum.totalHarga || 0;
 
           pendapatan.push(Math.round(totalOmset / 1000000));
           pengeluaran.push(Math.round(totalModal / 1000000));
