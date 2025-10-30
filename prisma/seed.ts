@@ -4,26 +4,27 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  const saltABL = await bcrypt.genSalt(12);
-  const hashedABL = await bcrypt.hash("123456", saltABL);
+  const saltRounds = 12;
+  const hashedPassword = await bcrypt.hash("123456", saltRounds);
 
-  const saltATM = await bcrypt.genSalt(12);
-  const hashedATM = await bcrypt.hash("123456", saltATM);
+  await prisma.admin.upsert({
+    where: { username: "abl" },
+    update: { password: hashedPassword },
+    create: {
+      username: "abl",
+      password: hashedPassword,
+      jabatan: Jabatan.ABL,
+    },
+  });
 
-  await prisma.admin.createMany({
-    data: [
-      {
-        username: "abl",
-        password: hashedABL,
-        jabatan: Jabatan.ABL,
-      },
-      {
-        username: "atm",
-        password: hashedATM,
-        jabatan: Jabatan.ATM,
-      },
-    ],
-    skipDuplicates: true,
+  await prisma.admin.upsert({
+    where: { username: "atm" },
+    update: { password: hashedPassword },
+    create: {
+      username: "atm",
+      password: hashedPassword,
+      jabatan: Jabatan.ATM,
+    },
   });
 }
 
