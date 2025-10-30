@@ -1,0 +1,42 @@
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: inventaris_udang_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: serverdev
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: inventaris_udang_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U serverdev -d inventaris_udang_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: inventaris_udang_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://serverdev:123@db:5432/inventaris_udang_dev?connection_limit=20&pool_timeout=20&connect_timeout=10
+      NODE_ENV: production
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: ltIRUKLViSyyuEmdxKVI9AoSi7Y+QQm6tkB9kEaK9Is=
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "npx prisma migrate deploy && node server.js"
+
+volumes:
+  postgres_data:
+    driver: local
