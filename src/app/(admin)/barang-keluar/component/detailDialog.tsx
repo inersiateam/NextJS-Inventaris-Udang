@@ -149,6 +149,12 @@ export default function DetailDialog({
               </span>
             </div>
             <div className="flex justify-between">
+              <span>Ongkir:</span>
+              <span className="font-semibold">
+                {formatCurrency(data.ongkir)}
+              </span>
+            </div>
+            <div className="flex justify-between">
               <span>Total Discount (fee manager/teknisi):</span>
               <span className="font-semibold">
                 {formatCurrency(data.totalFee)}
@@ -162,7 +168,6 @@ export default function DetailDialog({
             </div>
           </div>
 
-          {/* Buttons - responsive */}
           <div className="flex flex-col sm:flex-row sm:justify-end justify-start gap-1 sm:gap-2 mt-2">
             <Button
               type="button"
