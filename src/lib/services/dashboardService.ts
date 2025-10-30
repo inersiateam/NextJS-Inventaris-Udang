@@ -184,69 +184,31 @@ export async function getChartStatistik(jabatan: Jabatan) {
       },
     });
 
-    const barangKeluarWithModal = await prisma.barangKeluarDetail.findMany({
+    const barangMasukData = await prisma.barangMasuk.findMany({
       where: {
-        barangKeluar: {
-          admin: { jabatan },
-          tglKeluar: {
-            gte: firstDayOfMonth,
-            lte: currentDate,
-          },
+        admin: { jabatan },
+        tglMasuk: {
+          gte: firstDayOfMonth,
+          lte: currentDate,
         },
       },
-      include: {
-        barang: {
-          select: {
-            harga: true,
-          },
-        },
-        barangKeluar: {
-          select: {
-            tglKeluar: true,
-            transaksiKeluar: {
-              select: {
-                totalBiayaKeluar: true,
-              },
-            },
-          },
-        },
+      select: {
+        tglMasuk: true,
+        totalHarga: true,
       },
     });
 
     const weeklyData = initializeWeeklyData();
+
     barangKeluarData.forEach((item) => {
       const week = getWeekFromDate(new Date(item.barangKeluar.tglKeluar));
       const omset = item.jmlPembelian * item.hargaJual;
       weeklyData[week].pendapatan += omset;
     });
 
-    const modalPerTransaksi = new Map<number, number>();
-    barangKeluarWithModal.forEach((item) => {
-      const hpp = item.jmlPembelian * item.barang.harga;
-      const barangKeluarId = item.barangKeluarId;
-
-      if (!modalPerTransaksi.has(barangKeluarId)) {
-        modalPerTransaksi.set(barangKeluarId, 0);
-      }
-
-      modalPerTransaksi.set(
-        barangKeluarId,
-        modalPerTransaksi.get(barangKeluarId)! + hpp
-      );
-    });
-
-    barangKeluarWithModal.forEach((item) => {
-      const week = getWeekFromDate(new Date(item.barangKeluar.tglKeluar));
-      const barangKeluarId = item.barangKeluarId;
-
-      const modalHPP = modalPerTransaksi.get(barangKeluarId) || 0;
-      const biayaKeluar =
-        item.barangKeluar.transaksiKeluar?.[0]?.totalBiayaKeluar || 0;
-
-      if (modalPerTransaksi.has(barangKeluarId)) {
-        weeklyData[week].pengeluaran += modalHPP + biayaKeluar;
-        modalPerTransaksi.delete(barangKeluarId);
-      }
+    barangMasukData.forEach((item) => {
+      const week = getWeekFromDate(new Date(item.tglMasuk));
+      weeklyData[week].pengeluaran += item.totalHarga;
     });
 
     const labels = Object.keys(weeklyData);
@@ -267,7 +229,6 @@ export async function getChartStatistik(jabatan: Jabatan) {
     throw new Error("Terjadi kesalahan saat mengambil data statistik");
   }
 }
-
 export async function getChartBarang(jabatan: Jabatan) {
   try {
     const currentDate = new Date();
