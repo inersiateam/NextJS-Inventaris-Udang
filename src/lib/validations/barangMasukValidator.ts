@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const barangMasukSchema = z.object({
-  barangId: z.number().int().positive("ID barang harus valid"),
+  barangId: z.number().int().positive("Pilih Barang yang valid"),
   noInvoice: z.string().min(1, "No. Invoice harus diisi"),
   noSuratJalan: z.string().min(1, "No. Surat jalan harus diisi"),
   stokMasuk: z.number().int().positive("Stok masuk minimal 1"),

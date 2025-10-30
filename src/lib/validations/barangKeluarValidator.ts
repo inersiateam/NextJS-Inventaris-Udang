@@ -1,13 +1,13 @@
 import z from "zod";
 
 export const barangKeluarItemSchema = z.object({
-  barangId: z.number().int().positive("ID barang harus valid"),
+  barangId: z.number().int().positive("Pilih Barang yang valid"),
   jmlPembelian: z.number().int().positive("Jumlah pembelian minimal 1"),
   hargaJual: z.number().positive("Harga jual harus lebih dari 0"),
 });
 
 export const barangKeluarSchema = z.object({
-  pelangganId: z.number().int().positive("ID pelanggan harus valid"),
+  pelangganId: z.number().int().positive("Pilih Pelanggan yang valid"),
   tglKeluar: z
     .string()
     .regex(
