@@ -17,6 +17,20 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000);
 
+const guestSessionStore = new Map<
+  string,
+  { type: string; expiresAt: number }
+>();
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [sessionId, session] of guestSessionStore.entries()) {
+    if (now > session.expiresAt) {
+      guestSessionStore.delete(sessionId);
+    }
+  }
+}, 30 * 60 * 1000);
+
 function rateLimit(
   identifier: string,
   limit: number,
@@ -67,8 +81,25 @@ function setSecurityHeaders(response: NextResponse): NextResponse {
   return response;
 }
 
+function generateGuestSessionId(): string {
+  return `guest_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+}
+
+function validateGuestAccess(request: NextRequest, type: string): boolean {
+  const guestSession = request.cookies.get("guest_session")?.value;
+
+  if (guestSession) {
+    const session = guestSessionStore.get(guestSession);
+    if (session && session.type === type && Date.now() < session.expiresAt) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
   const ip =
     request.headers.get("x-real-ip") ||
     request.headers.get("x-forwarded-for") ||
@@ -79,11 +110,13 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const isPublicRoute = 
-    pathname === "/login" || 
-    pathname === "/" || 
-    pathname === "/guest-selection" ||
-    pathname.startsWith("/laporan-guest");
+  const isPublicRoute =
+    pathname === "/login" ||
+    pathname === "/" ||
+    pathname === "/guest-selection";
+
+  const isGuestRoute = pathname.startsWith("/laporan-guest");
+  const isGuestApiRoute = pathname.startsWith("/api/guest");
 
   const isAdminRoute =
     pathname.startsWith("/(admin)") ||
@@ -92,16 +125,126 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/barang-keluar") ||
     pathname.startsWith("/pelanggan") ||
     pathname.startsWith("/pengeluaran") ||
-    (pathname.startsWith("/laporan") && !pathname.startsWith("/laporan-guest")) ||
+    (pathname.startsWith("/laporan") &&
+      !pathname.startsWith("/laporan-guest")) ||
     pathname.startsWith("/profile");
 
   const isProtectedApiRoute =
-    pathname.startsWith("/api") && 
+    pathname.startsWith("/api") &&
     !pathname.startsWith("/api/auth") &&
     !pathname.startsWith("/api/guest");
 
+  if (isGuestRoute) {
+    const type = searchParams.get("type");
+
+    if (!type || (type !== "abl" && type !== "atm")) {
+      const selectionUrl = new URL("/guest-selection", request.url);
+      const response = NextResponse.redirect(selectionUrl);
+      return setSecurityHeaders(response);
+    }
+
+    const guestRateLimit = rateLimit(`guest:${ip}`, 50, 60 * 60 * 1000);
+    if (!guestRateLimit.allowed) {
+      const response = NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+      return setSecurityHeaders(response);
+    }
+
+    if (!validateGuestAccess(request, type)) {
+      const selectionUrl = new URL("/guest-selection", request.url);
+      const response = NextResponse.redirect(selectionUrl);
+      return setSecurityHeaders(response);
+    }
+
+    const response = NextResponse.next();
+    response.headers.set("x-guest-type", type);
+    return setSecurityHeaders(response);
+  }
+
+  if (pathname === "/guest-selection") {
+    const existingSession = request.cookies.get("guest_session")?.value;
+    if (existingSession && guestSessionStore.has(existingSession)) {
+      const session = guestSessionStore.get(existingSession);
+      if (session && Date.now() < session.expiresAt) {
+        const laporanUrl = new URL(
+          `/laporan-guest?type=${session.type}`,
+          request.url
+        );
+        const response = NextResponse.redirect(laporanUrl);
+        return setSecurityHeaders(response);
+      }
+    }
+
+    const guestCode = searchParams.get("code");
+
+    if (guestCode) {
+      let guestType: string | null = null;
+      if (guestCode === "2503") {
+        guestType = "abl";
+      } else if (guestCode === "0125") {
+        guestType = "atm";
+      }
+
+      if (guestType) {
+        const sessionId = generateGuestSessionId();
+        const expiresAt = Date.now() + 4 * 60 * 60 * 1000;
+
+        guestSessionStore.set(sessionId, {
+          type: guestType,
+          expiresAt,
+        });
+
+        const laporanUrl = new URL(
+          `/laporan-guest?type=${guestType}`,
+          request.url
+        );
+        const response = NextResponse.redirect(laporanUrl);
+
+        response.cookies.set("guest_session", sessionId, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 4 * 60 * 60,
+          path: "/",
+        });
+
+        return setSecurityHeaders(response);
+      }
+    }
+
+    const response = NextResponse.next();
+    return setSecurityHeaders(response);
+  }
+
+  if (pathname === "/api/guest/logout") {
+    const guestSession = request.cookies.get("guest_session")?.value;
+
+    if (guestSession && guestSessionStore.has(guestSession)) {
+      guestSessionStore.delete(guestSession);
+    }
+
+    const response = NextResponse.next();
+    return setSecurityHeaders(response);
+  }
+
+  if (isGuestApiRoute) {
+    const guestSession = request.cookies.get("guest_session")?.value;
+
+    if (!guestSession || !guestSessionStore.has(guestSession)) {
+      const response = NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+      return setSecurityHeaders(response);
+    }
+
+    const response = NextResponse.next();
+    return setSecurityHeaders(response);
+  }
+
   if (!token && (isAdminRoute || isProtectedApiRoute)) {
-    console.log("🚫 Redirecting to login - No token for protected route");
     if (isProtectedApiRoute) {
       const response = NextResponse.json(
         { error: "Unauthorized" },
@@ -146,13 +289,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (public folder)
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

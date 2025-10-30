@@ -1,9 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Quicksand } from "next/font/google";
 import "./globals.css";
-import Providers from "./provider";
+import { Providers } from "./providers";
 
-// Configure the Quicksand font
 const quicksand = Quicksand({
   subsets: ["latin"],
   variable: "--font-quicksand",
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0070f3",
+  themeColor: "#2674a4",
 };
 
 export default function RootLayout({

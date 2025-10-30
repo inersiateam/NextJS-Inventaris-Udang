@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { LogoutCurve, User } from "iconsax-react";
+import { LogoutCurve } from "iconsax-react";
 
 interface GuestNavbarProps {
   guestType: "abl" | "atm";
@@ -10,10 +10,21 @@ interface GuestNavbarProps {
 export default function GuestNavbar({ guestType }: GuestNavbarProps) {
   const router = useRouter();
 
-  const handleLogout = () => {
-    router.push("/login");
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/guest/logout", {
+        method: "POST",
+      });
+
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      router.push("/login");
+    }
   };
+
   const logoSrc = guestType === "atm" ? "/ATM.png" : "/ABL.png";
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,13 +32,14 @@ export default function GuestNavbar({ guestType }: GuestNavbarProps) {
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg">
               <img
-                src={logoSrc} 
+                src={logoSrc}
+                alt={`${guestType.toUpperCase()} Logo`}
                 className="w-14 h-14 rounded-full"
               />
             </div>
             <div>
               <h1 className="text-lg font-bold text-gray-900">
-               Selamat Datang Tamu {guestType === "abl" ? "ABL" : "ATM"}
+                Selamat Datang Tamu {guestType === "abl" ? "ABL" : "ATM"}
               </h1>
             </div>
           </div>

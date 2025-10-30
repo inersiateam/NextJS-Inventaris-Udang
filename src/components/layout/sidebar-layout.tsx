@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { MenuItem } from "@/lib/menu-config";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -21,28 +22,40 @@ export default function AppSidebar({
 }: AppSidebarProps) {
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
-  const { data: session } = useSession();
-  const jabatan = session?.user?.jabatan;
-   const logoSrc =
-    jabatan === "ATM"
-      ? "/ATM.png"
-      : "/ABL.png";
+  const [mounted, setMounted] = useState(false);
 
-  const label =
-    jabatan === "ATM"
-      ? "CV. ATM"
-      : "CV. ABL";
+  const { data: session, status } = useSession();
+
+  const jabatan = session?.user?.jabatan;
+  const logoSrc = jabatan === "ATM" ? "/ATM.png" : "/ABL.png";
+  const label = jabatan === "ATM" ? "CV. ATM" : "CV. ABL";
 
   useEffect(() => {
+    setMounted(true);
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  if (!mounted || status === "loading") {
+    return (
+      <aside
+        className={cn(
+          "hidden md:flex flex-col bg-white dark:bg-gray-900 shadow-lg border rounded-xl",
+          "sticky top-0 h-screen transition-all duration-300",
+          open ? "w-56" : "w-20"
+        )}
+      >
+        <div className="h-16 flex items-center justify-center">
+          <div className="w-12 h-12 bg-gray-200 animate-pulse rounded" />
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <>
-  
       <aside
         className={cn(
           "hidden md:flex flex-col bg-white dark:bg-gray-900 shadow-lg border rounded-xl shadow-gray-100 transition-all duration-300",
@@ -52,7 +65,7 @@ export default function AppSidebar({
       >
         <div className="h-16 flex items-center justify-center">
           <div className="flex items-center space-x-2">
-            <img src={logoSrc} alt="Logo" className="h-12 w-auto" />
+            <Image src={logoSrc} alt="Logo" width={48} height={48} priority />
             {open && (
               <motion.span
                 initial={{ opacity: 0 }}

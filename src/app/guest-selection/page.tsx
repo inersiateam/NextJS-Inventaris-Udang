@@ -2,23 +2,28 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogFooter,  } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 export default function GuestSelectionPage() {
   const [inputValue, setInputValue] = useState<string>("");
-  const [dialogOpen, setDialogOpen] = useState(false); 
+  const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value.toLowerCase());
+    setInputValue(e.target.value);
   };
 
   const handleSubmit = () => {
-    if (inputValue === "2503") {
-      router.push("/laporan-guest?type=abl");
-    } else if (inputValue === "0125") {
-      router.push("/laporan-guest?type=atm");
+    if (inputValue === "2503" || inputValue === "0125") {
+      router.push(`/guest-selection?code=${inputValue}`);
     } else {
       setDialogOpen(true);
     }
@@ -42,11 +47,13 @@ export default function GuestSelectionPage() {
             Masukkan Kode Tamu
           </label>
           <input
-            type="text"
+            type="password"
             value={inputValue}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
+            placeholder="Masukkan kode akses"
             className="w-full py-3 px-4 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
+            autoComplete="off"
           />
         </div>
 
@@ -59,18 +66,25 @@ export default function GuestSelectionPage() {
             Lanjutkan
           </button>
         </div>
+
+        <div className="mt-4 text-center">
+          <p className="text-xs text-gray-500">
+            Masukkan kode akses yang telah diberikan untuk melanjutkan
+          </p>
+        </div>
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogTrigger asChild>
-        </DialogTrigger>
+        <DialogTrigger asChild></DialogTrigger>
         <DialogContent>
-          <DialogTitle>Invalid Code</DialogTitle>
+          <DialogTitle>Kode Tidak Valid</DialogTitle>
           <DialogDescription>
-            Kode tidak valid! <br />Masukkan kode tamu yang valid untuk melanjutkan.
+            Kode yang Anda masukkan tidak valid. <br />
+            Silakan hubungi administrator untuk mendapatkan kode akses yang
+            benar.
           </DialogDescription>
           <DialogFooter>
-            <Button onClick={() => setDialogOpen(false)}>Close</Button>
+            <Button onClick={() => setDialogOpen(false)}>Tutup</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

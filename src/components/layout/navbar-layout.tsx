@@ -44,7 +44,8 @@ const typeColors = {
 };
 
 export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const [mounted, setMounted] = useState(false);
   const username = session?.user?.username;
   const router = useRouter();
 
@@ -56,6 +57,10 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
 
   const searchRef = useRef<HTMLDivElement>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -207,10 +212,6 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
           <Search className="h-5 w-5 text-gray-600 dark:text-gray-300" />
         </button>
 
-        {/* <button aria-label="notifikasi" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-          <Bell className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-        </button> */}
-
         <div className="hidden md:block h-6 border-l border-gray-300 dark:border-gray-600"></div>
 
         <DropdownMenu>
@@ -218,20 +219,26 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
             <CircleUser className="h-8 w-8 text-gray-700 dark:text-gray-300" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="mt-2 w-40">
-            <DropdownMenuItem disabled>Hai, {username}</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href={`/profile`}>Profil</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              variant="destructive"
-              onClick={() => {
-                if (onLogout) onLogout();
-                signOut({ callbackUrl: "/login" });
-              }}
-            >
-              Logout
-            </DropdownMenuItem>
+            {mounted && status === "authenticated" ? (
+              <>
+                <DropdownMenuItem disabled>Hai, {username}</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href={`/profile`}>Profil</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={() => {
+                    if (onLogout) onLogout();
+                    signOut({ callbackUrl: "/login" });
+                  }}
+                >
+                  Logout
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <DropdownMenuItem disabled>Loading...</DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
