@@ -49,6 +49,7 @@ const getInitialFormState = () => ({
   pelangganId: "",
   tglKeluar: new Date().toISOString().split("T")[0],
   ongkir: "",
+  feeTeknisi: "",
   status: "BELUM_LUNAS" as "BELUM_LUNAS" | "LUNAS",
   noPo: "",
 });
@@ -259,13 +260,22 @@ function BarangKeluarDialog({
   const [items, setItems] = useState<IBarangKeluarItem[]>(getInitialItemsState);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const totalQuantity = useMemo(() => {
+    return items.reduce((sum, item) => sum + item.jmlPembelian, 0);
+  }, [items]);
+
+  const totalFee = useMemo(() => {
+    const fee = parseFloat(form.feeTeknisi) || 0;
+    return fee * totalQuantity;
+  }, [form.feeTeknisi, totalQuantity]);
+
   const totalOmset = useMemo(() => {
     const total = items.reduce((sum, item) => {
       return sum + item.jmlPembelian * item.hargaJual;
     }, 0);
     const ongkir = parseFloat(form.ongkir) || 0;
-    return total - ongkir;
-  }, [items, form.ongkir]);
+    return total - ongkir - totalFee;
+  }, [items, form.ongkir, totalFee]);
 
   useEffect(() => {
     if (!open) {
@@ -282,6 +292,7 @@ function BarangKeluarDialog({
           ? new Date(editData.tglKeluar).toISOString().split("T")[0]
           : "",
         ongkir: editData.ongkir?.toString() || "",
+        feeTeknisi: editData.feeTeknisi?.toString() || "",
         status: editData.status || "BELUM_LUNAS",
         noPo: editData.noPo || "",
       });
@@ -300,7 +311,6 @@ function BarangKeluarDialog({
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    // Clear error saat user mengetik
     setErrors((prev) => ({ ...prev, [name]: "" }));
   }, []);
 
@@ -328,7 +338,6 @@ function BarangKeluarDialog({
         };
         return newItems;
       });
-      // Clear error untuk item ini
       setErrors((prev) => ({
         ...prev,
         [`items.${index}.${field}`]: "",
@@ -363,6 +372,7 @@ function BarangKeluarDialog({
         tglKeluar: form.tglKeluar,
         noPo: jabatan === "ATM" && form.noPo ? form.noPo : undefined,
         ongkir: parseFloat(form.ongkir) || 0,
+        feeTeknisi: parseFloat(form.feeTeknisi) || 0,
         status: form.status,
         items: items.map((item) => ({
           barangId: item.barangId,
@@ -390,10 +400,12 @@ function BarangKeluarDialog({
 
         return;
       }
+
       const payload: any = {
         pelangganId: validation.data.pelangganId,
         tglKeluar: validation.data.tglKeluar,
         ongkir: validation.data.ongkir,
+        feeTeknisi: validation.data.feeTeknisi,
         status: validation.data.status,
         items: validation.data.items,
       };
@@ -484,7 +496,9 @@ function BarangKeluarDialog({
                 </SelectContent>
               </Select>
               {errors.pelangganId && (
-                <p className="text-xs text-red-500 mt-1">{errors.pelangganId}</p>
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.pelangganId}
+                </p>
               )}
             </div>
 
@@ -509,6 +523,18 @@ function BarangKeluarDialog({
                 placeholder="Masukkan nomor PO"
               />
             )}
+
+            <FormInput
+              label="Fee Teknisi/Manager"
+              type="number"
+              name="feeTeknisi"
+              value={form.feeTeknisi}
+              onChange={handleChange}
+              placeholder="0"
+              disabled={isPending}
+              className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              error={errors.feeTeknisi}
+            />
 
             <FormInput
               label="Ongkir"

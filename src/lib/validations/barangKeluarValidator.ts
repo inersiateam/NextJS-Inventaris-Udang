@@ -15,6 +15,10 @@ export const barangKeluarSchema = z.object({
       "Tanggal keluar harus dalam format YYYY-MM-DD"
     ),
   ongkir: z.number().min(0, "Ongkir harus bernilai minimal 0").default(0),
+  feeTeknisi: z
+    .number()
+    .min(0, "Fee teknisi harus bernilai minimal 0")
+    .default(0),
   items: z
     .array(barangKeluarItemSchema)
     .min(1, "Minimal harus ada 1 item barang"),

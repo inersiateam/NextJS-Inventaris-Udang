@@ -10,6 +10,7 @@ export interface IBarangKeluarInput {
   pelangganId: number;
   tglKeluar: string;
   ongkir: number;
+  feeTeknisi: number;
   items: IBarangKeluarItem[];
   status?: "LUNAS" | "BELUM_LUNAS";
   noPo?: string;

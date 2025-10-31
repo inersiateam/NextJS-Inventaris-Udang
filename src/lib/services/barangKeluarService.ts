@@ -310,6 +310,7 @@ export const getBarangKeluarByIdForEdit = cache(
         namaPelanggan: barangKeluar.pelanggan.nama,
         alamatPelanggan: barangKeluar.pelanggan.alamat,
         ongkir: transaksi?.ongkir || 0,
+        feeTeknisi: transaksi?.totalFee || 0,
         status: transaksi?.status || "BELUM_LUNAS",
         items: barangKeluar.details.map((detail) => ({
           barangId: detail.barangId,
@@ -355,8 +356,6 @@ export async function createBarangKeluar(params: CreateBarangKeluarParams) {
     if (!pelanggan) {
       throw new Error("Pelanggan tidak ditemukan");
     }
-    
-    
 
     for (const item of data.items) {
       const barang = barangs.find((b) => b.id === item.barangId);
@@ -395,7 +394,8 @@ export async function createBarangKeluar(params: CreateBarangKeluarParams) {
       (sum, item) => sum + item.jmlPembelian,
       0
     );
-    const totalFee = (30000 + 10000) * totalQuantity;
+
+    const totalFee = data.feeTeknisi * totalQuantity;
     const totalBiayaKeluar = totalFee + data.ongkir;
     const labaBerjalan = labaKotor - totalBiayaKeluar;
 
@@ -556,7 +556,8 @@ export async function updateBarangKeluar(params: UpdateBarangKeluarParams) {
       (sum, item) => sum + item.jmlPembelian,
       0
     );
-    const totalFee = (30000 + 10000) * totalQuantity;
+    
+    const totalFee = data.feeTeknisi * totalQuantity;
     const totalBiayaKeluar = totalFee + data.ongkir;
     const labaBerjalan = labaKotor - totalBiayaKeluar;
 
