@@ -9,7 +9,7 @@ export default async function BarangPage() {
   const session = await getServerSession(authOptions)
 
   if (!session || !session.user) {
-    redirect("/login")
+    redirect("/")
   }
 
   const initialData = await getBarangWithPagination({

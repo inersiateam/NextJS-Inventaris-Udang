@@ -375,7 +375,7 @@ function BarangKeluarDialog({
 
       if (!validation.success) {
         const newErrors: Record<string, string> = {};
-        
+
         validation.error.issues.forEach((err) => {
           const path = err.path.join(".");
           newErrors[path] = err.message;
@@ -456,20 +456,29 @@ function BarangKeluarDialog({
                 disabled={isPending}
               >
                 <SelectTrigger
-                  className={`bg-gray-100 text-sm focus:ring-1 focus:ring-sky-500 ${
+                  className={`bg-gray-100 text-sm focus:ring-1 focus:ring-sky-500 overflow-hidden ${
                     errors.pelangganId ? "border border-red-500" : ""
                   }`}
                 >
-                  <SelectValue placeholder="Pilih Pelanggan" />
+                  <div className="truncate w-full text-left">
+                    {form.pelangganId
+                      ? pelangganOptions.find(
+                          (p) => p.id.toString() === form.pelangganId
+                        )?.nama || "Pilih Pelanggan"
+                      : "Pilih Pelanggan"}
+                  </div>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-w-[85vw] sm:max-w-md">
                   {pelangganOptions.map((pelanggan) => (
                     <SelectItem
                       key={pelanggan.id}
                       value={pelanggan.id.toString()}
+                      className="text-sm"
                     >
-                      {pelanggan.nama}
-                      {pelanggan.alamat && ` - ${pelanggan.alamat}`}
+                      <span className="block truncate">
+                        {pelanggan.nama}
+                        {pelanggan.alamat && ` - ${pelanggan.alamat}`}
+                      </span>
                     </SelectItem>
                   ))}
                 </SelectContent>

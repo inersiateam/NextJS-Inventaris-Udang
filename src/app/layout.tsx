@@ -31,7 +31,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
       <body className="font-quicksand antialiased pb-20 md:pb-2">
-        <Providers>{children}</Providers>
+        <Providers><main>{children}</main></Providers>
       </body>
     </html>
   );

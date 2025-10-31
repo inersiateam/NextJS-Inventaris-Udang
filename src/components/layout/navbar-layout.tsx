@@ -230,7 +230,7 @@ export default function AppNavbar({ onLogout, onMenuClick }: AppNavbarProps) {
                   variant="destructive"
                   onClick={() => {
                     if (onLogout) onLogout();
-                    signOut({ callbackUrl: "/login" });
+                    signOut({ callbackUrl: "/" });
                   }}
                 >
                   Logout

@@ -348,7 +348,7 @@ const generateSuratJalanPDF = (data: DetailData, jabatan: Jabatan) => {
       ).join("")}
       <tr class="total-row">
         <td colspan="2">TOTAL</td>
-        <td>${data.items.reduce((sum, item) => sum + item.jmlPembelian, 0)}</td>
+        <td>${data.items.reduce((sum, item) => sum + item.jmlPembelian, 0)} ${data.items[0]?.satuan}</td>
       </tr>
     </tbody>
   </table>

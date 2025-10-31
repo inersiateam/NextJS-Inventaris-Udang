@@ -111,7 +111,6 @@ export async function middleware(request: NextRequest) {
   });
 
   const isPublicRoute =
-    pathname === "/login" ||
     pathname === "/" ||
     pathname === "/guest-selection";
 
@@ -252,12 +251,12 @@ export async function middleware(request: NextRequest) {
       );
       return setSecurityHeaders(response);
     }
-    const loginUrl = new URL("/login", request.url);
+    const loginUrl = new URL("/", request.url);
     const response = NextResponse.redirect(loginUrl);
     return setSecurityHeaders(response);
   }
 
-  if (token && pathname === "/login") {
+  if (token && pathname === "/") {
     const dashboardUrl = new URL("/dashboard", request.url);
     const response = NextResponse.redirect(dashboardUrl);
     return setSecurityHeaders(response);
@@ -271,7 +270,7 @@ export async function middleware(request: NextRequest) {
 
   if (token && !isPublicRoute) {
     if (token.isActive === false) {
-      const loginUrl = new URL("/login?error=inactive", request.url);
+      const loginUrl = new URL("/?error=inactive", request.url);
       const response = NextResponse.redirect(loginUrl);
       return setSecurityHeaders(response);
     }

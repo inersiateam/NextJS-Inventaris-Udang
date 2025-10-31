@@ -60,7 +60,7 @@ export default async function Pengeluaran({ searchParams }: PageProps) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
-    redirect("/login");
+    redirect("/");
   }
 
   return (

@@ -8,7 +8,7 @@ export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
-    redirect("/login");
+    redirect("/");
   }
 
   const profile = await getProfile(parseInt(session.user.id));

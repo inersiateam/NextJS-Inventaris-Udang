@@ -186,7 +186,7 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
           toast.success(result.message || "Profil berhasil diperbarui");
           toast.info("Silakan login kembali dengan username baru");
           setTimeout(() => {
-            signOut({ callbackUrl: "/login" });
+            signOut({ callbackUrl: "/" });
           }, 2000);
         }
       } catch (error) {
@@ -214,7 +214,7 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
             toast.success(result.message || "Password berhasil diubah");
             toast.info("Silakan login kembali dengan password baru");
             setTimeout(() => {
-              signOut({ callbackUrl: "/login" });
+              signOut({ callbackUrl: "/" });
             }, 2000);
           }
         } catch (error) {
