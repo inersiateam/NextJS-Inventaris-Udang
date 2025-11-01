@@ -39,14 +39,6 @@ services:
       db:
         condition: service_healthy
     command: sh -c "npx prisma migrate deploy && npm run db:seed && node server.js"
-    deploy:
-      resources:
-        limits:
-          cpus: "1.0"
-          memory: 1G
-        reservations:
-          cpus: "0.25"
-          memory: 256M
 
 volumes:
   postgres_data:
