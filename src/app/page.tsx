@@ -87,7 +87,7 @@ export default function LoginPage() {
               className={`absolute left-10 bg-white px-2 transition-all duration-200 pointer-events-none ${
                 username || usernameFocused
                   ? "-top-2.5 text-xs text-blue-600"
-                  : "top-1/2 -translate-y-3 text-sm text-gray-500"
+                  : "top-4 text-sm text-gray-500"
               }`}
             >
               Username
@@ -109,10 +109,10 @@ export default function LoginPage() {
             <LockIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
             <label
               htmlFor="password"
-              className={`absolute left-10 bg-white px-2 transition-all duration-200 pointer-events-none ${
+              className={`absolute left-10 bg-white px-2 transition-all duration-200 ease-in-out pointer-events-none ${
                 password || passwordFocused
                   ? "-top-2.5 text-xs text-blue-600"
-                  : "top-1/2 -translate-y-3 text-sm text-gray-500"
+                  : "top-4 text-sm text-gray-500"
               }`}
             >
               Password
