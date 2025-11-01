@@ -10,7 +10,7 @@ const quicksand = Quicksand({
 
 export const metadata: Metadata = {
   title: "Inventaris App",
-  description: "Dashboard Inventaris CV. ABL",
+  description: "Dashboard Inventaris Udang",
   manifest: "/manifest.json",
 };
 
@@ -31,7 +31,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
       <body className="font-quicksand antialiased pb-20 md:pb-2">
-        <Providers><main>{children}</main></Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
