@@ -44,13 +44,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-dvh max-h-dvh overflow-hidden bg-gray-100 px-4 py-4">
+    <div className="fixed inset-0 flex flex items-center justify-center bg-gray-100 px-4 py-4">
       <main
-        className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md max-h-[95vh] overflow-y-auto"
+        className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md"
         role="main"
         aria-labelledby="login-title"
       >
-        {/* Title */}
         <h1
           id="login-title"
           className="text-center text-xl sm:text-2xl font-semibold text-gray-800 mb-2"
@@ -67,9 +66,7 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Username Field */}
           <div className="relative">
             <input
               id="username"
@@ -94,7 +91,6 @@ export default function LoginPage() {
             </label>
           </div>
 
-          {/* Password Field */}
           <div className="relative">
             <input
               id="password"
