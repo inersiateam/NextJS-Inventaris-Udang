@@ -36,7 +36,7 @@ export default function GuestSelectionPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-6 sm:px-10">
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-100 px-6">
       <div className="bg-white shadow-lg rounded-2xl p-8 sm:p-8 w-full max-w-xs sm:max-w-sm md:max-w-md scale-95 transition-transform">
         <h2 className="text-center text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
           Pilih Tipe Tamu
