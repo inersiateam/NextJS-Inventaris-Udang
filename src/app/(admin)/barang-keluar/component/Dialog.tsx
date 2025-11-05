@@ -286,13 +286,21 @@ function BarangKeluarDialog({
     }
 
     if (mode === "edit" && editData) {
+      const totalQty =
+        editData.items?.reduce(
+          (sum: number, item: any) => sum + item.jmlPembelian,
+          0
+        ) || 1;
+
+      const feePerUnit = editData.totalFee ? editData.totalFee / totalQty : 0;
+
       setForm({
         pelangganId: editData.pelangganId?.toString() || "",
         tglKeluar: editData.tglKeluar
           ? new Date(editData.tglKeluar).toISOString().split("T")[0]
           : "",
         ongkir: editData.ongkir?.toString() || "",
-        feeTeknisi: editData.feeTeknisi?.toString() || "",
+        feeTeknisi: feePerUnit.toString() || "0",
         status: editData.status || "BELUM_LUNAS",
         noPo: editData.noPo || "",
       });
@@ -525,7 +533,7 @@ function BarangKeluarDialog({
             )}
 
             <FormInput
-              label="Fee Teknisi/Manager"
+              label="Fee Teknisi/Manager (Per Unit)"
               type="number"
               name="feeTeknisi"
               value={form.feeTeknisi}
@@ -617,9 +625,9 @@ function BarangKeluarDialog({
             </div>
           </div>
 
-          <div className="pt-2 text-gray-900 text-sm sm:text-base font-semibold border-t">
-            Total Omset:
-            <span className="ml-2 text-base sm:text-lg font-bold text-sky-700">
+          <div className="flex justify-between pt-2 border-t">
+            <span className="font-semibold">Total Omset:</span>
+            <span className="text-base font-bold text-sky-700">
               {formatCurrency(totalOmset)}
             </span>
           </div>
