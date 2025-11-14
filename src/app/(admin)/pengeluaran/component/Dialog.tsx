@@ -1,5 +1,5 @@
 "use client";
-
+import { Calendar } from "lucide-react";
 import {
   useState,
   useEffect,
@@ -48,29 +48,68 @@ const FormInput = memo(
     disabled = false,
     type = "text",
     placeholder = "",
-    min,
-  }: any) => (
-    <div className="flex flex-col gap-1">
-      <label className="text-xs sm:text-sm font-medium text-gray-700">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        required={required}
-        disabled={disabled}
-        placeholder={placeholder}
-        min={min}
-        className={`w-full rounded-md bg-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 ${
-          type === "number"
-            ? "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-            : ""
-        }`}
-      />
-    </div>
-  )
+    className = "",
+    error = "",
+  }: any) => {
+    if (type === "date") {
+      return (
+        <div className="flex flex-col gap-1">
+          <label className="text-xs sm:text-sm font-medium text-gray-700">
+            {label} {required && <span className="text-red-500">*</span>}
+          </label>
+          <div className="relative">
+            <input
+              type="date"
+              name={name}
+              value={value}
+              onChange={onChange}
+              required={required}
+              disabled={disabled}
+              placeholder={placeholder}
+              className={`rounded-md bg-gray-100 px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 w-full 
+                [&::-webkit-calendar-picker-indicator]:absolute 
+                [&::-webkit-calendar-picker-indicator]:inset-0 
+                [&::-webkit-calendar-picker-indicator]:w-full 
+                [&::-webkit-calendar-picker-indicator]:h-full 
+                [&::-webkit-calendar-picker-indicator]:opacity-0 
+                [&::-webkit-calendar-picker-indicator]:cursor-pointer
+                [&::-webkit-inner-spin-button]:appearance-none
+                [&::-webkit-clear-button]:appearance-none
+                ${error ? "border border-red-500" : ""} ${className}`}
+              style={{
+                colorScheme: 'light'
+              }}
+            />
+            <Calendar 
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black pointer-events-none" 
+            />
+          </div>
+          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col gap-1">
+        <label className="text-xs sm:text-sm font-medium text-gray-700">
+          {label} {required && <span className="text-red-500">*</span>}
+        </label>
+        <input
+          type={type}
+          name={name}
+          value={value}
+          onChange={onChange}
+          required={required}
+          disabled={disabled}
+          placeholder={placeholder}
+          className={`rounded-md bg-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 ${
+            error ? "border border-red-500" : ""
+          } ${className}`}
+        />
+        {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+      </div>
+    );
+  }
 );
 FormInput.displayName = "FormInput";
 
