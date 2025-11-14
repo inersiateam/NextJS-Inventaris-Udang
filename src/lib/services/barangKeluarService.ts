@@ -523,9 +523,7 @@ export async function updateBarangKeluar(params: UpdateBarangKeluarParams) {
 
       if (availableStok < item.jmlPembelian) {
         throw new Error(
-          `Stok ${
-            barang!.nama
-          } tidak mencukupi. Stok tersedia: ${availableStok}`
+          `Stok ${barang!.nama} tidak mencukupi. Stok tersedia: ${availableStok}`
         );
       }
     }
