@@ -98,7 +98,7 @@ function validateGuestAccess(request: NextRequest, type: string): boolean {
   return false;
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
   const ip =
     request.headers.get("x-real-ip") ||
